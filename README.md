@@ -1,11 +1,11 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+QALShifts
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
+* An automatic employee rostering system
+* 1.0.0
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
