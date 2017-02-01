@@ -14,6 +14,7 @@
 namespace Algorithmos {
 QShiftsCore::QShiftsCore()
 {
+    init();
 }
 
 QShiftsCore::~QShiftsCore()
@@ -23,6 +24,8 @@ QShiftsCore::~QShiftsCore()
 
 void QShiftsCore::init()
 {
+    m_solver = Q_NULLPTR;
+
     QDir path ;
     path = QDir(path.currentPath());
     qDebug() << "Current path : "<< path.absolutePath() << endl;
@@ -88,9 +91,16 @@ void QShiftsCore::init()
             qDebug() << "Managers :\n" << bManagers << endl;
             qDebug() << "Fuel Managers :\n" << bfManagers << endl;
             qDebug() << "Fuel Employees :\n" << bEmployees << endl;
+            //Now it's time to initialize our solver
+            m_solver = new QShiftSolver(bManagers,bfManagers, bEmployees);
         }
     } else {
         qDebug() << "Error reading file. Current path : " << path.absolutePath() << endl;
     }
+}
+
+QShiftSolver *QShiftsCore::solver()
+{
+    return m_solver;
 }
 }

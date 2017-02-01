@@ -10,6 +10,7 @@ public:
     QShiftsCore();
     ~QShiftsCore();
     void init();
+    QShiftSolver *solver();
 private:
     QShiftSolver *m_solver;
     QVector<QEmployee* > bManagers;

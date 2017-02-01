@@ -1,4 +1,8 @@
 #include "qshiftsolver.h"
+
+#include <QDebug>
+#include <QQueue>
+
 namespace Algorithmos {
 
 
@@ -46,6 +50,19 @@ namespace Algorithmos {
         m_bfManagers.clear();
         m_fEmployees.clear();
         m_date = QDateTime::currentDateTime();
+        if (m_date.date().dayOfWeek() == 7) {
+            m_reqFEmployees = 6;
+        } else
+        {
+            m_reqFEmployees = 9;
+        }
+        m_reqManagers = 6;
+        m_reqFManagers = 4;
+    }
+
+    QShiftDay::QShiftDay(const QDateTime &dt)
+    {
+        m_date = dt;
     }
 
     QShiftDay::QShiftDay(const QDateTime &dt, EmployeeMap &bm, EmployeeMap &bfm, EmployeeMap &fe) :
@@ -81,7 +98,10 @@ namespace Algorithmos {
         m_fuelEmployeeGroup(fe),
         QObject(parent)
     {
-
+        qDebug() << "From QShiftSolver ctor :\n"
+                 << "Managers contains : " << m_manGroup.size() << " managers!\n"
+                 <<"Fuel Managers Contains : " << m_fuelManGroup.size() << " fuel managers!\n"
+                 <<"Employees Contains : " << m_fuelEmployeeGroup.size() << " fuel employees!" << endl;
     }
 
     QShiftSolver::~QShiftSolver()
@@ -103,7 +123,82 @@ namespace Algorithmos {
 
     Shifts &QShiftSolver::initShifts()
     {
+        //Initialize shifts.
+        //We'll start from Managers (more easy than the others).
+        m_currentShift = new QShiftDay();
+        QDateTime shift_date = m_currentShift->shiftDate();
+        /* Fill three queues with necessary employees from m_manGroup.
+         * 1. earlyQueue : contains employees for early shift
+         * 2. lateQueue  : contains employees for late shift
+         * 3 dayoffQueue : contains employees for day off.
+         */
         //TODO : Enter your code bellow!
+        QQueue<QEmployee*> man_early_queue;
+        QQueue<QEmployee *> man_late_queue;
+        QQueue<QEmployee*> man_dayoff_queue;
+        for(int i = 0; i < m_currentShift->reqManagers() / 2; i++)
+            man_early_queue.enqueue(m_manGroup[i]);
+        for(int i = m_currentShift->reqManagers()/2; i < m_currentShift->reqManagers(); i++)
+            man_late_queue.enqueue(m_manGroup[i]);
+        man_dayoff_queue.enqueue(m_manGroup.last());
+
+        m_currentShift->bManagers().insert(Algorithmos::EARLY,QVector<QEmployee*>::fromList(man_early_queue));
+        m_currentShift->bManagers().insert(Algorithmos::LATE, QVector<QEmployee*>::fromList(man_late_queue));
+        m_currentShift->bManagers().insert(Algorithmos::DAYOFF, QVector<QEmployee*>::fromList(man_dayoff_queue));
+        qDebug() << "Shift Day Managers  for : "
+                 << shift_date << " : "
+                 <<m_currentShift->bManagers() << endl;
+        m_pShifts.push_back(m_currentShift);
+
+//        qDebug() << "Queues at 1st round : \n"
+//                 << man_early_queue << endl
+//                 << man_late_queue << endl
+//                 << man_dayoff_queue <<endl;
+        int req_shift_man = m_currentShift->reqManagers() /2 ;
+        //try it for the rest 48 days !!!
+        for(int j = 2; j <= 49; j++) {
+            //first create date:
+            shift_date = shift_date.addDays(1);
+            m_currentShift = new QShiftDay(shift_date);
+            /*
+         * Four moves :
+         * 1) take the first element from early_queue and push it to dayoff_queue
+         * 2) take the first element from dayoff_queue and push to late_queue
+         * 3) take the three first elements from late_queue and push them to early_queue
+         * 4) take the two first elements from early_queue and push them to late_queue
+         */
+            int i;
+            // 1)
+            man_dayoff_queue.enqueue(man_early_queue.dequeue());
+            // 2)
+            man_late_queue.enqueue(man_dayoff_queue.dequeue());
+            // 3)
+            for(i = 1; i <= req_shift_man; i++)
+                man_early_queue.enqueue(man_late_queue.dequeue());
+            // 4)
+            for(i = 1; i <= req_shift_man-1; i++)
+                man_late_queue.enqueue(man_early_queue.dequeue());
+
+            m_currentShift->bManagers().insert(Algorithmos::EARLY,QVector<QEmployee*>::fromList(man_early_queue));
+            m_currentShift->bManagers().insert(Algorithmos::LATE, QVector<QEmployee*>::fromList(man_late_queue));
+            m_currentShift->bManagers().insert(Algorithmos::DAYOFF, QVector<QEmployee*>::fromList(man_dayoff_queue));
+            qDebug() << "Shift Day Managers  for : "
+                     << shift_date << " : "
+                     <<m_currentShift->bManagers() << endl;
+            m_pShifts.push_back(m_currentShift);
+
+//            qDebug() << "Queues at " << j+1 << "nd round : \n"
+//                     << man_early_queue << endl
+//                     << man_late_queue << endl
+//                     << man_dayoff_queue <<endl;
+        }
+
+        /*
+         * Now its time for others. Be careful !!
+         * Now we don't push_back values but we gone use
+         * the [] operator for m_pShifts.
+         */
+        ///TODO : Add you code for other type of employees.
         return m_pShifts;
     }
 
@@ -115,5 +210,7 @@ namespace Algorithmos {
     int QShiftSolver::solve_managers()
     {
 
+
+        return 0;
     }
 }

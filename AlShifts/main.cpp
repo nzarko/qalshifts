@@ -2,6 +2,7 @@
 #include "qshiftscore.h"
 
 #include <QApplication>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,12 @@ int main(int argc, char *argv[])
     w.show();
 
     Algorithmos::QShiftsCore s_core;
-    s_core.init();
+    Algorithmos::QShiftSolver *s_solver = s_core.solver();
+    if(s_solver)
+        s_solver->initShifts();
+    else
+        qDebug() << "Solver could not initialized. Check QShiftSolver::init()" << endl;
+
+
     return a.exec();
 }

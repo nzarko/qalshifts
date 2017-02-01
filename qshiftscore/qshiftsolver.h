@@ -26,6 +26,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         const int reqFEmployees();
 
         QShiftDay();
+        QShiftDay(const QDateTime &dt);
         QShiftDay(const QDateTime &dt, EmployeeMap &bm,
             EmployeeMap &bfm, EmployeeMap &fe);
         ~QShiftDay();
