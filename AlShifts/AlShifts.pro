@@ -24,9 +24,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    centralview.cpp \
+    qemployeeshiftstable.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    centralview.h \
+    qemployeeshiftstable.h
 
 FORMS    += mainwindow.ui
 
@@ -40,3 +44,6 @@ else:unix: LIBS += -L$$OUT_PWD/../qshiftscore/ -lqshiftscore
 
 INCLUDEPATH += $$PWD/../qshiftscore
 DEPENDPATH += $$PWD/../qshiftscore
+
+RESOURCES += \
+    resources.qrc

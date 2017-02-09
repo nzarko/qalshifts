@@ -5,6 +5,16 @@
 
 namespace Algorithmos {
 
+/**
+     * @brief The Available struct
+     * Used for the availibility of branch fuels managers
+     * These managers fill the empty shifts position from
+     * fuel employees.
+     */
+    struct Available {
+        QEmployee *e1;
+        QEmployee *e2;
+    };
 
     EmployeeMap & QShiftDay::bManagers()
     {
@@ -199,6 +209,41 @@ namespace Algorithmos {
          * the [] operator for m_pShifts.
          */
         ///TODO : Add you code for other type of employees.
+        // Use the above queues for the fuel managers
+        //First clear the lists
+        man_dayoff_queue.clear();
+        man_early_queue.clear();
+        man_late_queue.clear();
+        QVector<Available *> availables;
+        QQueue<QEmployee *> fuel_early_queue;
+        QQueue<QEmployee *> fuel_late_queue;
+        QQueue<QEmployee *> fuel_intermittent_queue;
+        QQueue<QEmployee *> fuel_dayoff_queue;
+        //First round. Init.
+        m_currentShift = m_pShifts[0];
+        shift_date = m_currentShift->shiftDate();
+        int empl_needed = m_currentShift->reqFManagers() / 2;
+        int cur_i;
+        for( cur_i = 0; cur_i < empl_needed; cur_i++ )
+            man_early_queue.enqueue(m_fuelManGroup[cur_i]);
+        for( cur_i = empl_needed; cur_i < empl_needed + 2; cur_i++)
+            man_late_queue.enqueue(m_fuelManGroup[cur_i]);
+        man_dayoff_queue.enqueue(m_fuelManGroup[cur_i]);
+        qDebug() << "Branch Fuel Managers, round 1: "
+                 << man_early_queue
+                 << man_late_queue
+                 << man_dayoff_queue
+                 << endl;
+        if ( cur_i + 2 < m_fuelManGroup.size()){
+            Available av = { m_fuelManGroup[cur_i+1], m_fuelManGroup[cur_i+2] };
+            availables.push_back(&av);
+            qDebug() << "Availables : " << av.e1 << " , " <<av.e2 <<  endl;
+        }
+
+        //Initialize fuel employees.
+
+
+
         return m_pShifts;
     }
 
@@ -209,8 +254,6 @@ namespace Algorithmos {
 
     int QShiftSolver::solve_managers()
     {
-
-
         return 0;
     }
 }

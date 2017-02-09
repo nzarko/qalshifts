@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="dayoff">icons/dayoff.png</file>
+        <file alias="early_shift">icons/early_shift.png</file>
+        <file alias="interm_shift">icons/intermintent_shift.png</file>
+        <file alias="late_shift">icons/late_shift.png</file>
+    </qresource>
+</RCC>

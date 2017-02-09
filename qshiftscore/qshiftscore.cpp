@@ -19,7 +19,7 @@ QShiftsCore::QShiftsCore()
 
 QShiftsCore::~QShiftsCore()
 {
-
+    delete m_solver;
 }
 
 void QShiftsCore::init()

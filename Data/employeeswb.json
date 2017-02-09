@@ -125,6 +125,13 @@
       "name": "Χόνδρου Μαρία",
       "position": "YK",
       "branches": [ "BR3" ]
-    }
+    },
+    {
+            "id":"22",
+            "name": "Νέος Υπάλληλος 1",
+            "position": "B",
+            "branches": ["BR2", "BR3","BR4","BR5"]
+        }
+
   ]
 }

@@ -6,6 +6,7 @@
 namespace Ui {
 class MainWindow;
 }
+class CentralView;
 
 class MainWindow : public QMainWindow
 {
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    CentralView *m_centralView;
+
 };
 
 #endif // MAINWINDOW_H
