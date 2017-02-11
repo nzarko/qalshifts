@@ -4,5 +4,6 @@
         <file alias="early_shift">icons/early_shift.png</file>
         <file alias="interm_shift">icons/intermintent_shift.png</file>
         <file alias="late_shift">icons/late_shift.png</file>
+        <file alias="populate">icons/populate.png</file>
     </qresource>
 </RCC>

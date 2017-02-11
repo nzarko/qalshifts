@@ -12,9 +12,13 @@ class CentralView : public QWidget
 public:
     explicit CentralView(QWidget *parent = 0);
 
+    QEmployeeShiftsTable *employeeShiftsTable() {return m_emplTable;  }
+    QStackedWidget *cvStackedWnd() { return m_stackWnd; }
+
 signals:
 
 public slots:
+    void populate();
 
 private:
     QEmployeeShiftsTable *m_emplTable;

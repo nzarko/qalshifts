@@ -20,6 +20,8 @@ private:
     Ui::MainWindow *ui;
     CentralView *m_centralView;
 
+    void setupActions();
+
 };
 
 #endif // MAINWINDOW_H

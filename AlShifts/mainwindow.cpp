@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     move(500,100);
     m_centralView = new CentralView();
     setCentralWidget(m_centralView);
+    setupActions();
 
 }
 
@@ -17,4 +18,9 @@ MainWindow::~MainWindow()
 {
     delete m_centralView;
     delete ui;
+}
+
+void MainWindow::setupActions()
+{
+    connect(ui->action_Populate,SIGNAL(triggered()), m_centralView, SLOT(populate()));
 }

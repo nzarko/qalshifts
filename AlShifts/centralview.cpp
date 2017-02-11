@@ -1,4 +1,5 @@
 #include <QLayout>
+#include <QApplication>
 
 #include "centralview.h"
 #include "qemployeeshiftstable.h"
@@ -11,4 +12,11 @@ CentralView::CentralView(QWidget *parent) : QWidget(parent)
     QVBoxLayout *vBox = new QVBoxLayout();
     vBox->addWidget(m_stackWnd);
     setLayout(vBox);
+}
+
+void CentralView::populate()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_emplTable->populate();
+    QApplication::restoreOverrideCursor();
 }

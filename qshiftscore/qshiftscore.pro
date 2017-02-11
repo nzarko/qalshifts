@@ -16,13 +16,13 @@ DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
 
-win32 {
+#win32 {
 copydata.commands = $(COPY_DIR) $$shell_path($$PWD/../Data)  $$shell_path($$OUT_PWD/../Data)
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
 QMAKE_EXTRA_TARGETS += first copydata
-}
+#}
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the

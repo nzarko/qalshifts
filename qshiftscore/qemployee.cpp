@@ -28,6 +28,18 @@ namespace Algorithmos {
         const QStringList &branches() const;
         void addBranch(const QString & id);
 
+        /**
+         * @brief toStringList
+         * @return The employee details as QStringList
+         */
+        QStringList toStringList();
+
+        /**
+         * @brief toString
+         * @return Employee details as QString
+         */
+        QString toString();
+
 
         /* void addBranch(const ICBranch* pBranch);
         QVector<ICBranch*> branches();*/
@@ -113,6 +125,16 @@ namespace Algorithmos {
         return m_pPriv->branches();
     }
 
+    QStringList QEmployee::toStringList()
+    {
+        return m_pPriv->toStringList();
+    }
+
+    QString QEmployee::toString()
+    {
+        return m_pPriv->toString();
+    }
+
     QEmployeePrivate::QEmployeePrivate(EmployeeType type):m_eType(type)
     {
     }
@@ -185,6 +207,25 @@ namespace Algorithmos {
     void QEmployeePrivate::addBranch(const QString &id)
     {
         m_branches << id;
+    }
+
+    QStringList QEmployeePrivate::toStringList()
+    {
+        QStringList details;
+        details << QString::number(m_id) << m_name << EmployeeTypeName(m_eType)
+                << m_branches;
+        return details;
+    }
+
+    QString QEmployeePrivate::toString()
+    {
+        QString res;
+        res = QString("ID : %1\nName : %2\nType : %3\nBranches : %4 .")
+                .arg(QString::number(m_id))
+                .arg(m_name)
+                .arg(EmployeeTypeName(m_eType))
+                .arg(m_branches.join(", "));
+        return res;
     }
 
 
