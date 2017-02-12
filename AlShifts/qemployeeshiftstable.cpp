@@ -1,13 +1,29 @@
 #include <QDebug>
 #include <QStringList>
 
+#include <QHeaderView>
+#include <QApplication>
 #include "qemployeeshiftstable.h"
 
+int QEmployeeShiftsTable::r = 0;
 
 QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
-    QTableWidget(parent)
+    QTableWidget(parent),
+    is_empty(true)
 {
 
+    itemBgColor.insert(Algorithmos::EARLY,QBrush(QColor(Qt::red)));
+    itemBgColor.insert(Algorithmos::LATE, QBrush(QColor(Qt::green)));
+    itemBgColor.insert(Algorithmos::INTERMITTENT, QBrush(QColor(Qt::blue)));
+
+    setColumnCount(49);
+    setRowCount(30);
+    setAlternatingRowColors(true);
+
+    horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+    verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+    //resizeRowsToContents();
+    //resizeColumnsToContents();
     //QIcon icon;
    // QTableWidgetItem *item = new QTableWidgetItem();
     //icon.addFile(QStringLiteral(":/icons/early_shift"),item->sizeHint(),QIcon::Normal, QIcon::On);
@@ -23,28 +39,24 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
 }
 
 QEmployeeShiftsTable::~QEmployeeShiftsTable()
-{
-
+{        
 }
 
 void QEmployeeShiftsTable::populate()
-{
-    setColumnCount(49);
-    setRowCount(30);
-    setAlternatingRowColors(true);
-
-    QMap<int, QBrush> itemBgColor;
-    itemBgColor.insert(Algorithmos::EARLY,QBrush(QColor(Qt::red)));
-    itemBgColor.insert(Algorithmos::LATE, QBrush(QColor(Qt::green)));
-    itemBgColor.insert(Algorithmos::INTERMITTENT, QBrush(QColor(Qt::blue)));
-
+{    
     Algorithmos::QShiftsCore s_core;
     Algorithmos::QShiftSolver *s_solver = s_core.solver();
 
     if(s_solver) {
         Shifts shifts = s_solver->initShifts();
         populateVHeader( shifts[0]->bManagers());
-        populateVHeader( shifts[0]->bManagers());
+        ///TODO : Uncomment the following lines when
+        /// shifts for fuel managers and employees are ready
+        //populateVHeader( shifts[0]->bfManagers());
+        //populateVHeader(shifts[0]->fEmployees());
+        populateShiftsTable(shifts);
+        is_empty = false;
+        emit populationChanged(true);
 
     }
     else
@@ -52,10 +64,31 @@ void QEmployeeShiftsTable::populate()
 
 }
 
+bool QEmployeeShiftsTable::isEmpty()
+{
+    return is_empty;
+}
+
+void QEmployeeShiftsTable::clearShifts()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    setRowCount(0);
+    setColumnCount(0);
+    is_empty = true;
+    emit populationChanged(false);
+
+    setColumnCount(49);
+    setRowCount(30);
+    setAlternatingRowColors(true);
+    set_r(0);
+
+    QApplication::restoreOverrideCursor();
+}
+
 void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
 {
     QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > iter (e_map);
-    static int r = 0;
+
     //QStringList e_names;
     QTableWidgetItem *headerItem= Q_NULLPTR;
     while(iter.hasNext()) {
@@ -80,5 +113,42 @@ void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
 
 void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
 {
-    ///TODO : Implement me!!!
+    ///TODO : Implement me!!
+
+   // QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > iter (e_map);
+    for(int j = 0; j < shifts.size(); j++) {
+        QDateTime date_time = shifts[j]->shiftDate();
+        QTableWidgetItem *vHeaderItem = new QTableWidgetItem();
+        vHeaderItem->setText(date_time.toString("ddd dd \nMMM yyyy"));
+        vHeaderItem->setTextAlignment(Qt::AlignCenter);
+
+        setHorizontalHeaderItem(j,vHeaderItem);
+        EmployeeMap m_map = shifts[j]->bManagers(); //Managers
+        EmployeeMap fm_map = shifts[j]->bfManagers(); // Fuel Managers
+        EmployeeMap e_map = shifts[j]->fEmployees(); //Fuel Employees
+        if (m_map.size() > 0) {
+            QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > m_iter(m_map);
+            //QStringList e_names;
+            QTableWidgetItem *s_item= Q_NULLPTR;
+            while(m_iter.hasNext()) {
+                //Initialize Verticalheader Items.
+                m_iter.next();
+                QVector <QEmployee *> e_vector = m_iter.value();
+                for(int i = 0; i < e_vector.size(); i++) {
+                    s_item = new QTableWidgetItem();
+                    s_item->setText(e_vector[i]->branches().join(", "));
+                    s_item->setToolTip(shiftName(m_iter.key()));
+                    QBrush brush = itemBgColor.value((int)m_iter.key());
+                    //qDebug() << brush.color().toRgb() << endl;
+                    s_item->setBackground(brush);
+                    setItem(m_eRow.value(e_vector[i]->ID()),j,s_item);
+                }
+            }
+        }
+    }
+}
+
+void QEmployeeShiftsTable::set_r(int val)
+{
+    r= val;
 }

@@ -62,6 +62,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Populate"/>
+   <addaction name="actionClear_Shifts"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -74,6 +75,15 @@
    </property>
    <property name="toolTip">
     <string>Fill's table with initial values</string>
+   </property>
+  </action>
+  <action name="actionClear_Shifts">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/edit_clear</normaloff>:/icons/edit_clear</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Shifts</string>
    </property>
   </action>
  </widget>

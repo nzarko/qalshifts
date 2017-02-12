@@ -69,4 +69,27 @@ namespace Algorithmos {
         return type;
     }
 
+    QString shiftName(ShiftType stype)
+    {
+        QString name;
+        switch(stype) {
+        case EARLY:
+            name = QObject::tr("Early");
+            break;
+        case LATE:
+            name = QObject::tr("Late");
+            break;
+        case DAYOFF:
+            name = QObject::tr("Day Off");
+            break;
+        case INTERMITTENT:
+            name = QObject::tr("Intermittent");
+            break;
+        default:
+            name = "Unknown";
+        }
+        return name;
+
+    }
+
 }
