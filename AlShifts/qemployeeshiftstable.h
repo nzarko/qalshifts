@@ -40,6 +40,9 @@ private:
      */
     static void set_r(int val);
 
+    Algorithmos::QShiftsCore s_core;
+    Algorithmos::QShiftSolver *s_solver;
+
 signals:
     void populationChanged(bool);
 };

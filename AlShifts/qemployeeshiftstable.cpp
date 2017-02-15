@@ -4,6 +4,7 @@
 #include <QHeaderView>
 #include <QApplication>
 #include "qemployeeshiftstable.h"
+#include "qshiftstableitem.h"
 
 int QEmployeeShiftsTable::r = 0;
 
@@ -44,8 +45,7 @@ QEmployeeShiftsTable::~QEmployeeShiftsTable()
 
 void QEmployeeShiftsTable::populate()
 {    
-    Algorithmos::QShiftsCore s_core;
-    Algorithmos::QShiftSolver *s_solver = s_core.solver();
+    s_solver = s_core.solver();
 
     if(s_solver) {
         Shifts shifts = s_solver->initShifts();
@@ -129,18 +129,19 @@ void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
         if (m_map.size() > 0) {
             QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > m_iter(m_map);
             //QStringList e_names;
-            QTableWidgetItem *s_item= Q_NULLPTR;
+            Algorithmos::QShiftsTableItem *s_item= Q_NULLPTR;
             while(m_iter.hasNext()) {
                 //Initialize Verticalheader Items.
                 m_iter.next();
                 QVector <QEmployee *> e_vector = m_iter.value();
                 for(int i = 0; i < e_vector.size(); i++) {
-                    s_item = new QTableWidgetItem();
+                    s_item = new Algorithmos::QShiftsTableItem();
                     s_item->setText(e_vector[i]->branches().join(", "));
                     s_item->setToolTip(shiftName(m_iter.key()));
-                    QBrush brush = itemBgColor.value((int)m_iter.key());
-                    //qDebug() << brush.color().toRgb() << endl;
-                    s_item->setBackground(brush);
+                    s_item->setData(Algorithmos::STIROLE,(int)m_iter.key());
+//                  //QBrush brush = itemBgColor.value((int)m_iter.key());
+//                  //qDebug() << brush.color().toRgb() << endl;
+//                  //s_item->setBackground(brush);
                     setItem(m_eRow.value(e_vector[i]->ID()),j,s_item);
                 }
             }

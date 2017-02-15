@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     centralview.cpp \
-    qemployeeshiftstable.cpp
+    qemployeeshiftstable.cpp \
+    qshiftstableitem.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
-    qemployeeshiftstable.h
+    qemployeeshiftstable.h \
+    qshiftstableitem.h
 
 FORMS    += mainwindow.ui
 
