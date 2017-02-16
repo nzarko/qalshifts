@@ -1,10 +1,17 @@
     #pragma once
 
-    #include <QObject>
-    #include <QDateTime>
+#include <boost/numeric/ublas/matrix.hpp>
+//#include <boost/numeric/ublas/io.hpp>
+//#include <boost/spirit/include/karma.hpp>
+#include <boost/multi_array.hpp>
 
-    #include "qemployee.h"
-    #include "utils.h"
+#include <QObject>
+#include <QDateTime>
+
+#include "qemployee.h"
+#include "utils.h"
+
+namespace UBlas = boost::numeric::ublas;
 
 
 namespace Algorithmos {
@@ -54,17 +61,40 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         int solve(EmployeeGroup &eg);
         Shifts & initShifts();
         Shifts &shifts();
+        UBlas::matrix<int> &create_managers_shifts_matrix();
+        UBlas::matrix<int> &managersShiftsMatrix();
     private:
         QShiftDay *m_currentShift;
         Shifts m_pShifts;
         EmployeeGroup m_manGroup;
         EmployeeGroup m_fuelManGroup;
         EmployeeGroup m_fuelEmployeeGroup;
+        UBlas::matrix<int> m_smatrix;
 
         /**
          * @brief solve_managers Tries to place managers to proper shift
          * @return tha maximum number of constraints have not been met.
          */
         int solve_managers();
+        /**
+         * @brief count_col_zeros
+         * @param mat Shifts matrix
+         * @param j matrix column
+         * @return the number of zeros exists in column j
+         */
+        int count_col_zeros(const UBlas::matrix<int> &mat, size_t j);
+
+        /**
+         * @brief find003
+         * Find the pattern 003 in neighour columns in matrix mat
+         * @param mat Shifts Matrix
+         * @param j matrix column
+         * @return -1 if the pattern does not exists or the
+         * number of row where the first zero exists.
+         */
+        int find003(const UBlas::matrix<int> &mat, size_t j);
     };
+
+    QDebug operator<<(QDebug debug, const UBlas::matrix<int> &mat);
+
 }

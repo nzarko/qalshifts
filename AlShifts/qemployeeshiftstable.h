@@ -29,7 +29,9 @@ private:
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.
     void populateVHeader(EmployeeMap &e_map);
+    void populateVHeader(const QVector<QEmployee*> &em_vec);
     void populateShiftsTable(Shifts &shifts);
+    void populateShiftsTable(const UBlas::matrix<int>& m);
     bool is_empty;
     static int r; //For population (keep track of current row during table population through employee types.
     /**

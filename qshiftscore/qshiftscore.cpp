@@ -103,4 +103,19 @@ QShiftSolver *QShiftsCore::solver()
 {
     return m_solver;
 }
+
+QVector<QEmployee *> QShiftsCore::branchManagers()
+{
+    return bManagers;
+}
+
+QVector<QEmployee *> QShiftsCore::branchFuelManagers()
+{
+    return bfManagers;
+}
+
+QVector<QEmployee *> QShiftsCore::fuelEmployees()
+{
+    return bEmployees;
+}
 }

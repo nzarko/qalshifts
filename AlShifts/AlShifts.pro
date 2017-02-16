@@ -27,14 +27,17 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     centralview.cpp \
     qemployeeshiftstable.cpp \
-    qshiftstableitem.cpp
+    qshiftstableitem.cpp \
+    legendform.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
     qemployeeshiftstable.h \
-    qshiftstableitem.h
+    qshiftstableitem.h \
+    legendform.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    legendform.ui
 
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1

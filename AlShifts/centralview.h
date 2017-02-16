@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 
 class QEmployeeShiftsTable;
+class LegendForm;
 
 class CentralView : public QWidget
 {
@@ -23,6 +24,7 @@ public slots:
 private:
     QEmployeeShiftsTable *m_emplTable;
     QStackedWidget *m_stackWnd;
+    LegendForm *m_legendForm;
 };
 
 #endif // CENTRALVIEW_H

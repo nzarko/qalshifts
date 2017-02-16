@@ -1,7 +1,14 @@
-#include "qshiftsolver.h"
+#include <iostream>
+#include <algorithm>
+#include <fstream>
 
 #include <QDebug>
-#include <QQueue>
+
+
+#include "qshiftsolver.h"
+
+
+
 
 namespace Algorithmos {
 
@@ -98,20 +105,28 @@ namespace Algorithmos {
      * @param parent
      */
     QShiftSolver::QShiftSolver(QObject *parent)
-        : QObject(parent)
+        : QObject(parent),
+          m_smatrix(7,49)
     {
+        for(size_t i = 0; i < m_smatrix.size1(); i++)
+            for(size_t j = 0; j < m_smatrix.size2(); j++)
+                m_smatrix(i,j) = 0;
     }
 
     QShiftSolver::QShiftSolver(EmployeeGroup &man, EmployeeGroup &fman, EmployeeGroup &fe, QObject *parent):
         m_manGroup(man),
         m_fuelManGroup(fman),
         m_fuelEmployeeGroup(fe),
-        QObject(parent)
+        QObject(parent),
+        m_smatrix(7,49)
     {
         qDebug() << "From QShiftSolver ctor :\n"
                  << "Managers contains : " << m_manGroup.size() << " managers!\n"
                  <<"Fuel Managers Contains : " << m_fuelManGroup.size() << " fuel managers!\n"
                  <<"Employees Contains : " << m_fuelEmployeeGroup.size() << " fuel employees!" << endl;
+        for(size_t i = 0; i < m_smatrix.size1(); i++)
+            for(size_t j = 0; j < m_smatrix.size2(); j++)
+                m_smatrix(i,j) = 0;
     }
 
     QShiftSolver::~QShiftSolver()
@@ -137,112 +152,45 @@ namespace Algorithmos {
         //We'll start from Managers (more easy than the others).
         m_currentShift = new QShiftDay();
         QDateTime shift_date = m_currentShift->shiftDate();
-        /* Fill three queues with necessary employees from m_manGroup.
-         * 1. earlyQueue : contains employees for early shift
-         * 2. lateQueue  : contains employees for late shift
-         * 3 dayoffQueue : contains employees for day off.
-         */
-        //TODO : Enter your code bellow!
-        QQueue<QEmployee*> man_early_queue;
-        QQueue<QEmployee *> man_late_queue;
-        QQueue<QEmployee*> man_dayoff_queue;
-        for(int i = 0; i < m_currentShift->reqManagers() / 2; i++)
-            man_early_queue.enqueue(m_manGroup[i]);
-        for(int i = m_currentShift->reqManagers()/2; i < m_currentShift->reqManagers(); i++)
-            man_late_queue.enqueue(m_manGroup[i]);
-        man_dayoff_queue.enqueue(m_manGroup.last());
 
-        m_currentShift->bManagers().insert(Algorithmos::EARLY,QVector<QEmployee*>::fromList(man_early_queue));
-        m_currentShift->bManagers().insert(Algorithmos::LATE, QVector<QEmployee*>::fromList(man_late_queue));
-        m_currentShift->bManagers().insert(Algorithmos::DAYOFF, QVector<QEmployee*>::fromList(man_dayoff_queue));
-        qDebug() << "Shift Day Managers  for : "
-                 << shift_date << " : "
-                 <<m_currentShift->bManagers() << endl;
-        m_pShifts.push_back(m_currentShift);
+        ///TODO : implement matrix solution.
+        m_smatrix = create_managers_shifts_matrix();
+        qDebug() << m_smatrix << endl;
 
-//        qDebug() << "Queues at 1st round : \n"
-//                 << man_early_queue << endl
-//                 << man_late_queue << endl
-//                 << man_dayoff_queue <<endl;
-        int req_shift_man = m_currentShift->reqManagers() /2 ;
-        //try it for the rest 48 days !!!
-        for(int j = 2; j <= 49; j++) {
-            //first create date:
-            shift_date = shift_date.addDays(1);
-            m_currentShift = new QShiftDay(shift_date);
-            /*
-         * Four moves :
-         * 1) take the first element from early_queue and push it to dayoff_queue
-         * 2) take the first element from dayoff_queue and push to late_queue
-         * 3) take the three first elements from late_queue and push them to early_queue
-         * 4) take the two first elements from early_queue and push them to late_queue
-         */
-            int i;
-            // 1)
-            man_dayoff_queue.enqueue(man_early_queue.dequeue());
-            // 2)
-            man_late_queue.enqueue(man_dayoff_queue.dequeue());
-            // 3)
-            for(i = 1; i <= req_shift_man; i++)
-                man_early_queue.enqueue(man_late_queue.dequeue());
-            // 4)
-            for(i = 1; i <= req_shift_man-1; i++)
-                man_late_queue.enqueue(man_early_queue.dequeue());
-
-            m_currentShift->bManagers().insert(Algorithmos::EARLY,QVector<QEmployee*>::fromList(man_early_queue));
-            m_currentShift->bManagers().insert(Algorithmos::LATE, QVector<QEmployee*>::fromList(man_late_queue));
-            m_currentShift->bManagers().insert(Algorithmos::DAYOFF, QVector<QEmployee*>::fromList(man_dayoff_queue));
-            qDebug() << "Shift Day Managers  for : "
-                     << shift_date << " : "
-                     <<m_currentShift->bManagers() << endl;
+        //Fill the Shifts vector compining names from
+        //m_manGroup and shifts from m_smatrix
+        QVector<QEmployee *> early_vec;
+        QVector<QEmployee *> late_vec;
+        QVector<QEmployee *> dayof_vec;
+        for(size_t j = 0; j < m_smatrix.size2(); j++) {
+            for(size_t i = 0; i < m_smatrix.size1(); i++) {
+                Algorithmos::ShiftType type = (Algorithmos::ShiftType)m_smatrix(i,j);
+                switch (type) {
+                case Algorithmos::EARLY:
+                    early_vec.push_back(m_manGroup[i]);
+                    break;
+                case Algorithmos::LATE:
+                    late_vec.push_back(m_manGroup[i]);
+                    break;
+                case Algorithmos::DAYOFF:
+                    dayof_vec.push_back(m_manGroup[i]);
+                    break;
+                case Algorithmos::INTERMITTENT:
+                    break;
+                }
+            }
+            m_currentShift->bManagers().insert(Algorithmos::EARLY,early_vec);
+            m_currentShift->bManagers().insert(Algorithmos::LATE, late_vec);
+            m_currentShift->bManagers().insert(Algorithmos::DAYOFF, dayof_vec);
             m_pShifts.push_back(m_currentShift);
 
-//            qDebug() << "Queues at " << j+1 << "nd round : \n"
-//                     << man_early_queue << endl
-//                     << man_late_queue << endl
-//                     << man_dayoff_queue <<endl;
+            shift_date = shift_date.addDays(1);
+            m_currentShift = new QShiftDay(shift_date);
+
+            early_vec.clear();
+            late_vec.clear();
+            dayof_vec.clear();
         }
-
-        /*
-         * Now its time for others. Be careful !!
-         * Now we don't push_back values but we gone use
-         * the [] operator for m_pShifts.
-         */
-        ///TODO : Add you code for other type of employees.
-        // Use the above queues for the fuel managers
-        //First clear the lists
-        man_dayoff_queue.clear();
-        man_early_queue.clear();
-        man_late_queue.clear();
-        QVector<Available *> availables;
-        QQueue<QEmployee *> fuel_early_queue;
-        QQueue<QEmployee *> fuel_late_queue;
-        QQueue<QEmployee *> fuel_intermittent_queue;
-        QQueue<QEmployee *> fuel_dayoff_queue;
-        //First round. Init.
-        m_currentShift = m_pShifts[0];
-        shift_date = m_currentShift->shiftDate();
-        int empl_needed = m_currentShift->reqFManagers() / 2;
-        int cur_i;
-        for( cur_i = 0; cur_i < empl_needed; cur_i++ )
-            man_early_queue.enqueue(m_fuelManGroup[cur_i]);
-        for( cur_i = empl_needed; cur_i < empl_needed + 2; cur_i++)
-            man_late_queue.enqueue(m_fuelManGroup[cur_i]);
-        man_dayoff_queue.enqueue(m_fuelManGroup[cur_i]);
-        qDebug() << "Branch Fuel Managers, round 1: "
-                 << man_early_queue
-                 << man_late_queue
-                 << man_dayoff_queue
-                 << endl;
-        if ( cur_i + 2 < m_fuelManGroup.size()){
-            Available av = { m_fuelManGroup[cur_i+1], m_fuelManGroup[cur_i+2] };
-            availables.push_back(&av);
-            qDebug() << "Availables : " << av.e1 << " , " <<av.e2 <<  endl;
-        }
-
-        //Initialize fuel employees.
-
-
 
         return m_pShifts;
     }
@@ -252,8 +200,108 @@ namespace Algorithmos {
         return m_pShifts;
     }
 
+    UBlas::matrix<int> &QShiftSolver::create_managers_shifts_matrix()
+    {
+        size_t i,j=0;
+        m_smatrix(0,1) = 1;
+        for(j = 0; j < m_smatrix.size2(); j+=8)
+            for(i=0; i<m_smatrix.size1();i++) {
+                if ( i + j < m_smatrix.size2()) {
+                    m_smatrix(i,i+j) = 3;
+                    //neighours must have specific values
+                    if (i + j> 0 && j + i + 1 < m_smatrix.size2()) {
+                        m_smatrix(i,i+j-1) = 0;
+                        m_smatrix(i, i + j + 1) = 1;
+                    }
+                }
+            }
+        //First column
+        m_smatrix(2,0) = 1;
+        m_smatrix(4,0) = 1;
+        m_smatrix(6,0) = 1;
+        //Last Column
+        m_smatrix(1,48) = 1;
+        m_smatrix(3,48) = 1;
+        m_smatrix(5,48) = 1;
+        //Rest of columns
+        for(int j = 1; j < m_smatrix.size2() - 1; j++) {
+            for(int i = 0; i < m_smatrix.size1(); i++) {
+                if(m_smatrix(i,j) == 3 || m_smatrix(i,j-1) == 3 || m_smatrix(i,j+1) == 3)
+                    continue;
+                m_smatrix(i,j) = (m_smatrix(i,j-1)+ 1) % 2;
+            }
+        }
+
+        //Special treatment for "naked days" :
+        //days without dayoff shift.
+        //Starts from column 7
+        int r = 1;
+        for(int j = 7; j < m_smatrix.size2(); j += 8) {
+            m_smatrix(r,j) = 3;
+            r++;
+        }
+
+        //finishing out
+        for(size_t j = 1; j < m_smatrix.size2(); j++) {
+            if(count_col_zeros(m_smatrix,j) == 4) {
+                int r = find003(m_smatrix,j);
+                if (r != -1)
+                    m_smatrix(r,j) = 1;
+            }
+        }
+        return m_smatrix;
+    }
+
+    UBlas::matrix<int> &QShiftSolver::managersShiftsMatrix()
+    {
+        return m_smatrix;
+    }
+
     int QShiftSolver::solve_managers()
     {
         return 0;
     }
+
+    int QShiftSolver::count_col_zeros(const UBlas::matrix<int> &mat, size_t j)
+    {
+        if (j < mat.size2()) {
+            int count = 0;
+            for(int i=0; i< mat.size1(); i++) {
+                if ( mat(i,j) == 0)
+                    count ++;
+            }
+            return count;
+        } else {
+            qDebug() << "Out of bounds!" << endl;
+            return -1 ;
+        }
+    }
+
+    int QShiftSolver::find003(const UBlas::matrix<int> &mat, size_t j)
+    {
+        int res = -1;
+        if ( j + 2 < mat.size2()) {
+            for(size_t i = 0; i < mat.size1(); i++) {
+                if (mat(i,j) == 0 && mat(i,j+1)==0 & mat(i,j+2) == 3)
+                    res = i;
+            }
+        } else if (j + 1 == mat.size2() - 1) {
+            return 5;
+        }
+        return res;
+    }
+
+    QDebug operator<<(QDebug debug, const UBlas::matrix<int> &mat)
+    {
+        QDebugStateSaver saver(debug);
+        for(size_t i = 0; i < mat.size1(); i++) {
+            for(size_t j = 0; j < mat.size2(); j++) {
+                debug.nospace() << mat(i,j) << "   ";
+            }
+            debug.nospace() << '\n';
+        }
+
+        return debug;
+    }
+
 }

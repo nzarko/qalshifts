@@ -6,5 +6,10 @@
         <file alias="late_shift">icons/late_shift.png</file>
         <file alias="populate">icons/populate.png</file>
         <file alias="edit_clear">icons/edit-clear.png</file>
+        <file alias="early_legend">icons/early_legend.png</file>
+        <file alias="intermintent_legend">icons/intermintent_legend.png</file>
+        <file alias="late_legend">icons/late_legend.png</file>
+        <file alias="dayoff_legend">icons/dayoff_legend.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

@@ -49,7 +49,7 @@ void QEmployeeShiftsTable::populate()
 
     if(s_solver) {
         Shifts shifts = s_solver->initShifts();
-        populateVHeader( shifts[0]->bManagers());
+        populateVHeader(s_core.branchManagers());
         ///TODO : Uncomment the following lines when
         /// shifts for fuel managers and employees are ready
         //populateVHeader( shifts[0]->bfManagers());
@@ -111,6 +111,21 @@ void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
     //setVerticalHeaderLabels(e_names);
 }
 
+void QEmployeeShiftsTable::populateVHeader(const QVector<Algorithmos::QEmployee *> &em_vec)
+{
+    for(size_t i = 0; i < em_vec.size(); i++) {
+        QTableWidgetItem *headerItem = new QTableWidgetItem();
+        headerItem->setText(em_vec[i]->name());
+        headerItem->setData(Qt::UserRole, em_vec[i]->toStringList());
+        headerItem->setToolTip(em_vec[i]->toString());
+        setVerticalHeaderItem(r, headerItem);
+        m_eRow.insert(em_vec[i]->ID(),r);
+        QString str = em_vec[i]->toStringList().join(", ");
+        qDebug() << tr("Employee %1 : ").arg(r+1) << str << endl;
+        ++r;
+    }
+}
+
 void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
 {
     ///TODO : Implement me!!
@@ -147,6 +162,11 @@ void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
             }
         }
     }
+}
+
+void QEmployeeShiftsTable::populateShiftsTable(const UBlas::matrix<int> &m)
+{
+
 }
 
 void QEmployeeShiftsTable::set_r(int val)

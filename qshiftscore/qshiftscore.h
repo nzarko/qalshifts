@@ -11,6 +11,9 @@ public:
     ~QShiftsCore();
     void init();
     QShiftSolver *solver();
+    QVector<QEmployee* > branchManagers();
+    QVector<QEmployee* > branchFuelManagers();
+    QVector<QEmployee* > fuelEmployees();
 private:
     QShiftSolver *m_solver;
     QVector<QEmployee* > bManagers;
