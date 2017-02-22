@@ -106,11 +106,13 @@ namespace Algorithmos {
      */
     QShiftSolver::QShiftSolver(QObject *parent)
         : QObject(parent),
-          m_smatrix(7,49)
+          m_smatrix(7,49),
+          fm_smatrix(7,49),
+          ef_smatrix(8,49)
     {
-        for(size_t i = 0; i < m_smatrix.size1(); i++)
-            for(size_t j = 0; j < m_smatrix.size2(); j++)
-                m_smatrix(i,j) = 0;
+        init_matrix_with_zeros(m_smatrix);
+        init_matrix_with_zeros(fm_smatrix);
+        init_matrix_with_zeros(ef_smatrix);
     }
 
     QShiftSolver::QShiftSolver(EmployeeGroup &man, EmployeeGroup &fman, EmployeeGroup &fe, QObject *parent):
@@ -118,15 +120,17 @@ namespace Algorithmos {
         m_fuelManGroup(fman),
         m_fuelEmployeeGroup(fe),
         QObject(parent),
-        m_smatrix(7,49)
+        m_smatrix(7,49),
+        fm_smatrix(7,49),
+        ef_smatrix(8,49)
     {
         qDebug() << "From QShiftSolver ctor :\n"
                  << "Managers contains : " << m_manGroup.size() << " managers!\n"
                  <<"Fuel Managers Contains : " << m_fuelManGroup.size() << " fuel managers!\n"
                  <<"Employees Contains : " << m_fuelEmployeeGroup.size() << " fuel employees!" << endl;
-        for(size_t i = 0; i < m_smatrix.size1(); i++)
-            for(size_t j = 0; j < m_smatrix.size2(); j++)
-                m_smatrix(i,j) = 0;
+        init_matrix_with_zeros(m_smatrix);
+        init_matrix_with_zeros(fm_smatrix);
+        init_matrix_with_zeros(ef_smatrix);
     }
 
     QShiftSolver::~QShiftSolver()
@@ -142,6 +146,7 @@ namespace Algorithmos {
 
     int QShiftSolver::solve(EmployeeGroup &eg)
     {
+        Q_UNUSED(eg)
         //TODO : Enter you code bellow
         return 0;
     }
@@ -155,41 +160,75 @@ namespace Algorithmos {
 
         ///TODO : implement matrix solution.
         m_smatrix = create_managers_shifts_matrix();
+        fm_smatrix = m_smatrix;
         qDebug() << m_smatrix << endl;
+
+        //Create the employees matrix
+        ef_smatrix = create_employees_shifts_matrix();
+        qDebug() << ef_smatrix << endl;
 
         //Fill the Shifts vector compining names from
         //m_manGroup and shifts from m_smatrix
-        QVector<QEmployee *> early_vec;
-        QVector<QEmployee *> late_vec;
-        QVector<QEmployee *> dayof_vec;
+        QVector<QEmployee *> early_vec,f_early_vec,e_early_vec;
+        QVector<QEmployee *> late_vec,f_late_vec,e_late_vec;
+        QVector<QEmployee *> dayof_vec,f_dayoff_vec,e_dayoff_vec;
+        QVector<QEmployee *> e_intermittent_vec;
         for(size_t j = 0; j < m_smatrix.size2(); j++) {
             for(size_t i = 0; i < m_smatrix.size1(); i++) {
                 Algorithmos::ShiftType type = (Algorithmos::ShiftType)m_smatrix(i,j);
                 switch (type) {
                 case Algorithmos::EARLY:
                     early_vec.push_back(m_manGroup[i]);
+                    f_early_vec.push_back(m_fuelManGroup[i]);
                     break;
                 case Algorithmos::LATE:
                     late_vec.push_back(m_manGroup[i]);
+                    f_late_vec.push_back(m_fuelManGroup[i]);
                     break;
                 case Algorithmos::DAYOFF:
                     dayof_vec.push_back(m_manGroup[i]);
+                    f_dayoff_vec.push_back(m_fuelManGroup[i]);
                     break;
                 case Algorithmos::INTERMITTENT:
+                    break;
+                }
+            }
+            //For employees shift matrix need to take care in seperate loop.
+            for(size_t i = 0; i < ef_smatrix.size1(); i++) {
+                Algorithmos::ShiftType type = (Algorithmos::ShiftType)ef_smatrix(i,j);
+                switch (type) {
+                case Algorithmos::EARLY:
+                    e_early_vec.push_back(m_fuelEmployeeGroup[i]);
+                    break;
+                case Algorithmos::LATE:
+                    e_late_vec.push_back(m_fuelEmployeeGroup[i]);
+                    break;
+                case Algorithmos::DAYOFF:
+                    e_dayoff_vec.push_back(m_fuelEmployeeGroup[i]);
+                    break;
+                case Algorithmos::INTERMITTENT:
+                    e_intermittent_vec.push_back(m_fuelEmployeeGroup[i]);
                     break;
                 }
             }
             m_currentShift->bManagers().insert(Algorithmos::EARLY,early_vec);
             m_currentShift->bManagers().insert(Algorithmos::LATE, late_vec);
             m_currentShift->bManagers().insert(Algorithmos::DAYOFF, dayof_vec);
+            m_currentShift->bfManagers().insert(Algorithmos::EARLY,f_early_vec);
+            m_currentShift->bfManagers().insert(Algorithmos::LATE, f_late_vec);
+            m_currentShift->bfManagers().insert(Algorithmos::DAYOFF, f_dayoff_vec);
+            m_currentShift->fEmployees().insert(Algorithmos::EARLY,e_early_vec);
+            m_currentShift->fEmployees().insert(Algorithmos::LATE, e_late_vec);
+            m_currentShift->fEmployees().insert(Algorithmos::INTERMITTENT, e_intermittent_vec);
             m_pShifts.push_back(m_currentShift);
 
             shift_date = shift_date.addDays(1);
             m_currentShift = new QShiftDay(shift_date);
 
-            early_vec.clear();
-            late_vec.clear();
-            dayof_vec.clear();
+            early_vec.clear(); f_early_vec.clear(); e_early_vec.clear();
+            late_vec.clear(); f_late_vec.clear(); e_late_vec.clear();
+            dayof_vec.clear(); f_dayoff_vec.clear(); e_dayoff_vec.clear();
+            e_intermittent_vec.clear();
         }
 
         return m_pShifts;
@@ -224,8 +263,8 @@ namespace Algorithmos {
         m_smatrix(3,48) = 1;
         m_smatrix(5,48) = 1;
         //Rest of columns
-        for(int j = 1; j < m_smatrix.size2() - 1; j++) {
-            for(int i = 0; i < m_smatrix.size1(); i++) {
+        for(uint j = 1; j < m_smatrix.size2() - 1; j++) {
+            for(uint i = 0; i < m_smatrix.size1(); i++) {
                 if(m_smatrix(i,j) == 3 || m_smatrix(i,j-1) == 3 || m_smatrix(i,j+1) == 3)
                     continue;
                 m_smatrix(i,j) = (m_smatrix(i,j-1)+ 1) % 2;
@@ -236,7 +275,7 @@ namespace Algorithmos {
         //days without dayoff shift.
         //Starts from column 7
         int r = 1;
-        for(int j = 7; j < m_smatrix.size2(); j += 8) {
+        for(uint j = 7; j < m_smatrix.size2(); j += 8) {
             m_smatrix(r,j) = 3;
             r++;
         }
@@ -257,6 +296,70 @@ namespace Algorithmos {
         return m_smatrix;
     }
 
+    UBlas::matrix<int> &QShiftSolver::fuelmanagersShiftsMatrix()
+    {
+        return fm_smatrix;
+    }
+
+    UBlas::matrix<int> &QShiftSolver::create_employees_shifts_matrix()
+    {
+        ///TODO : Implement me!!!
+        ///
+        size_t i,j=0;
+        ef_smatrix(0,1) = 1;
+        for(j = 0; j < ef_smatrix.size2(); j+=8)
+            for(i=0; i<ef_smatrix.size1();i++) {
+                if ( i + j < ef_smatrix.size2()) {
+                    ef_smatrix(i,i+j) = 3;
+                    //neighours must have specific values
+                    if (i + j> 0 && j + i + 1 < ef_smatrix.size2()) {
+                        ef_smatrix(i,i+j-1) = 0;
+                        ef_smatrix(i, i + j + 1) = 1;
+                    }
+                }
+            }
+        //First column
+        ef_smatrix(2,0) = 1;
+        ef_smatrix(4,0) = 1;
+        ef_smatrix(6,0) = 1;
+        //Last Column
+        ef_smatrix(1,48) = 1;
+        ef_smatrix(3,48) = 1;
+        ef_smatrix(5,48) = 1;
+        //Rest of columns
+        for(uint j = 1; j < ef_smatrix.size2() - 1; j++) {
+            for(uint i = 0; i < ef_smatrix.size1(); i++) {
+                if(ef_smatrix(i,j) == 3 || ef_smatrix(i,j-1) == 3 || ef_smatrix(i,j+1) == 3)
+                    continue;
+                ef_smatrix(i,j) = (ef_smatrix(i,j-1)+ 1) % 3;
+            }
+        }
+
+        //finishing out
+        for(size_t j = 1; j < ef_smatrix.size2(); j++) {
+            if(count_col_zeros(ef_smatrix,j) == 4) {
+                int r = find003(ef_smatrix,j);
+                if (r != -1)
+                    ef_smatrix(r,j) = 1;
+            }
+        }
+        return ef_smatrix;
+    }
+
+    UBlas::matrix<int> &QShiftSolver::employeeShiftsMatrix()
+    {
+        return ef_smatrix;
+    }
+
+    void QShiftSolver::init_matrix_with_zeros(UBlas::matrix<int> &mat)
+    {
+        for(uint i = 0; i < mat.size1(); i++) {
+            for(uint j = 0; j < mat.size2(); j++) {
+                mat(i,j) = 0;
+            }
+        }
+    }
+
     int QShiftSolver::solve_managers()
     {
         return 0;
@@ -266,7 +369,7 @@ namespace Algorithmos {
     {
         if (j < mat.size2()) {
             int count = 0;
-            for(int i=0; i< mat.size1(); i++) {
+            for(uint i=0; i< mat.size1(); i++) {
                 if ( mat(i,j) == 0)
                     count ++;
             }
@@ -282,7 +385,7 @@ namespace Algorithmos {
         int res = -1;
         if ( j + 2 < mat.size2()) {
             for(size_t i = 0; i < mat.size1(); i++) {
-                if (mat(i,j) == 0 && mat(i,j+1)==0 & mat(i,j+2) == 3)
+                if ((mat(i,j) == 0) && (mat(i,j+1)==0) & (mat(i,j+2) == 3))
                     res = i;
             }
         } else if (j + 1 == mat.size2() - 1) {

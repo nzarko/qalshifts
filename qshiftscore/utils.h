@@ -11,5 +11,5 @@ namespace Algorithmos {
     EmployeeType setEmployeeTypeByName(const QString &name);
     QString to_qstring(const std::string &s);
     EmployeeType parseEmployeeType(const QString &str_type);
-    QString shiftName(ShiftType stype);
+    QString QSHIFTSCORE_EXPORT shiftName(ShiftType stype);
 }

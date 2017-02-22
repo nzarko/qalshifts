@@ -51,3 +51,5 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+win32: INCLUDEPATH += C:/local/boost_1_62_0

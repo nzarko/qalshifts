@@ -46,6 +46,7 @@ QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/release/ -lqshiftscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/debug/ -lqshiftscore
 else:unix: LIBS += -L$$OUT_PWD/../qshiftscore/ -lqshiftscore
+win32: INCLUDEPATH += C:/local/boost_1_62_0
 
 INCLUDEPATH += $$PWD/../qshiftscore
 DEPENDPATH += $$PWD/../qshiftscore

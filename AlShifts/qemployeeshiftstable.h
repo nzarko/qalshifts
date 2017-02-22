@@ -32,6 +32,7 @@ private:
     void populateVHeader(const QVector<QEmployee*> &em_vec);
     void populateShiftsTable(Shifts &shifts);
     void populateShiftsTable(const UBlas::matrix<int>& m);
+    void fillTableByEmployeeCategory(EmployeeMap &m_map, int j);
     bool is_empty;
     static int r; //For population (keep track of current row during table population through employee types.
     /**

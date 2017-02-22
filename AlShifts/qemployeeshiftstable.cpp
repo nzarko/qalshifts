@@ -50,10 +50,11 @@ void QEmployeeShiftsTable::populate()
     if(s_solver) {
         Shifts shifts = s_solver->initShifts();
         populateVHeader(s_core.branchManagers());
-        ///TODO : Uncomment the following lines when
-        /// shifts for fuel managers and employees are ready
-        //populateVHeader( shifts[0]->bfManagers());
-        //populateVHeader(shifts[0]->fEmployees());
+        r++;
+        populateVHeader(s_core.branchFuelManagers());
+        r++;
+        populateVHeader(s_core.fuelEmployees());
+
         populateShiftsTable(shifts);
         is_empty = false;
         emit populationChanged(true);
@@ -121,16 +122,17 @@ void QEmployeeShiftsTable::populateVHeader(const QVector<Algorithmos::QEmployee 
         setVerticalHeaderItem(r, headerItem);
         m_eRow.insert(em_vec[i]->ID(),r);
         QString str = em_vec[i]->toStringList().join(", ");
-        qDebug() << tr("Employee %1 : ").arg(r+1) << str << endl;
+        qDebug() << tr("Employee %1 : ").arg(r+1) << str
+                 << "Row : " << m_eRow.value(em_vec[i]->ID()) <<  endl;
         ++r;
     }
 }
 
 void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
 {
-    ///TODO : Implement me!!
+    ///TODO : Implement me!!    
 
-   // QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > iter (e_map);
+    // QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > iter (e_map);
     for(int j = 0; j < shifts.size(); j++) {
         QDateTime date_time = shifts[j]->shiftDate();
         QTableWidgetItem *vHeaderItem = new QTableWidgetItem();
@@ -141,32 +143,45 @@ void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
         EmployeeMap m_map = shifts[j]->bManagers(); //Managers
         EmployeeMap fm_map = shifts[j]->bfManagers(); // Fuel Managers
         EmployeeMap e_map = shifts[j]->fEmployees(); //Fuel Employees
-        if (m_map.size() > 0) {
-            QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > m_iter(m_map);
-            //QStringList e_names;
-            Algorithmos::QShiftsTableItem *s_item= Q_NULLPTR;
-            while(m_iter.hasNext()) {
-                //Initialize Verticalheader Items.
-                m_iter.next();
-                QVector <QEmployee *> e_vector = m_iter.value();
-                for(int i = 0; i < e_vector.size(); i++) {
-                    s_item = new Algorithmos::QShiftsTableItem();
-                    s_item->setText(e_vector[i]->branches().join(", "));
-                    s_item->setToolTip(shiftName(m_iter.key()));
-                    s_item->setData(Algorithmos::STIROLE,(int)m_iter.key());
-//                  //QBrush brush = itemBgColor.value((int)m_iter.key());
-//                  //qDebug() << brush.color().toRgb() << endl;
-//                  //s_item->setBackground(brush);
-                    setItem(m_eRow.value(e_vector[i]->ID()),j,s_item);
-                }
-            }
-        }
+        fillTableByEmployeeCategory(m_map,j);
+        fillTableByEmployeeCategory(fm_map,j);
+        ///TODO : uncomment the following line when ready
+        fillTableByEmployeeCategory(e_map,j);
     }
 }
 
 void QEmployeeShiftsTable::populateShiftsTable(const UBlas::matrix<int> &m)
 {
 
+}
+
+void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j)
+{
+    Algorithmos::ShiftType s_type; //Used to determine if an item should display text or not
+    //depending on which shift type (e.g if s_type is DAYOFF the item does not need to display
+    // in which branches the employee belongs.
+    if (m_map.size() > 0) {
+        QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > m_iter(m_map);
+        //QStringList e_names;
+        Algorithmos::QShiftsTableItem *s_item= Q_NULLPTR;
+        while(m_iter.hasNext()) {
+            //Initialize Verticalheader Items.
+            m_iter.next();
+            QVector <QEmployee *> e_vector = m_iter.value();
+            for(int i = 0; i < e_vector.size(); i++) {
+                s_item = new Algorithmos::QShiftsTableItem();
+                s_type = m_iter.key();
+                if (s_type != Algorithmos::DAYOFF)
+                    s_item->setText(e_vector[i]->branches().join(", "));
+                s_item->setToolTip(shiftName(m_iter.key()));
+                s_item->setData(Algorithmos::STIROLE,(int)m_iter.key());
+//                  //QBrush brush = itemBgColor.value((int)m_iter.key());
+//                  //qDebug() << brush.color().toRgb() << endl;
+//                  //s_item->setBackground(brush);
+                setItem(m_eRow.value(e_vector[i]->ID()),j,s_item);
+            }
+        }
+    }
 }
 
 void QEmployeeShiftsTable::set_r(int val)

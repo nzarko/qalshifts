@@ -61,15 +61,48 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         int solve(EmployeeGroup &eg);
         Shifts & initShifts();
         Shifts &shifts();
+
+        /**
+         * @brief create_managers_shifts_matrix
+         * Create the shifts matrix for managers and fuel managers
+         * @return a 7x49 matrix with initial shifts. (Not the optimal)
+         */
         UBlas::matrix<int> &create_managers_shifts_matrix();
+        /**
+         * @brief managersShiftsMatrix
+         * @return the managers shifts matrix.
+         */
         UBlas::matrix<int> &managersShiftsMatrix();
+
+        /**
+         * @brief fuelmanagersShiftsMatrix
+         * @return the fuel managers shifts matrix.
+         */
+        UBlas::matrix<int> &fuelmanagersShiftsMatrix();
+
+        /**
+         * @brief create_employees_shifts_matrix
+         * Create the shifts matrix for employees
+         * @return a 8x49 matrix with initial shifts. (Not the optimal)
+         */
+        UBlas::matrix<int> &create_employees_shifts_matrix();
+
+        /**
+         * @brief employeeShiftsMatrix
+         * @return the employee shifts matrix (may be optimal!)
+         */
+        UBlas::matrix<int> &employeeShiftsMatrix();
     private:
         QShiftDay *m_currentShift;
         Shifts m_pShifts;
         EmployeeGroup m_manGroup;
         EmployeeGroup m_fuelManGroup;
         EmployeeGroup m_fuelEmployeeGroup;
-        UBlas::matrix<int> m_smatrix;
+        UBlas::matrix<int> m_smatrix;   //Branch Managers
+        UBlas::matrix<int> fm_smatrix; // Branch Fuel managers
+        UBlas::matrix<int> ef_smatrix; // Branch Fuel Employees
+
+        void init_matrix_with_zeros(UBlas::matrix<int> &mat);
 
         /**
          * @brief solve_managers Tries to place managers to proper shift
