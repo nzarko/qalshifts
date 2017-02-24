@@ -20,13 +20,25 @@
      <x>0</x>
      <y>0</y>
      <width>624</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export to ...</string>
+     </property>
+     <addaction name="actionHtml"/>
+    </widget>
+    <addaction name="action_Populate"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionprint"/>
+    <addaction name="actionPrint_Preview"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -63,6 +75,9 @@
    </attribute>
    <addaction name="action_Populate"/>
    <addaction name="actionClear_Shifts"/>
+   <addaction name="separator"/>
+   <addaction name="actionprint"/>
+   <addaction name="actionPrint_Preview"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -84,6 +99,45 @@
    </property>
    <property name="text">
     <string>Clear Shifts</string>
+   </property>
+  </action>
+  <action name="actionprint">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/document-print</normaloff>:/icons/document-print</iconset>
+   </property>
+   <property name="text">
+    <string>print</string>
+   </property>
+   <property name="toolTip">
+    <string>Print's the current shifts table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPrint_Preview">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/document-print-preview</normaloff>:/icons/document-print-preview</iconset>
+   </property>
+   <property name="text">
+    <string>Print Preview</string>
+   </property>
+   <property name="toolTip">
+    <string>Show how printed table will look like.</string>
+   </property>
+  </action>
+  <action name="actionHtml">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/export</normaloff>:/icons/export</iconset>
+   </property>
+   <property name="text">
+    <string>Html</string>
+   </property>
+   <property name="toolTip">
+    <string>Export current table to Html document</string>
    </property>
   </action>
  </widget>

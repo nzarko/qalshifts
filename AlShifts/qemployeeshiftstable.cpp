@@ -1,10 +1,16 @@
 #include <QDebug>
 #include <QStringList>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
+#include <QPrinter>
+#include <QString>
+#include <QTextStream>
 
 #include <QHeaderView>
 #include <QApplication>
 #include "qemployeeshiftstable.h"
 #include "qshiftstableitem.h"
+#include "xlsx/xlsxdocument.h"
 
 int QEmployeeShiftsTable::r = 0;
 
@@ -84,6 +90,63 @@ void QEmployeeShiftsTable::clearShifts()
     set_r(0);
 
     QApplication::restoreOverrideCursor();
+}
+
+void QEmployeeShiftsTable::print()
+{
+    ///TODO : Add your code here!!
+}
+
+void QEmployeeShiftsTable::printPreview()
+{
+    ///TODO : Implement me!!!
+}
+
+QString QEmployeeShiftsTable::exportToHtml()
+{
+    ///TODO : Needs improvements.
+    QString strStream;
+    QString strTitle = tr("Aliagas Shifts Table from %1 to %2")
+            .arg(horizontalHeaderItem(0)->text())
+            .arg(horizontalHeaderItem(48)->text());
+
+    QTextStream out(&strStream);
+
+    const int rCount = rowCount();
+    const int cCount = columnCount();
+
+    out <<  "<html>\n"
+            "<head>\n"
+            "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+         <<  QString("<title>%1</title>\n").arg(strTitle)
+          <<  "</head>\n"
+              "<body bgcolor=#ffffff link=#5000A0>\n"
+              "<table border=1 cellspacing=0 cellpadding=2>\n";
+
+    // headers
+    out << "<thead><tr bgcolor=#f0f0f0>";
+    for (int column = 0; column < cCount; column++)
+        if (!isColumnHidden(column))
+            out << QString("<th>%1</th>").arg(this->model()->headerData(column, Qt::Horizontal).toString());
+    out << "</tr></thead>\n";
+
+    // data table
+    for (int row = 0; row < rCount; row++) {
+        out << "<tr>";
+        for (int column = 0; column < cCount; column++) {
+            if (!isColumnHidden(column)) {
+                QString data = this->model()->data(this->model()->index(row, column)).toString().simplified();
+                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+            }
+        }
+        out << "</tr>\n";
+    }
+    out <<  "</table>\n"
+            "</body>\n"
+            "</html>\n";
+
+    qDebug() << strStream << endl;
+    return strStream;
 }
 
 void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)

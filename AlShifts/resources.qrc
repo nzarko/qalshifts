@@ -10,6 +10,9 @@
         <file alias="intermintent_legend">icons/intermintent_legend.png</file>
         <file alias="late_legend">icons/late_legend.png</file>
         <file alias="dayoff_legend">icons/dayoff_legend.png</file>
+        <file alias="document-print">icons/document-print.png</file>
+        <file alias="document-print-preview">icons/document-print-preview.png</file>
+        <file alias="export">icons/webexport.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

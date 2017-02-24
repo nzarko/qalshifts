@@ -4,6 +4,12 @@
 #include <QTableWidget>
 #include "qshiftscore.h"
 
+QT_BEGIN_NAMESPACE
+class QPrinter;
+class QPrintDialog;
+class QPrintPreviewDialog;
+QT_END_NAMESPACE
+
 using Algorithmos::QEmployee;
 using Algorithmos ::QShiftDay;
 
@@ -24,6 +30,9 @@ public:
 
 public slots:
     void clearShifts();
+    void print();
+    void printPreview();
+    QString exportToHtml();
 
 private:
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.

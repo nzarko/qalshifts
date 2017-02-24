@@ -28,4 +28,7 @@ void MainWindow::setupActions()
     connect(m_centralView->employeeShiftsTable(),SIGNAL(populationChanged(bool)),ui->action_Populate,
             SLOT(setDisabled(bool)));
     connect(ui->actionClear_Shifts,SIGNAL(triggered()),m_centralView->employeeShiftsTable(), SLOT(clearShifts()));
+    connect(ui->actionprint,SIGNAL(triggered()), m_centralView->employeeShiftsTable(),SLOT(print()));
+    connect(ui->actionPrint_Preview,SIGNAL(triggered()), m_centralView->employeeShiftsTable(), SLOT(printPreview()));
+    connect(ui->actionHtml,SIGNAL(triggered()),m_centralView->employeeShiftsTable(), SLOT(exportToHtml()));
 }
