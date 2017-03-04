@@ -1,6 +1,12 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <set>
+#include <stdio.h>
 
 #include <QDebug>
 
@@ -80,6 +86,17 @@ namespace Algorithmos {
     QShiftDay::QShiftDay(const QDateTime &dt)
     {
         m_date = dt;
+        m_bManagers.clear();
+        m_bfManagers.clear();
+        m_fEmployees.clear();
+        if (m_date.date().dayOfWeek() == 7) {
+            m_reqFEmployees = 6;
+        } else
+        {
+            m_reqFEmployees = 9;
+        }
+        m_reqManagers = 6;
+        m_reqFManagers = 4;
     }
 
     QShiftDay::QShiftDay(const QDateTime &dt, EmployeeMap &bm, EmployeeMap &bfm, EmployeeMap &fe) :
@@ -100,6 +117,9 @@ namespace Algorithmos {
     {
     }
 
+
+    typedef std::vector<std::string> StringList;
+    typedef std::vector<std::vector<std::string> > StringListArray;
     /**
      * @brief QShiftSolver::QShiftSolver
      * @param parent
@@ -151,11 +171,11 @@ namespace Algorithmos {
         return 0;
     }
 
-    Shifts &QShiftSolver::initShifts()
+    Shifts &QShiftSolver::initShifts(QDateTime dt)
     {
         //Initialize shifts.
         //We'll start from Managers (more easy than the others).
-        m_currentShift = new QShiftDay();
+        m_currentShift = new QShiftDay(dt);
         QDateTime shift_date = m_currentShift->shiftDate();
 
         ///TODO : implement matrix solution.
@@ -256,7 +276,7 @@ namespace Algorithmos {
             }
         //First column
         m_smatrix(2,0) = 1;
-        m_smatrix(4,0) = 1;
+        m_smatrix(5,0) = 1;
         m_smatrix(6,0) = 1;
         //Last Column
         m_smatrix(1,48) = 1;
@@ -351,6 +371,24 @@ namespace Algorithmos {
         return ef_smatrix;
     }
 
+    QStringList QShiftSolver::solve_branch_shifts(StringListArray &sla)
+    {
+        ///TODO: Implement me!!
+        StringListArray combs = find_compinations_of(sla);
+        QStringList res;
+        int req_len = combs[0].size();
+        std::set<std::string> checker;
+        for (auto x : combs) {
+            checker.insert(x.begin(), x.end());
+            if (checker.size() == req_len )
+            {
+                return sl_to_qsl(x);
+            }
+            checker.clear();
+        }
+        return res;
+    }
+
     void QShiftSolver::init_matrix_with_zeros(UBlas::matrix<int> &mat)
     {
         for(uint i = 0; i < mat.size1(); i++) {
@@ -393,6 +431,7 @@ namespace Algorithmos {
         }
         return res;
     }
+
 
     QDebug operator<<(QDebug debug, const UBlas::matrix<int> &mat)
     {

@@ -2,11 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDateTime>
 
 namespace Ui {
 class MainWindow;
 }
+
 class CentralView;
+class QDateSelector;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +24,12 @@ private:
     CentralView *m_centralView;
 
     void setupActions();
+    QDate m_startDate;
+    QDateSelector* dateSelectorDlg;
+
+
+public slots:
+    void selectStartDate();
 
 };
 

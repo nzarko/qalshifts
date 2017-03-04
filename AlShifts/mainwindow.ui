@@ -33,6 +33,11 @@
      </property>
      <addaction name="actionHtml"/>
     </widget>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
     <addaction name="action_Populate"/>
     <addaction name="separator"/>
     <addaction name="menuExport"/>
@@ -49,6 +54,8 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionSolve"/>
+    <addaction name="actionSwap_Shifts"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -73,11 +80,17 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
    <addaction name="action_Populate"/>
    <addaction name="actionClear_Shifts"/>
    <addaction name="separator"/>
    <addaction name="actionprint"/>
    <addaction name="actionPrint_Preview"/>
+   <addaction name="separator"/>
+   <addaction name="actionSolve"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -138,6 +151,87 @@
    </property>
    <property name="toolTip">
     <string>Export current table to Html document</string>
+   </property>
+  </action>
+  <action name="actionSolve">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/solve</normaloff>:/icons/solve</iconset>
+   </property>
+   <property name="text">
+    <string>Solve</string>
+   </property>
+   <property name="toolTip">
+    <string>Try to find the optimal shifts solution.</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/doc_new</normaloff>:/icons/doc_new</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>Create's new shifts table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/doc_save</normaloff>:/icons/doc_save</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save's shifts table to file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/doc_save_as</normaloff>:/icons/doc_save_as</iconset>
+   </property>
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save's shifts table with different name</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/doc_open</normaloff>:/icons/doc_open</iconset>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Shifts table from file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSwap_Shifts">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/swap_shifts</normaloff>:/icons/swap_shifts</iconset>
+   </property>
+   <property name="text">
+    <string>Swap Shifts</string>
+   </property>
+   <property name="toolTip">
+    <string>Swap shifts types between items</string>
    </property>
   </action>
  </widget>

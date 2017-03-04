@@ -48,6 +48,8 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
 
     typedef QVector<QShiftDay *> Shifts;
     typedef QVector<QEmployee *> EmployeeGroup;
+    typedef std::vector<std::string> StringList;
+    typedef std::vector<std::vector<std::string> > StringListArray;
 
     class QSHIFTSCORE_EXPORT QShiftSolver : public QObject
     {
@@ -59,7 +61,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         ~QShiftSolver();
         void setEmployeeGroups(EmployeeGroup &man, EmployeeGroup &fman, EmployeeGroup &fe);
         int solve(EmployeeGroup &eg);
-        Shifts & initShifts();
+        Shifts & initShifts(QDateTime dt = QDateTime::currentDateTime());
         Shifts &shifts();
 
         /**
@@ -92,6 +94,13 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * @return the employee shifts matrix (may be optimal!)
          */
         UBlas::matrix<int> &employeeShiftsMatrix();
+
+        /**
+         * @brief solve_branch_shifts find's the optimal solution(if any) of branch combinations
+         * @param lsa an array of StringList (branches)
+         * @return The optimal StringList (if any) or an empty list if there is no solution.
+         */
+        static QStringList solve_branch_shifts(StringListArray &lsa);
     private:
         QShiftDay *m_currentShift;
         Shifts m_pShifts;
@@ -126,6 +135,13 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * number of row where the first zero exists.
          */
         int find003(const UBlas::matrix<int> &mat, size_t j);
+
+        /**
+         * @brief find_compinations_of
+         * @param sla
+         * @return
+         */
+
     };
 
     QDebug operator<<(QDebug debug, const UBlas::matrix<int> &mat);

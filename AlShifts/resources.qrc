@@ -13,6 +13,12 @@
         <file alias="document-print">icons/document-print.png</file>
         <file alias="document-print-preview">icons/document-print-preview.png</file>
         <file alias="export">icons/webexport.png</file>
+        <file alias="solve">icons/solve.png</file>
+        <file alias="doc_new">icons/document-new.png</file>
+        <file alias="doc_save">icons/document-save.png</file>
+        <file alias="doc_save_as">icons/document-save-as.png</file>
+        <file alias="doc_open">icons/document-open.png</file>
+        <file alias="swap_shifts">icons/swap_shifts.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

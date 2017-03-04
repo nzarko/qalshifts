@@ -1,3 +1,13 @@
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <set>
+#include <stdio.h>
+
 #include <QObject>
 #include <QTextCodec>
 #include <QDebug>
@@ -90,6 +100,45 @@ namespace Algorithmos {
         }
         return name;
 
+    }
+
+    QStringList sl_to_qsl(StringList &sl)
+    {
+        QStringList qsl;
+        for(auto x : sl) {
+            qsl << QString::fromStdString(x);
+        }
+        return qsl;
+    }
+
+    StringListArray find_compinations_of(StringListArray &v)
+    {
+        StringListArray res;
+        auto product = [](long long a, std::vector<std::string>& b) { return a*b.size(); };
+        const long long N = std::accumulate(v.begin(), v.end(), 1LL, product);
+        std::vector<std::string> u(v.size());
+        for (long long n = 0; n<N; ++n) {
+            lldiv_t q{ n, 0 };
+            for (long long i = v.size() - 1; 0 <= i; --i) {
+                q = div(q.quot, v[i].size());
+                u[i] = v[i][q.rem];
+            }
+            // Do what you want here with u.
+            /*for (string x : u) cout << x << ' ';
+                cout << '\n';*/
+            res.push_back(u);
+        }
+        return res;
+    }
+
+    StringList qsl_to_sl(QStringList qsl)
+    {
+        StringList res;
+        QStringListIterator iter(qsl);
+        while(iter.hasNext()) {
+            res.push_back(iter.next().toStdString());
+        }
+        return res;
     }
 
 }

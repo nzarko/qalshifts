@@ -4,19 +4,22 @@
 #include <QPrintPreviewDialog>
 #include <QPrinter>
 #include <QString>
+#include <QAction>
 #include <QTextStream>
 
 #include <QHeaderView>
 #include <QApplication>
 #include "qemployeeshiftstable.h"
-#include "qshiftstableitem.h"
+
+#include "qshifttableitemdelegate.h"
 #include "xlsx/xlsxdocument.h"
 
 int QEmployeeShiftsTable::r = 0;
 
 QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     QTableWidget(parent),
-    is_empty(true)
+    is_empty(true),
+    m_startDate(QDateTime::currentDateTime())
 {
 
     itemBgColor.insert(Algorithmos::EARLY,QBrush(QColor(Qt::red)));
@@ -29,6 +32,10 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
 
     horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
     verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+
+    QShiftTableItemDelegate *i_del = new QShiftTableItemDelegate();
+    setItemDelegate(i_del);    
+
     //resizeRowsToContents();
     //resizeColumnsToContents();
     //QIcon icon;
@@ -54,16 +61,36 @@ void QEmployeeShiftsTable::populate()
     s_solver = s_core.solver();
 
     if(s_solver) {
-        Shifts shifts = s_solver->initShifts();
+        Shifts shifts = s_solver->initShifts(m_startDate);
+        manRange.startRow = r;
         populateVHeader(s_core.branchManagers());
+        manRange.endRow = r;
         r++;
+        fmanRange.startRow = r;
         populateVHeader(s_core.branchFuelManagers());
+        fmanRange.endRow = r;
         r++;
+        feRange.startRow = r;
         populateVHeader(s_core.fuelEmployees());
+        feRange.endRow = r;
 
+        qDebug() << "managers : (" << manRange.startRow << ", " << manRange.endRow << ")" << '\n'
+                 << "fuel managers : (" << fmanRange.startRow << ", " << fmanRange.endRow << ")" << '\n'
+                 << "fuel employees : (" << feRange.startRow << ", " << feRange.endRow << ")"
+                 << endl;
+
+        emtypeRange.insert(Algorithmos::BMANAGER,manRange);
+        emtypeRange.insert(Algorithmos::BFUELMANAGER,fmanRange);
+        emtypeRange.insert(Algorithmos::FUELMANAGER, feRange);
         populateShiftsTable(shifts);
         is_empty = false;
         emit populationChanged(true);
+        //Occurs when the user change shift from Cell ComboBox
+        //connect(this, SIGNAL(cellChanged(int,int)),SLOT(updateCell(int,int)));
+        //connect(this, &QEmployeeShiftsTable::itemChanged, this,&QEmployeeShiftsTable::updateItemColumn);
+        //Enable/Disable swap shifts action depending of how many items are selected
+        // If there are two ,action be enabled.
+        connect(this, SIGNAL(itemSelectionChanged()), SLOT(updateActions()));
 
     }
     else
@@ -74,6 +101,34 @@ void QEmployeeShiftsTable::populate()
 bool QEmployeeShiftsTable::isEmpty()
 {
     return is_empty;
+}
+
+StringListArray QEmployeeShiftsTable::createSolverData(ETRange range,int col,int shift_type)
+{
+    qDeleteAll(bsdata_vec);
+    bsdata_vec.clear();
+    StringListArray res;
+    StringList sl;
+    for(int i = range.startRow; i < range.endRow; i++) {
+        int st = item(i,col)->data(Algorithmos::STIROLE).toInt();
+        if(st == 3) continue;
+        if(st == shift_type) { //Early shift
+            bsdata = new BranchSolverData;
+            bsdata->row = i;
+            bsdata->col = col;
+            bsdata->branches = //verticalHeaderItem(i)->data(Qt::UserRole).toStringList();
+                    item(i,col)->data(Qt::UserRole+1).toStringList();
+            sl =Algorithmos::qsl_to_sl(bsdata->branches);
+            res.push_back(sl);
+            bsdata_vec.push_back(bsdata);
+        }
+    }
+    return res;
+}
+
+void QEmployeeShiftsTable::setStartDate(QDateTime &dt)
+{
+    m_startDate = dt;
 }
 
 void QEmployeeShiftsTable::clearShifts()
@@ -149,6 +204,108 @@ QString QEmployeeShiftsTable::exportToHtml()
     return strStream;
 }
 
+void QEmployeeShiftsTable::solve()
+{
+    is_in_solve_fun = true;
+    QStringList solution;
+    //QMapIterator<Algorithmos::EmployeeType, ETRange> m_iter(emtypeRange);
+    for(int j=0; j < columnCount(); j++){
+        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                      emtypeRange.value(Algorithmos::BMANAGER),
+                                                                      j,(int)Algorithmos::EARLY));
+        qDebug() << "Early solution , column " << j << " : " << solution << endl;
+        if ( !solution.empty()) {
+            for(int i=0; i<solution.size(); i++) {
+                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+            }
+        }
+        solution.clear();
+        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                      emtypeRange.value(Algorithmos::BMANAGER),
+                                                                      j,(int)Algorithmos::LATE));
+        qDebug() << "Late solution , column " << j << " : " << solution << endl;
+        if(!solution.empty()) {
+            for(int i=0; i<solution.size(); i++) {
+                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+            }
+        }
+    }
+    is_in_solve_fun = false;
+}
+
+void QEmployeeShiftsTable::solve(int col)
+{
+    is_in_solve_fun = true;
+    QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                              emtypeRange.value(Algorithmos::BMANAGER),
+                                                                                  col,(int)Algorithmos::EARLY));
+    if(!solution.empty()) {
+        for(int i=0; i<solution.size(); i++) {
+            item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+        }
+    } else {
+        QTableWidgetItem *tw_item;
+        for(int i =0; i < bsdata_vec.size(); i++) {
+            tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+            QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+            tw_item->setText(txt);
+        }
+    }
+    solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                  emtypeRange.value(Algorithmos::BMANAGER),
+                                                                  col,(int)Algorithmos::LATE));
+    if(!solution.empty()) {
+        for(int i=0; i<solution.size(); i++) {
+            item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+        }
+    }else {
+        QTableWidgetItem *tw_item;
+        for(int i =0; i < bsdata_vec.size(); i++) {
+            tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+            QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+            tw_item->setText(txt);
+        }
+    }
+    is_in_solve_fun = false;
+}
+
+void QEmployeeShiftsTable::updateCell(int /*row*/, int col)
+{
+    if(!is_empty)
+        solve(col);
+}
+
+void QEmployeeShiftsTable::updateItemColumn(QTableWidgetItem *item)
+{
+    if (is_empty == false && is_in_solve_fun == false)
+        solve(item->column());
+}
+
+void QEmployeeShiftsTable::swapShifts(QTableWidgetItem *item1, QTableWidgetItem *item2)
+{
+    int data1 = item1->data(Algorithmos::STIROLE).toInt();
+    item1->setData(Algorithmos::STIROLE,item2->data(Algorithmos::STIROLE));
+    item2->setData(Algorithmos::STIROLE, data1);
+    solve(item1->column());
+}
+
+void QEmployeeShiftsTable::updateActions()
+{
+    QAction* a = actions()[0];
+    if(selectedItems().size() == 2 &&
+            selectedItems()[0]->column() == selectedItems()[1]->column()) {
+        a->setEnabled(true);
+        //swapShifts(selectedItems()[0], selectedItems()[1]);
+    } else
+        a->setEnabled(false);
+}
+
+void QEmployeeShiftsTable::swapShifts()
+{
+    swapShifts(selectedItems()[0], selectedItems()[1]);
+}
+
+
 void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
 {
     QMapIterator<Algorithmos::ShiftType, QVector<QEmployee*> > iter (e_map);
@@ -177,7 +334,7 @@ void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
 
 void QEmployeeShiftsTable::populateVHeader(const QVector<Algorithmos::QEmployee *> &em_vec)
 {
-    for(size_t i = 0; i < em_vec.size(); i++) {
+    for(int i = 0; i < em_vec.size(); i++) {
         QTableWidgetItem *headerItem = new QTableWidgetItem();
         headerItem->setText(em_vec[i]->name());
         headerItem->setData(Qt::UserRole, em_vec[i]->toStringList());
@@ -215,7 +372,7 @@ void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
 
 void QEmployeeShiftsTable::populateShiftsTable(const UBlas::matrix<int> &m)
 {
-
+    Q_UNUSED(m)
 }
 
 void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j)
@@ -236,8 +393,11 @@ void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j
                 s_type = m_iter.key();
                 if (s_type != Algorithmos::DAYOFF)
                     s_item->setText(e_vector[i]->branches().join(", "));
-                s_item->setToolTip(shiftName(m_iter.key()));
+                QString tool_tip = tr("Shift type : %1").arg(shiftName(m_iter.key()));
+                tool_tip+= tr("\nAvailable branches : %1").arg(e_vector[i]->branches().join(", "));
+                s_item->setToolTip(tool_tip);
                 s_item->setData(Algorithmos::STIROLE,(int)m_iter.key());
+                s_item->setData(Qt::UserRole+1,e_vector[i]->branches());
 //                  //QBrush brush = itemBgColor.value((int)m_iter.key());
 //                  //qDebug() << brush.color().toRgb() << endl;
 //                  //s_item->setBackground(brush);

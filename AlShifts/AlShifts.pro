@@ -30,13 +30,17 @@ SOURCES += main.cpp\
     centralview.cpp \
     qemployeeshiftstable.cpp \
     qshiftstableitem.cpp \
-    legendform.cpp
+    legendform.cpp \
+    qshifttableitemdelegate.cpp \
+    qdateselector.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
     qemployeeshiftstable.h \
     qshiftstableitem.h \
-    legendform.h
+    legendform.h \
+    qshifttableitemdelegate.h \
+    qdateselector.h
 
 FORMS    += mainwindow.ui \
     legendform.ui
