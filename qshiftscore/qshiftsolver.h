@@ -100,7 +100,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * @param lsa an array of StringList (branches)
          * @return The optimal StringList (if any) or an empty list if there is no solution.
          */
-        static QStringList solve_branch_shifts(StringListArray &lsa);
+        static QStringList solve_branch_shifts(StringListArray lsa);
     private:
         QShiftDay *m_currentShift;
         Shifts m_pShifts;

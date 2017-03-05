@@ -126,7 +126,7 @@ StringListArray QEmployeeShiftsTable::createSolverData(ETRange range,int col,int
     return res;
 }
 
-void QEmployeeShiftsTable::setStartDate(QDateTime &dt)
+void QEmployeeShiftsTable::setStartDate(QDateTime dt)
 {
     m_startDate = dt;
 }

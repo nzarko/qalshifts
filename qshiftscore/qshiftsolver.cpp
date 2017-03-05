@@ -371,7 +371,7 @@ namespace Algorithmos {
         return ef_smatrix;
     }
 
-    QStringList QShiftSolver::solve_branch_shifts(StringListArray &sla)
+    QStringList QShiftSolver::solve_branch_shifts(StringListArray sla)
     {
         ///TODO: Implement me!!
         StringListArray combs = find_compinations_of(sla);

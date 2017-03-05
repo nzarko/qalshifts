@@ -47,7 +47,7 @@ public:
     } ETRange;
 
     StringListArray createSolverData(ETRange range, int col, int shift_type);
-    void setStartDate(QDateTime &dt);
+    void setStartDate(QDateTime dt);
 
 public slots:
     void clearShifts();
