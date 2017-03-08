@@ -63,6 +63,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         int solve(EmployeeGroup &eg);
         Shifts & initShifts(QDateTime dt = QDateTime::currentDateTime());
         Shifts &shifts();
+        void setEmployeeMatrixFile(const QString &fileName);
 
         /**
          * @brief create_managers_shifts_matrix
@@ -124,6 +125,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         static void clear_req_branches();
     private:
         static StringList m_reqBranches;
+        QString m_matrixFile;
         QShiftDay *m_currentShift;
         Shifts m_pShifts;
         EmployeeGroup m_manGroup;

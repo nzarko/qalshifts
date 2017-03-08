@@ -281,6 +281,11 @@ StringList QShiftSolver::m_reqBranches = StringList();
         return m_pShifts;
     }
 
+    void QShiftSolver::setEmployeeMatrixFile(const QString &fileName)
+    {
+        m_matrixFile = fileName;
+    }
+
     UBlas::matrix<int> &QShiftSolver::create_managers_shifts_matrix()
     {
         size_t i,j=0;
@@ -467,14 +472,19 @@ StringList QShiftSolver::m_reqBranches = StringList();
         /* *************************************** *
          * Read the ef_smatrix contents from file
          * *************************************** */
-        QFile f("fe_matrix.txt");
+        QFile f(m_matrixFile);
         if(!f.open(QIODevice::ReadOnly))
             qDebug() << " Error while trying to read " << f.fileName() << " file. " << endl;
 
         QTextStream ts(&f);
-        QString line;
-        int num;
         ///TODO Finish me!!
+        for(size_t i = 0; i < ef_smatrix.size1(); i++) {
+            for(size_t j = 0; j < ef_smatrix.size2()&& !ts.atEnd(); j++) {
+                ef_smatrix(i,j) = ts.readLine().toInt();
+            }
+        }
+        qDebug() << "ef_smatrix loaded succesful" << endl;
+        f.close();
         return ef_smatrix;
     }
 
