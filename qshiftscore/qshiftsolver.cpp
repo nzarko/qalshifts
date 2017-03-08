@@ -1,9 +1,9 @@
 #include <iostream>
-#include <algorithm>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <numeric>
 #include <set>
 #include <stdio.h>
@@ -17,6 +17,8 @@
 
 
 namespace Algorithmos {
+
+StringList QShiftSolver::m_reqBranches = StringList();
 
 /**
      * @brief The Available struct
@@ -180,12 +182,13 @@ namespace Algorithmos {
 
         ///TODO : implement matrix solution.
         m_smatrix = create_managers_shifts_matrix();
-        fm_smatrix = m_smatrix;
-        qDebug() << m_smatrix << endl;
+        fm_smatrix = create_fuel_managers_shifts_matrix();
+        //fm_smatrix = m_smatrix;
+        //qDebug() << m_smatrix << endl;
 
         //Create the employees matrix
         ef_smatrix = create_employees_shifts_matrix();
-        qDebug() << ef_smatrix << endl;
+        //qDebug() << ef_smatrix << endl;
 
         //Fill the Shifts vector compining names from
         //m_manGroup and shifts from m_smatrix
@@ -198,15 +201,31 @@ namespace Algorithmos {
                 Algorithmos::ShiftType type = (Algorithmos::ShiftType)m_smatrix(i,j);
                 switch (type) {
                 case Algorithmos::EARLY:
-                    early_vec.push_back(m_manGroup[i]);
-                    f_early_vec.push_back(m_fuelManGroup[i]);
+                    early_vec.push_back(m_manGroup[i]);                    
                     break;
                 case Algorithmos::LATE:
-                    late_vec.push_back(m_manGroup[i]);
-                    f_late_vec.push_back(m_fuelManGroup[i]);
+                    late_vec.push_back(m_manGroup[i]);                    
                     break;
                 case Algorithmos::DAYOFF:
                     dayof_vec.push_back(m_manGroup[i]);
+                    break;
+                case Algorithmos::INTERMITTENT:
+                    break;
+                }
+            }
+
+            // For branch fuel employees
+
+            for(size_t i = 0; i < fm_smatrix.size1(); i++) {
+                Algorithmos::ShiftType type = (Algorithmos::ShiftType)fm_smatrix(i,j);
+                switch (type) {
+                case Algorithmos::EARLY:
+                    f_early_vec.push_back(m_fuelManGroup[i]);
+                    break;
+                case Algorithmos::LATE:
+                    f_late_vec.push_back(m_fuelManGroup[i]);
+                    break;
+                case Algorithmos::DAYOFF:
                     f_dayoff_vec.push_back(m_fuelManGroup[i]);
                     break;
                 case Algorithmos::INTERMITTENT:
@@ -240,6 +259,7 @@ namespace Algorithmos {
             m_currentShift->fEmployees().insert(Algorithmos::EARLY,e_early_vec);
             m_currentShift->fEmployees().insert(Algorithmos::LATE, e_late_vec);
             m_currentShift->fEmployees().insert(Algorithmos::INTERMITTENT, e_intermittent_vec);
+            m_currentShift->fEmployees().insert(Algorithmos::DAYOFF, e_dayoff_vec);
             m_pShifts.push_back(m_currentShift);
 
             shift_date = shift_date.addDays(1);
@@ -311,6 +331,83 @@ namespace Algorithmos {
         return m_smatrix;
     }
 
+    UBlas::matrix<int> &QShiftSolver::create_fuel_managers_shifts_matrix()
+    {
+        /*size_t i,j=0;
+        fm_smatrix(0,1) = 1;
+        for(j = 0; j < fm_smatrix.size2(); j+=8)
+            for(i=0; i<fm_smatrix.size1();i++) {
+                if ( i + j < fm_smatrix.size2()) {
+                    fm_smatrix(i,i+j) = 3;
+                    //neighours must have specific values
+                    if (i + j> 0 && j + i + 1 < fm_smatrix.size2()) {
+                        fm_smatrix(i,i+j-1) = 0;
+                        fm_smatrix(i, i + j + 1) = 1;
+                    }
+                }
+            }
+
+        //First column
+        m_smatrix(2,0) = 1;
+        m_smatrix(5,0) = 1;
+        m_smatrix(6,0) = 1;
+        //Last Column
+        m_smatrix(1,48) = 1;
+        m_smatrix(3,48) = 1;
+        m_smatrix(5,48) = 1;
+
+        //Rest of columns
+        for(uint j = 1; j < fm_smatrix.size2() - 1; j++) {
+            for(uint i = 0; i < fm_smatrix.size1(); i++) {
+                if(fm_smatrix(i,j) == 3 || fm_smatrix(i,j-1) == 3 || fm_smatrix(i,j+1) == 3)
+                    continue;
+                fm_smatrix(i,j) = (fm_smatrix(i,j-1)+ 1) % 2;
+            }
+        }
+
+        //finishing out
+        for(size_t j = 1; j < fm_smatrix.size2(); j++) {
+            if((count_col_zeros(fm_smatrix,j)) == 4) {
+                int r = find003(fm_smatrix,j);
+                if (r != -1)
+                    fm_smatrix(r,j) = 1;
+            }
+        }
+        //Check for Employees in rows 2 and 4. They must not have the same shift in the same day
+        for(size_t j = 1; j < ef_smatrix.size2()- 1; j++) {
+            if (fm_smatrix(2,j) == fm_smatrix(4,j)) {
+                if(fm_smatrix(2,j-1) == 3 || fm_smatrix(2,j+1) == 3)
+                    fm_smatrix(4,j) = (fm_smatrix(4,j) + 1) % 2;
+                else fm_smatrix(2,j) = (fm_smatrix(2,j) + 1) % 2;
+                fm_smatrix(3,j) = (fm_smatrix(3,j) + 1) % 2;
+            }
+            //configure the remaining items
+
+        }*/
+
+        fm_smatrix = m_smatrix;
+        //Check for Employees in rows 2 and 4. They must not have the same shift in the same day
+        for(size_t j = 1; j < ef_smatrix.size2()- 1; j++) {
+            if (fm_smatrix(2,j) == fm_smatrix(4,j)) {
+                if(fm_smatrix(2,j-1) == 3 || fm_smatrix(2,j+1) == 3)
+                    fm_smatrix(4,j) = (fm_smatrix(4,j) + 1) % 2;
+                else fm_smatrix(2,j) = (fm_smatrix(2,j) + 1) % 2;
+                if(fm_smatrix(3,j) !=3)
+                    fm_smatrix(3,j) = (fm_smatrix(3,j) + 1) % 2;
+                else
+                    fm_smatrix(5,j) = (fm_smatrix(5,j) + 1) % 2;
+            }
+            //configure the remaining items
+
+        }
+        //Last column :
+        fm_smatrix(1,48) = 1;
+        fm_smatrix(2,48) = fm_smatrix(3,48) = 0;
+        fm_smatrix(4,48) = fm_smatrix(5,48) = 1;
+        fm_smatrix(6,48) = 0;
+        return fm_smatrix;
+    }
+
     UBlas::matrix<int> &QShiftSolver::managersShiftsMatrix()
     {
         return m_smatrix;
@@ -339,9 +436,10 @@ namespace Algorithmos {
                 }
             }
         //First column
+        ef_smatrix(1,0) = 2;
         ef_smatrix(2,0) = 1;
-        ef_smatrix(4,0) = 1;
-        ef_smatrix(6,0) = 1;
+        ef_smatrix(4,0) = 2;
+        ef_smatrix(6,0) = 2;
         //Last Column
         ef_smatrix(1,48) = 1;
         ef_smatrix(3,48) = 1;
@@ -359,7 +457,7 @@ namespace Algorithmos {
         for(size_t j = 1; j < ef_smatrix.size2(); j++) {
             if(count_col_zeros(ef_smatrix,j) == 4) {
                 int r = find003(ef_smatrix,j);
-                if (r != -1)
+                if (r != -1 && r != 5)
                     ef_smatrix(r,j) = 1;
             }
         }
@@ -372,21 +470,49 @@ namespace Algorithmos {
     }
 
     QStringList QShiftSolver::solve_branch_shifts(StringListArray sla)
-    {
-        ///TODO: Implement me!!
+    {        
         StringListArray combs = find_compinations_of(sla);
         QStringList res;
         int req_len = combs[0].size();
         std::set<std::string> checker;
-        for (auto x : combs) {
-            checker.insert(x.begin(), x.end());
-            if (checker.size() == req_len )
-            {
-                return sl_to_qsl(x);
+        if(m_reqBranches.empty()) {
+            for (auto x : combs) {
+                checker.insert(x.begin(), x.end());
+                if (checker.size() == req_len )
+                {
+                    return sl_to_qsl(x);
+                }
+                checker.clear();
             }
-            checker.clear();
+        } else {
+            for (auto x : combs) {
+                checker.insert(x.begin(), x.end());
+                if ((checker.size() == req_len) )
+                {
+                    int cnt = 0;
+                    for(auto rb : m_reqBranches) {
+                        auto pos = std::find(std::begin(checker),std::end(checker), rb);
+                        if(pos != std::end(checker))
+                            cnt++;
+                    }
+                    if(cnt == m_reqBranches.size())
+                        return sl_to_qsl(x);
+                }
+                checker.clear();
+            }
         }
+        clear_req_branches();
         return res;
+    }
+
+    void QShiftSolver::set_required_branches(StringList sl)
+    {
+        m_reqBranches = sl;
+    }
+
+    void QShiftSolver::clear_req_branches()
+    {
+        m_reqBranches.clear();
     }
 
     void QShiftSolver::init_matrix_with_zeros(UBlas::matrix<int> &mat)

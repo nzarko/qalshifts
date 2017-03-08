@@ -1,5 +1,18 @@
 #include <QCalendarWidget>
 #include <QDebug>
+#include <QMenu>
+#include <QAction>
+#include <QStatusBar>
+#include <QApplication>
+#include <QMessageBox>
+#include <QSettings>
+#include <QByteArray>
+#include <QList>
+#include <QCloseEvent>
+#include <QFileInfo>
+#include <QFileDialog>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -17,7 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_centralView = new CentralView();
     setCentralWidget(m_centralView);
     setupActions();
+    createStatusBar();
 
+    //setWindowState(Qt::WindowMaximized);
+    readSettings();
 }
 
 MainWindow::~MainWindow()
@@ -48,6 +64,78 @@ void MainWindow::setupActions()
     m_centralView->employeeShiftsTable()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(ui->actionSwap_Shifts, SIGNAL(triggered()),
             m_centralView->employeeShiftsTable(), SLOT(swapShifts()));
+
+    /* ************************************ *
+          Recent File Menu
+    * *********************************** */
+    recentFilesMenu = new QMenu(ui->menu_File);
+    ui->menu_File->insertAction(ui->actionprint,recentFilesMenu->menuAction());
+    for(int i = 0 ; i < MaxRecentFiles; i++)
+    {
+        recentFileActions[i] = new QAction(this);
+        recentFileActions[i]->setVisible(false);
+        connect(recentFileActions[i], SIGNAL(triggered()), this,
+                SLOT(openRecentFile()));
+        recentFilesMenu->addAction(recentFileActions[i]);
+    }
+    updateRecentFileActions();
+
+}
+
+void MainWindow::createStatusBar()
+{
+    QEmployeeShiftsTable *esht = m_centralView->employeeShiftsTable();
+    connect(esht, &QEmployeeShiftsTable::currentCellChanged,this,
+            &MainWindow::updateStatusBar);
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("Algorithmos", "QALShifts");
+    QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
+    QSize size = settings.value("size", QSize(800, 600)).toSize();
+    restoreState(settings.value("windowState").toByteArray());
+    resize(size);
+    move(pos);
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("Algorithmos", "QALShifts");
+    settings.setValue("pos", pos());
+    settings.setValue("size", size());
+    settings.setValue("windowState", saveState());
+    //Config().read();
+}
+
+bool MainWindow::maybeSave()
+{
+    return true;
+}
+
+void MainWindow::loadFile(const QString &fileName)
+{
+
+}
+
+bool MainWindow::saveFile(const QString &fileName)
+{
+    return false;
+}
+
+QString MainWindow::strippedName(const QString &fullFileName)
+{
+    return QString();
+}
+
+void MainWindow::updateRecentFileActions()
+{
+
+}
+
+void MainWindow::updateRecentFiles(const QString &)
+{
+
 }
 
 void MainWindow::selectStartDate()
@@ -61,5 +149,92 @@ void MainWindow::selectStartDate()
         this->m_centralView->employeeShiftsTable()->setStartDate(QDateTime(m_startDate));
         this->m_centralView->employeeShiftsTable()->populate();
         qDebug() << "Selected date : " << m_startDate.toString("ddd dd MMM yyyy");
+    }
+}
+
+void MainWindow::newFile()
+{
+
+}
+
+void MainWindow::open()
+{
+
+}
+
+bool MainWindow::save()
+{
+    return false;
+}
+
+bool MainWindow::saveAs()
+{
+    return false;
+}
+
+bool MainWindow::saveAll()
+{
+    return false;
+}
+
+void MainWindow::about()
+{
+
+}
+
+void MainWindow::documentWasModified()
+{
+
+}
+
+void MainWindow::openRecentFile()
+{
+    if (maybeSave()) {
+        QAction *action = qobject_cast<QAction*>(sender());
+        if(action) {
+            loadFile(action->data().toString());
+        }
+    }
+}
+
+void MainWindow::setCurrentFile(const QString &fileName)
+{
+
+}
+
+void MainWindow::fileprint()
+{
+
+}
+
+void MainWindow::filePrintPreview()
+{
+
+}
+
+void MainWindow::printPreview(QPrinter *printer)
+{
+
+}
+
+void MainWindow::showPreferencesDialog()
+{
+
+}
+
+void MainWindow::updateStatusBar()
+{
+
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (maybeSave()) {
+        saveAll();
+        writeSettings();
+        //Config().write();
+        event->accept();
+    } else {
+        event->ignore();
     }
 }

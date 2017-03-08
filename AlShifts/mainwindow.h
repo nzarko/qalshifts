@@ -8,6 +8,13 @@ namespace Ui {
 class MainWindow;
 }
 
+QT_BEGIN_NAMESPACE
+class QMenu;
+class QAction;
+class QPrinter;
+class QCloseEvent;
+QT_END_NAMESPACE
+
 class CentralView;
 class QDateSelector;
 
@@ -24,13 +31,46 @@ private:
     CentralView *m_centralView;
 
     void setupActions();
+    void createStatusBar();
+    void readSettings();
+    void writeSettings();
+    bool maybeSave();
+    void loadFile(const QString &fileName);
+    bool saveFile(const QString &fileName);
+
+    QString strippedName(const QString &fullFileName);
+    void updateRecentFileActions();
+    void updateRecentFiles(const QString &);
+
+    enum { MaxRecentFiles = 20 };
+    QAction *recentFileActions[MaxRecentFiles];
+
+
     QDate m_startDate;
     QDateSelector* dateSelectorDlg;
+    QMenu *recentFilesMenu;
 
 
 public slots:
     void selectStartDate();
+private slots:
+    void newFile();
+    void open();
+    bool save();
+    bool saveAs();
+    bool saveAll();
+    void about();
+    void documentWasModified();
+    void openRecentFile();
+    void setCurrentFile(const QString &fileName);
+    void fileprint();
+    void filePrintPreview();
+    void printPreview(QPrinter *printer);
+    void showPreferencesDialog();
+    void updateStatusBar();
 
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H

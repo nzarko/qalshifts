@@ -66,10 +66,19 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
 
         /**
          * @brief create_managers_shifts_matrix
-         * Create the shifts matrix for managers and fuel managers
+         * Create the shifts matrix for managers.
          * @return a 7x49 matrix with initial shifts. (Not the optimal)
          */
         UBlas::matrix<int> &create_managers_shifts_matrix();
+        /**
+         * @brief create_fuel_managers_shifts_matrix
+         * Create the shifts matrix for fuel managers.
+         * @return a 7x49 matrix with initial shifts. (Not the optimal)
+         * Note that due to employee type restrictions only the first 5 row
+         * of this array are valid fuel managers shifts. The last two rows
+         * will be used with fuel employee array to cover the gaps.
+         */
+        UBlas::matrix<int> &create_fuel_managers_shifts_matrix();
         /**
          * @brief managersShiftsMatrix
          * @return the managers shifts matrix.
@@ -101,7 +110,20 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * @return The optimal StringList (if any) or an empty list if there is no solution.
          */
         static QStringList solve_branch_shifts(StringListArray lsa);
+
+        /**
+         * @brief set_required_branches set's the required branches to be present
+         * in solution to accept it.
+         * @param sl : Branches name list
+         */
+        static void set_required_branches(StringList sl);
+
+        /**
+         * @brief clear_req_branches clear's the required branches list.
+         */
+        static void clear_req_branches();
     private:
+        static StringList m_reqBranches;
         QShiftDay *m_currentShift;
         Shifts m_pShifts;
         EmployeeGroup m_manGroup;

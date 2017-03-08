@@ -44,6 +44,10 @@ public:
         int endRow;
         EmployeeTypeRowRange() : startRow(0), endRow(0) {}
         EmployeeTypeRowRange(int s,int e) :startRow(s), endRow(e) {}
+        EmployeeTypeRowRange operator +(const int k);
+        EmployeeTypeRowRange operator -(const int k);
+        EmployeeTypeRowRange &operator +=(const int k);
+        EmployeeTypeRowRange &operator -=(const int k);
     } ETRange;
 
     StringListArray createSolverData(ETRange range, int col, int shift_type);

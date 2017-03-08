@@ -206,64 +206,75 @@ QString QEmployeeShiftsTable::exportToHtml()
 
 void QEmployeeShiftsTable::solve()
 {
-    is_in_solve_fun = true;
-    QStringList solution;
-    //QMapIterator<Algorithmos::EmployeeType, ETRange> m_iter(emtypeRange);
-    for(int j=0; j < columnCount(); j++){
-        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                      emtypeRange.value(Algorithmos::BMANAGER),
-                                                                      j,(int)Algorithmos::EARLY));
-        qDebug() << "Early solution , column " << j << " : " << solution << endl;
-        if ( !solution.empty()) {
-            for(int i=0; i<solution.size(); i++) {
-                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
-            }
-        }
-        solution.clear();
-        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                      emtypeRange.value(Algorithmos::BMANAGER),
-                                                                      j,(int)Algorithmos::LATE));
-        qDebug() << "Late solution , column " << j << " : " << solution << endl;
-        if(!solution.empty()) {
-            for(int i=0; i<solution.size(); i++) {
-                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
-            }
-        }
-    }
-    is_in_solve_fun = false;
+//    is_in_solve_fun = true;
+//    QStringList solution;
+//    //QMapIterator<Algorithmos::EmployeeType, ETRange> m_iter(emtypeRange);
+//    for(int j=0; j < columnCount(); j++){
+//        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+//                                                                      emtypeRange.value(Algorithmos::BMANAGER),
+//                                                                      j,(int)Algorithmos::EARLY));
+//        qDebug() << "Early solution , column " << j << " : " << solution << endl;
+//        if ( !solution.empty()) {
+//            for(int i=0; i<solution.size(); i++) {
+//                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+//            }
+//        }
+//        solution.clear();
+//        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+//                                                                      emtypeRange.value(Algorithmos::BMANAGER),
+//                                                                      j,(int)Algorithmos::LATE));
+//        qDebug() << "Late solution , column " << j << " : " << solution << endl;
+//        if(!solution.empty()) {
+//            for(int i=0; i<solution.size(); i++) {
+//                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+//            }
+//        }
+//    }
+//    is_in_solve_fun = false;
+    for(int j = 0; j < columnCount(); j++)
+        solve(j);
 }
 
 void QEmployeeShiftsTable::solve(int col)
 {
     is_in_solve_fun = true;
-    QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                              emtypeRange.value(Algorithmos::BMANAGER),
+    QMapIterator<Algorithmos::EmployeeType, ETRange> m_iter(emtypeRange);
+    while(m_iter.hasNext()) {
+        m_iter.next();
+        ETRange range = m_iter.value();
+        if(m_iter.key() == Algorithmos::BFUELMANAGER)
+            Algorithmos::QShiftSolver::set_required_branches({"BR1", "BR4"});
+        QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                                  /*emtypeRange.value(Algorithmos::BMANAGER),*/
+                                                                                  range,
                                                                                   col,(int)Algorithmos::EARLY));
-    if(!solution.empty()) {
-        for(int i=0; i<solution.size(); i++) {
-            item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+        if(!solution.empty()) {
+            for(int i=0; i<solution.size(); i++) {
+                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+            }
+        } else {
+            QTableWidgetItem *tw_item;
+            for(int i =0; i < bsdata_vec.size(); i++) {
+                tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+                tw_item->setText(txt);
+            }
         }
-    } else {
-        QTableWidgetItem *tw_item;
-        for(int i =0; i < bsdata_vec.size(); i++) {
-            tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
-            QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
-            tw_item->setText(txt);
-        }
-    }
-    solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                  emtypeRange.value(Algorithmos::BMANAGER),
-                                                                  col,(int)Algorithmos::LATE));
-    if(!solution.empty()) {
-        for(int i=0; i<solution.size(); i++) {
-            item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
-        }
-    }else {
-        QTableWidgetItem *tw_item;
-        for(int i =0; i < bsdata_vec.size(); i++) {
-            tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
-            QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
-            tw_item->setText(txt);
+        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                      /*emtypeRange.value(Algorithmos::BMANAGER),*/
+                                                                      range,
+                                                                      col,(int)Algorithmos::LATE));
+        if(!solution.empty()) {
+            for(int i=0; i<solution.size(); i++) {
+                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+            }
+        }else {
+            QTableWidgetItem *tw_item;
+            for(int i =0; i < bsdata_vec.size(); i++) {
+                tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+                tw_item->setText(txt);
+            }
         }
     }
     is_in_solve_fun = false;
@@ -410,4 +421,34 @@ void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j
 void QEmployeeShiftsTable::set_r(int val)
 {
     r= val;
+}
+
+QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator +(const int k)
+{
+    EmployeeTypeRowRange etr;
+    etr.startRow = this->startRow + k;
+    etr.endRow = this->endRow + k;
+    return etr;
+}
+
+QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator -(const int k)
+{
+    EmployeeTypeRowRange etr;
+    etr.startRow = this->startRow - k;
+    etr.endRow = this->endRow - k;
+    return etr;
+}
+
+QEmployeeShiftsTable::EmployeeTypeRowRange &QEmployeeShiftsTable::EmployeeTypeRowRange::operator +=(const int k)
+{
+    this->startRow += k;
+    this->endRow += k;
+    return *this;
+}
+
+QEmployeeShiftsTable::EmployeeTypeRowRange &QEmployeeShiftsTable::EmployeeTypeRowRange::operator -=(const int k)
+{
+    this->endRow -= k;
+    this->startRow -= k;
+    return *this;
 }
