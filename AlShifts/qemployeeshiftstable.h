@@ -65,6 +65,7 @@ public slots:
     void swapShifts(QTableWidgetItem *item1, QTableWidgetItem *item2);
     void updateActions();
     void swapShifts();
+    void rearrangeEmployeesShift();
 private:
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.

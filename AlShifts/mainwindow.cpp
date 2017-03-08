@@ -61,9 +61,12 @@ void MainWindow::setupActions()
     connect(ui->actionSolve, SIGNAL(triggered()), m_centralView->employeeShiftsTable(), SLOT(solve()));
 
     m_centralView->employeeShiftsTable()->addAction(ui->actionSwap_Shifts);
+    m_centralView->employeeShiftsTable()->addAction(ui->actionRearrange_Employees_Shift);
     m_centralView->employeeShiftsTable()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(ui->actionSwap_Shifts, SIGNAL(triggered()),
             m_centralView->employeeShiftsTable(), SLOT(swapShifts()));
+    connect(ui->actionRearrange_Employees_Shift, &QAction::triggered,
+            m_centralView->employeeShiftsTable(), &QEmployeeShiftsTable::rearrangeEmployeesShift);
 
     /* ************************************ *
           Recent File Menu

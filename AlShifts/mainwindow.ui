@@ -56,6 +56,7 @@
     </property>
     <addaction name="actionSolve"/>
     <addaction name="actionSwap_Shifts"/>
+    <addaction name="actionRearrange_Employees_Shift"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -91,6 +92,7 @@
    <addaction name="actionPrint_Preview"/>
    <addaction name="separator"/>
    <addaction name="actionSolve"/>
+   <addaction name="actionRearrange_Employees_Shift"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -232,6 +234,18 @@
    </property>
    <property name="toolTip">
     <string>Swap shifts types between items</string>
+   </property>
+  </action>
+  <action name="actionRearrange_Employees_Shift">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/rearrange</normaloff>:/icons/rearrange</iconset>
+   </property>
+   <property name="text">
+    <string>Rearrange Employees Shift</string>
+   </property>
+   <property name="toolTip">
+    <string>Rearrange fuel employees shifts for better performance.</string>
    </property>
   </action>
  </widget>

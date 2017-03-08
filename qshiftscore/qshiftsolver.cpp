@@ -9,6 +9,8 @@
 #include <stdio.h>
 
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
 
 #include "qshiftsolver.h"
@@ -422,7 +424,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
     {
         ///TODO : Implement me!!!
         ///
-        size_t i,j=0;
+       /* size_t i,j=0;
         ef_smatrix(0,1) = 1;
         for(j = 0; j < ef_smatrix.size2(); j+=8)
             for(i=0; i<ef_smatrix.size1();i++) {
@@ -460,7 +462,19 @@ StringList QShiftSolver::m_reqBranches = StringList();
                 if (r != -1 && r != 5)
                     ef_smatrix(r,j) = 1;
             }
-        }
+        }*/
+
+        /* *************************************** *
+         * Read the ef_smatrix contents from file
+         * *************************************** */
+        QFile f("fe_matrix.txt");
+        if(!f.open(QIODevice::ReadOnly))
+            qDebug() << " Error while trying to read " << f.fileName() << " file. " << endl;
+
+        QTextStream ts(&f);
+        QString line;
+        int num;
+        ///TODO Finish me!!
         return ef_smatrix;
     }
 

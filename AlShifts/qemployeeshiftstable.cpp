@@ -6,6 +6,7 @@
 #include <QString>
 #include <QAction>
 #include <QTextStream>
+#include <QFile>
 
 #include <QHeaderView>
 #include <QApplication>
@@ -314,6 +315,25 @@ void QEmployeeShiftsTable::updateActions()
 void QEmployeeShiftsTable::swapShifts()
 {
     swapShifts(selectedItems()[0], selectedItems()[1]);
+}
+
+void QEmployeeShiftsTable::rearrangeEmployeesShift()
+{
+    ///TODO : Implement me !!
+    QFile f("fe_matrix.txt");
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qDebug() << "Cant't open " << f.fileName() << " for read." << endl;
+        return;
+    }
+    QTextStream ts(&f);
+    ETRange etr = emtypeRange.value(Algorithmos::FUELMANAGER);
+    for(int i =etr.startRow ; i< etr.endRow; i++) {
+        for(int j = 0; j < columnCount(); j++) {
+            ts << item(i,j)->data(Algorithmos::STIROLE).toInt() << '\n';
+        }
+    }
+    qDebug() << "Fuel Employee shifts array saved succesfully in : " << f.fileName() << " file." << endl;
+    f.close();
 }
 
 
