@@ -10,6 +10,7 @@
 #include <QList>
 #include <QCloseEvent>
 #include <QFileInfo>
+#include <QLabel>
 #include <QFileDialog>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
@@ -67,11 +68,13 @@ void MainWindow::setupActions()
             m_centralView->employeeShiftsTable(), SLOT(swapShifts()));
     connect(ui->actionRearrange_Employees_Shift, &QAction::triggered,
             m_centralView->employeeShiftsTable(), &QEmployeeShiftsTable::rearrangeEmployeesShift);
+    connect(ui->actionPrepare, &QAction::triggered,
+             m_centralView->employeeShiftsTable(), &QEmployeeShiftsTable::loadBFuelShifts);
 
     /* ************************************ *
           Recent File Menu
     * *********************************** */
-    recentFilesMenu = new QMenu(ui->menu_File);
+    recentFilesMenu = new QMenu(tr("Recent Files ..."),ui->menu_File);
     ui->menu_File->insertAction(ui->actionprint,recentFilesMenu->menuAction());
     for(int i = 0 ; i < MaxRecentFiles; i++)
     {
@@ -88,8 +91,13 @@ void MainWindow::setupActions()
 void MainWindow::createStatusBar()
 {
     QEmployeeShiftsTable *esht = m_centralView->employeeShiftsTable();
+    locationLabel = new QLabel(" W999 " );
+    locationLabel->setAlignment(Qt::AlignCenter);
+    locationLabel->setMinimumSize(locationLabel->sizeHint());
+    statusBar()->addWidget(locationLabel);
     connect(esht, &QEmployeeShiftsTable::currentCellChanged,this,
             &MainWindow::updateStatusBar);
+    updateStatusBar();
 }
 
 void MainWindow::readSettings()
@@ -227,7 +235,7 @@ void MainWindow::showPreferencesDialog()
 
 void MainWindow::updateStatusBar()
 {
-
+    locationLabel->setText(m_centralView->employeeShiftsTable()->currentLocation());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -46,6 +46,13 @@ void QShiftsCore::init()
             qCritical() << "Error reading matrix file." << endl;
         }
 
+        QFile file2(path.absolutePath()+"/fm_matrix_inter_cells.txt");
+        QFileInfo info2(file2);
+        qDebug() << "File path :" << info2.absoluteFilePath() << endl;
+        if(!file2.open(QIODevice::ReadOnly | QIODevice::Text)){
+            qCritical() << "Error reading matrix file." << endl;
+        }
+
         QJsonParseError jerror;
         QJsonDocument jdoc= QJsonDocument::fromJson(file.readAll(),&jerror);
         if(jerror.error != QJsonParseError::NoError) {
@@ -101,6 +108,7 @@ void QShiftsCore::init()
             //Now it's time to initialize our solver
             m_solver = new QShiftSolver(bManagers,bfManagers, bEmployees);
             m_solver->setEmployeeMatrixFile(info1.absoluteFilePath());
+            m_solver->setBFuelManagersMatrixFile(info2.absoluteFilePath());
         }
     } else {
         qDebug() << "Error reading file. Current path : " << path.absolutePath() << endl;

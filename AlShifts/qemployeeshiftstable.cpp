@@ -6,6 +6,7 @@
 #include <QString>
 #include <QAction>
 #include <QTextStream>
+#include <QMessageBox>
 #include <QFile>
 
 #include <QHeaderView>
@@ -127,9 +128,63 @@ StringListArray QEmployeeShiftsTable::createSolverData(ETRange range,int col,int
     return res;
 }
 
+StringListArray QEmployeeShiftsTable::createEmployeesSolverData(int col, int shift_type)
+{
+    qDeleteAll(bsdata_vec);
+    bsdata_vec.clear();
+    StringListArray res;
+    StringList sl;
+
+    int startRow = emtypeRange.value(Algorithmos::BFUELMANAGER).startRow,
+            endRow = emtypeRange.value(Algorithmos::BFUELMANAGER).endRow;
+
+    bool is_ok;
+    for(int i = startRow; i < endRow; i++) {
+        int st = item(i,col)->data(Algorithmos::STIROLE).toInt(&is_ok);
+        QString txt = item(i,col)->text();
+        //if(!is_ok) continue;
+        if(st == 3) continue;
+        if(st == shift_type && (txt.contains("BR2") ||
+                                txt.contains("BR3") ||
+                                txt.contains("BR5"))) { //Early shift
+            bsdata = new BranchSolverData;
+            bsdata->row = i;
+            bsdata->col = col;
+            bsdata->branches = //verticalHeaderItem(i)->data(Qt::UserRole).toStringList();
+                    item(i,col)->data(Qt::UserRole+1).toStringList();
+            sl =Algorithmos::qsl_to_sl(bsdata->branches);
+            res.push_back(sl);
+            bsdata_vec.push_back(bsdata);
+        }
+    }
+    startRow = emtypeRange.value(Algorithmos::FUELMANAGER).startRow;
+    endRow = emtypeRange.value(Algorithmos::FUELMANAGER).endRow;
+
+    for(int i = startRow; i < endRow; i++) {
+        int st = item(i,col)->data(Algorithmos::STIROLE).toInt();
+        if(st == 3) continue;
+        if(st == shift_type) { //Early shift
+            bsdata = new BranchSolverData;
+            bsdata->row = i;
+            bsdata->col = col;
+            bsdata->branches = //verticalHeaderItem(i)->data(Qt::UserRole).toStringList();
+                    item(i,col)->data(Qt::UserRole+1).toStringList();
+            sl =Algorithmos::qsl_to_sl(bsdata->branches);
+            res.push_back(sl);
+            bsdata_vec.push_back(bsdata);
+        }
+    }
+    return res;
+}
+
 void QEmployeeShiftsTable::setStartDate(QDateTime dt)
 {
     m_startDate = dt;
+}
+
+QString QEmployeeShiftsTable::currentLocation()
+{
+    return "R:"+QString::number(currentRow()) + " C:" + QString::number(currentColumn());
 }
 
 void QEmployeeShiftsTable::clearShifts()
@@ -233,7 +288,7 @@ void QEmployeeShiftsTable::solve()
 //    }
 //    is_in_solve_fun = false;
     for(int j = 0; j < columnCount(); j++)
-        solve(j);
+        solve(j);    
 }
 
 void QEmployeeShiftsTable::solve(int col)
@@ -318,22 +373,37 @@ void QEmployeeShiftsTable::swapShifts()
 }
 
 void QEmployeeShiftsTable::rearrangeEmployeesShift()
-{
-    ///TODO : Implement me !!
-    QFile f("fe_matrix.txt");
-    if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qDebug() << "Cant't open " << f.fileName() << " for read." << endl;
-        return;
-    }
-    QTextStream ts(&f);
-    ETRange etr = emtypeRange.value(Algorithmos::FUELMANAGER);
-    for(int i =etr.startRow ; i< etr.endRow; i++) {
-        for(int j = 0; j < columnCount(); j++) {
-            ts << item(i,j)->data(Algorithmos::STIROLE).toInt() << '\n';
+{    
+
+    //loadBFuelShifts();
+    // Now find a solution
+    std::vector<Algorithmos::ShiftType> sv = {Algorithmos::EARLY,
+                                              Algorithmos::LATE,
+                                              Algorithmos::INTERMITTENT };
+    for(int col =0; col < columnCount(); col++) {
+        for(auto x : sv) {
+            QString shift_name = Algorithmos::shiftName(x);
+            StringListArray sla = createEmployeesSolverData( col,(int)x);
+            if(sla.empty()) continue;
+            Algorithmos::QShiftSolver::set_required_branches({"BR2", "BR3", "BR5"});
+            QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(sla);
+            qDebug() << "Solution for column " << col << shift_name <<" shift :" << solution << endl;
+            if(!solution.empty()) {
+                Q_ASSERT(solution.size()==bsdata_vec.size());
+                for(int i=0; i<solution.size(); i++) {
+                    item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+                }
+            } else {
+                QTableWidgetItem *tw_item;
+                for(int i =0; i < bsdata_vec.size(); i++) {
+                    tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                    QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+                    tw_item->setText(txt);
+                }
+            }
         }
     }
-    qDebug() << "Fuel Employee shifts array saved succesfully in : " << f.fileName() << " file." << endl;
-    f.close();
+
 }
 
 
@@ -441,6 +511,27 @@ void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j
 void QEmployeeShiftsTable::set_r(int val)
 {
     r= val;
+}
+
+void QEmployeeShiftsTable::loadBFuelShifts()
+{
+    QFile f(s_solver->bfmMatrixFile());
+    if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, tr("Error reading solution!"),
+                              tr("Could not read %1 file. Check your installation!"));
+        return;
+    }
+
+    QString line;
+    QStringList values;
+    QTextStream ts(&f);
+    while (!ts.atEnd()) {
+        line = ts.readLine();
+        values = line.split(":",QString::SkipEmptyParts);
+        Q_ASSERT_X(values.size()==3,"Reading", "Values are less than expected!");
+        item(values[0].toInt(),values[1].toInt())->setData(Algorithmos::STIROLE,values[2].toInt());
+    }
+    f.close();
 }
 
 QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator +(const int k)

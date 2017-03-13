@@ -12,6 +12,7 @@ QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;
 class QPrinter;
+class QLabel;
 class QCloseEvent;
 QT_END_NAMESPACE
 
@@ -29,6 +30,8 @@ public:
 private:
     Ui::MainWindow *ui;
     CentralView *m_centralView;
+
+    QLabel *locationLabel;
 
     void setupActions();
     void createStatusBar();

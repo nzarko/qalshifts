@@ -93,6 +93,7 @@
    <addaction name="separator"/>
    <addaction name="actionSolve"/>
    <addaction name="actionRearrange_Employees_Shift"/>
+   <addaction name="actionPrepare"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -246,6 +247,15 @@
    </property>
    <property name="toolTip">
     <string>Rearrange fuel employees shifts for better performance.</string>
+   </property>
+  </action>
+  <action name="actionPrepare">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/doc_save_as</normaloff>:/icons/doc_save_as</iconset>
+   </property>
+   <property name="text">
+    <string>Prepare</string>
    </property>
   </action>
  </widget>

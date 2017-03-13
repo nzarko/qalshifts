@@ -286,6 +286,11 @@ StringList QShiftSolver::m_reqBranches = StringList();
         m_matrixFile = fileName;
     }
 
+    void QShiftSolver::setBFuelManagersMatrixFile(const QString &fileName)
+    {
+        m_bfmMatrixFile = fileName;
+    }
+
     UBlas::matrix<int> &QShiftSolver::create_managers_shifts_matrix()
     {
         size_t i,j=0;
@@ -321,10 +326,10 @@ StringList QShiftSolver::m_reqBranches = StringList();
         //Special treatment for "naked days" :
         //days without dayoff shift.
         //Starts from column 7
-        int r = 1;
+        int r = 6;
         for(uint j = 7; j < m_smatrix.size2(); j += 8) {
             m_smatrix(r,j) = 3;
-            r++;
+            r--;
         }
 
         //finishing out
@@ -537,6 +542,11 @@ StringList QShiftSolver::m_reqBranches = StringList();
     void QShiftSolver::clear_req_branches()
     {
         m_reqBranches.clear();
+    }
+
+    QString QShiftSolver::bfmMatrixFile() const
+    {
+        return m_bfmMatrixFile;
     }
 
     void QShiftSolver::init_matrix_with_zeros(UBlas::matrix<int> &mat)

@@ -20,4 +20,5 @@ typedef std::vector<std::vector<std::string> > StringListArray;
     QStringList sl_to_qsl(StringList &sl);
     StringList QSHIFTSCORE_EXPORT qsl_to_sl(QStringList qsl);
     StringListArray find_compinations_of(StringListArray &v);
+    void QSHIFTSCORE_EXPORT writeMatrixFiles();
 }
