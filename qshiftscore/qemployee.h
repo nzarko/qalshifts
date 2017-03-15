@@ -35,6 +35,9 @@ namespace Algorithmos {
         const QStringList &branches() const;
         void addBranch(const QString & id);
 
+        QStringList toStringList();
+        QString toString();
+
     private:
         QEmployeePrivate *m_pPriv;
     };

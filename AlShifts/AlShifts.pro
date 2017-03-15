@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,12 +23,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
+include(xlsx/qtxlsx.pri)
+
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    centralview.cpp \
+    qemployeeshiftstable.cpp \
+    qshiftstableitem.cpp \
+    legendform.cpp \
+    qshifttableitemdelegate.cpp \
+    qdateselector.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    centralview.h \
+    qemployeeshiftstable.h \
+    qshiftstableitem.h \
+    legendform.h \
+    qshifttableitemdelegate.h \
+    qdateselector.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    legendform.ui
 
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1
@@ -37,6 +52,10 @@ QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/release/ -lqshiftscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/debug/ -lqshiftscore
 else:unix: LIBS += -L$$OUT_PWD/../qshiftscore/ -lqshiftscore
+win32: INCLUDEPATH += C:/local/boost_1_62_0
 
 INCLUDEPATH += $$PWD/../qshiftscore
 DEPENDPATH += $$PWD/../qshiftscore
+
+RESOURCES += \
+    resources.qrc

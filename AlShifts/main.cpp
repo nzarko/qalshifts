@@ -1,7 +1,7 @@
 #include "mainwindow.h"
-#include "qshiftscore.h"
 
 #include <QApplication>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -9,7 +9,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    Algorithmos::QShiftsCore s_core;
-    s_core.init();
     return a.exec();
 }

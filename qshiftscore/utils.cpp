@@ -1,5 +1,17 @@
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <set>
+#include <stdio.h>
+
 #include <QObject>
 #include <QTextCodec>
+#include <QFile>
+#include <QTextStream>
 #include <QDebug>
 
 #include "utils.h"
@@ -67,6 +79,107 @@ namespace Algorithmos {
         }
 
         return type;
+    }
+
+    QString shiftName(ShiftType stype)
+    {
+        QString name;
+        switch(stype) {
+        case EARLY:
+            name = QObject::tr("Early");
+            break;
+        case LATE:
+            name = QObject::tr("Late");
+            break;
+        case DAYOFF:
+            name = QObject::tr("Day Off");
+            break;
+        case INTERMITTENT:
+            name = QObject::tr("Intermittent");
+            break;
+        default:
+            name = "Unknown";
+        }
+        return name;
+
+    }
+
+    QStringList sl_to_qsl(StringList &sl)
+    {
+        QStringList qsl;
+        for(auto x : sl) {
+            qsl << QString::fromStdString(x);
+        }
+        return qsl;
+    }
+
+    StringListArray find_compinations_of(StringListArray &v)
+    {
+        StringListArray res;
+        auto product = [](long long a, std::vector<std::string>& b) { return a*b.size(); };
+        const long long N = std::accumulate(v.begin(), v.end(), 1LL, product);
+        std::vector<std::string> u(v.size());
+        for (long long n = 0; n<N; ++n) {
+            lldiv_t q{ n, 0 };
+            for (long long i = v.size() - 1; 0 <= i; --i) {
+                q = div(q.quot, v[i].size());
+                u[i] = v[i][q.rem];
+            }
+            // Do what you want here with u.
+            /*for (string x : u) cout << x << ' ';
+                cout << '\n';*/
+            res.push_back(u);
+        }
+        return res;
+    }
+
+    StringList qsl_to_sl(QStringList qsl)
+    {
+        StringList res;
+        QStringListIterator iter(qsl);
+        while(iter.hasNext()) {
+            res.push_back(iter.next().toStdString());
+        }
+        return res;
+    }
+
+    void writeMatrixFiles()
+    {
+        /*QFile f("fe_matrix.txt");
+        if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            qDebug() << "Cant't open " << f.fileName() << " for read." << endl;
+            return;
+        }
+        QTextStream ts(&f);
+        ETRange etr = emtypeRange.value(Algorithmos::FUELMANAGER);
+        for(int i =etr.startRow ; i< etr.endRow; i++) {
+            for(int j = 0; j < columnCount(); j++) {
+                ts << item(i,j)->data(Algorithmos::STIROLE).toInt() << '\n';
+            }
+        }
+        qDebug() << "Fuel Employee shifts array saved succesfully in : " << f.fileName() << " file." << endl;
+        f.close();
+
+        QFile fm("fm_matrix_inter_cells.txt");
+        if(!fm.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+            qCritical() << "Can't open " << fm.fileName() << " to write." << endl;
+            return;
+        }
+        QTextStream ts_fm(&fm);
+        etr = emtypeRange.value(Algorithmos::BFUELMANAGER);
+        for(int i =etr.startRow; i < etr.endRow; i++) {
+            for(int j =0; j < columnCount(); j++) {
+                int dt = item(i,j)->data(Algorithmos::STIROLE).toInt();
+                QString display_str = item(i,j)->text();
+                if(display_str.contains("BR2") || display_str.contains("BR5")) {
+                    ts_fm << QString::number(i) << ":" << QString::number(j) <<":"
+                          << QString::number(dt) << endl;
+                }
+            }
+        }
+        fm.close();
+        qDebug() << "Fuel managers array changes saved succesfully in : " << fm.fileName() << " file." << endl;
+        */
     }
 
 }

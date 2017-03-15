@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="dayoff">icons/dayoff.png</file>
+        <file alias="early_shift">icons/early_shift.png</file>
+        <file alias="interm_shift">icons/intermintent_shift.png</file>
+        <file alias="late_shift">icons/late_shift.png</file>
+        <file alias="populate">icons/populate.png</file>
+        <file alias="edit_clear">icons/edit-clear.png</file>
+        <file alias="early_legend">icons/early_legend.png</file>
+        <file alias="intermintent_legend">icons/intermintent_legend.png</file>
+        <file alias="late_legend">icons/late_legend.png</file>
+        <file alias="dayoff_legend">icons/dayoff_legend.png</file>
+        <file alias="document-print">icons/document-print.png</file>
+        <file alias="document-print-preview">icons/document-print-preview.png</file>
+        <file alias="export">icons/webexport.png</file>
+        <file alias="solve">icons/solve.png</file>
+        <file alias="doc_new">icons/document-new.png</file>
+        <file alias="doc_save">icons/document-save.png</file>
+        <file alias="doc_save_as">icons/document-save-as.png</file>
+        <file alias="doc_open">icons/document-open.png</file>
+        <file alias="swap_shifts">icons/swap_shifts.png</file>
+        <file alias="rearrange">icons/recur.png</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>
