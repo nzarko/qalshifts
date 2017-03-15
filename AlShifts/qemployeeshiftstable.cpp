@@ -38,6 +38,8 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     QShiftTableItemDelegate *i_del = new QShiftTableItemDelegate();
     setItemDelegate(i_del);    
 
+    connect(this, SIGNAL(itemChanged(QTableWidgetItem *)),
+            this, SLOT(somethingChanged()));
     //resizeRowsToContents();
     //resizeColumnsToContents();
     //QIcon icon;
@@ -103,6 +105,87 @@ void QEmployeeShiftsTable::populate()
 bool QEmployeeShiftsTable::isEmpty()
 {
     return is_empty;
+}
+
+void QEmployeeShiftsTable::clear()
+{
+    setRowCount(0);
+    setColumnCount(0);
+    setRowCount(RowCount);
+    setColumnCount(ColumnCount);
+
+//    for (int i = 0; i < ColumnCount; ++i) {
+//        QTableWidgetItem *item = new QTableWidgetItem;
+//        item->setText(QString(QChar('A' + i)));
+//        setHorizontalHeaderItem(i, item);
+//    }
+
+    setCurrentCell(0, 0);
+}
+
+bool QEmployeeShiftsTable::readFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, tr("Aliagas Shifts"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(file.fileName())
+                             .arg(file.errorString()));
+        return false;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_5_8);
+
+    quint32 magic;
+    in >> magic;
+    if (magic != MagicNumber) {
+        QMessageBox::warning(this, tr("Aliagas Shifts"),
+                             tr("The file is not a Spreadsheet file."));
+        return false;
+    }
+
+    clear();
+
+//    quint16 row;
+//    quint16 column;
+//    QString str;
+
+//    QApplication::setOverrideCursor(Qt::WaitCursor);
+//    while (!in.atEnd()) {
+//        in >> row >> column >> str;
+//        setFormula(row, column, str);
+//    }
+//    QApplication::restoreOverrideCursor();
+    return true;
+}
+
+bool QEmployeeShiftsTable::writeFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::warning(this, tr("Aliagas Shifts"),
+                             tr("Cannot write file %1:\n%2.")
+                             .arg(file.fileName())
+                             .arg(file.errorString()));
+        return false;
+    }
+
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_5_8);
+
+    out << quint32(MagicNumber);
+
+//    QApplication::setOverrideCursor(Qt::WaitCursor);
+//    for (int row = 0; row < RowCount; ++row) {
+//        for (int column = 0; column < ColumnCount; ++column) {
+//            QString str = formula(row, column);
+//            if (!str.isEmpty())
+//                out << quint16(row) << quint16(column) << str;
+//        }
+//    }
+//    QApplication::restoreOverrideCursor();
+    return true;
 }
 
 StringListArray QEmployeeShiftsTable::createSolverData(ETRange range,int col,int shift_type)
@@ -199,6 +282,7 @@ void QEmployeeShiftsTable::clearShifts()
     setRowCount(30);
     setAlternatingRowColors(true);
     set_r(0);
+    setCurrentCell(0,0);
 
     QApplication::restoreOverrideCursor();
 }
@@ -532,6 +616,11 @@ void QEmployeeShiftsTable::loadBFuelShifts()
         item(values[0].toInt(),values[1].toInt())->setData(Algorithmos::STIROLE,values[2].toInt());
     }
     f.close();
+}
+
+void QEmployeeShiftsTable::somethingChanged()
+{
+    emit modified();
 }
 
 QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator +(const int k)

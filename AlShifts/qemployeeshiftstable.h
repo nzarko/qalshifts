@@ -32,6 +32,9 @@ public:
 
     void populate();
     bool isEmpty();
+    void clear();
+    bool readFile(const QString &fileName);
+    bool writeFile(const QString &fileName);
 
     /**
      * @brief The BranchSolverData struct
@@ -113,7 +116,13 @@ public slots:
     void rearrangeEmployeesShift();
     void loadBFuelShifts();
 
+signals:
+    void modified();
+
+private slots:
+    void somethingChanged();
 private:
+    enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49 };
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.
     void populateVHeader(EmployeeMap &e_map);

@@ -32,18 +32,21 @@ private:
     CentralView *m_centralView;
 
     QLabel *locationLabel;
+    QString curFile;
+    QStringList recentFiles;
+    QAction *separatorAction;
 
     void setupActions();
     void createStatusBar();
     void readSettings();
     void writeSettings();
     bool maybeSave();
-    void loadFile(const QString &fileName);
+    bool loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
 
     QString strippedName(const QString &fullFileName);
     void updateRecentFileActions();
-    void updateRecentFiles(const QString &);
+    void updateRecentFiles(const QString &fileName);
 
     enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];

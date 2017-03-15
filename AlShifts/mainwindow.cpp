@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //setWindowState(Qt::WindowMaximized);
     readSettings();
+    setCurrentFile("");
 }
 
 MainWindow::~MainWindow()
@@ -47,11 +48,17 @@ MainWindow::~MainWindow()
 void MainWindow::setupActions()
 {
 
-    connect(ui->actionNew,SIGNAL(triggered()), this, SLOT(selectStartDate()));
+    connect(ui->actionNew,&QAction::triggered, this, &MainWindow::newFile);
+    connect(ui->actionOpen, &QAction::triggered, this,
+            &MainWindow::open);
+    connect(ui->actionSave, &QAction::triggered,this,
+            &MainWindow::save);
+    connect(ui->actionSave_As, &QAction::triggered, this,
+            &MainWindow::saveAs);
     ui->action_Populate->setEnabled(m_centralView->employeeShiftsTable()->isEmpty());
-    connect(ui->action_Populate,SIGNAL(triggered()), m_centralView, SLOT(populate()));
-    connect(m_centralView->employeeShiftsTable(),SIGNAL(populationChanged(bool)),ui->action_Populate,
-            SLOT(setDisabled(bool)));
+    connect(ui->action_Populate,&QAction::triggered, m_centralView, &CentralView::populate);
+    connect(m_centralView->employeeShiftsTable(),&QEmployeeShiftsTable::populationChanged,ui->action_Populate,
+            &QAction::setDisabled);
     ui->actionSolve->setEnabled(false);
     connect(m_centralView->employeeShiftsTable(),SIGNAL(populationChanged(bool)),ui->actionSolve,
             SLOT(setEnabled(bool)));
@@ -97,12 +104,18 @@ void MainWindow::createStatusBar()
     statusBar()->addWidget(locationLabel);
     connect(esht, &QEmployeeShiftsTable::currentCellChanged,this,
             &MainWindow::updateStatusBar);
+    connect(esht, &QEmployeeShiftsTable::modified,
+            this, &MainWindow::documentWasModified);
     updateStatusBar();
 }
 
 void MainWindow::readSettings()
 {
     QSettings settings("Algorithmos", "QALShifts");
+
+    recentFiles = settings.value("recentFiles").toStringList();
+    updateRecentFileActions();
+
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
     QSize size = settings.value("size", QSize(800, 600)).toSize();
     restoreState(settings.value("windowState").toByteArray());
@@ -113,6 +126,7 @@ void MainWindow::readSettings()
 void MainWindow::writeSettings()
 {
     QSettings settings("Algorithmos", "QALShifts");
+     settings.setValue("recentFiles", recentFiles);
     settings.setValue("pos", pos());
     settings.setValue("size", size());
     settings.setValue("windowState", saveState());
@@ -121,32 +135,88 @@ void MainWindow::writeSettings()
 
 bool MainWindow::maybeSave()
 {
+    if (isWindowModified()) {
+        int r = QMessageBox::warning(this, tr("Aliagas Shifts"),
+                        tr("The document has been modified.\n"
+                           "Do you want to save your changes?"),
+                        QMessageBox::Yes | QMessageBox::Default,
+                        QMessageBox::No,
+                        QMessageBox::Cancel | QMessageBox::Escape);
+        if (r == QMessageBox::Yes) {
+            return save();
+        } else if (r == QMessageBox::Cancel) {
+            return false;
+        }
+    }
     return true;
 }
 
-void MainWindow::loadFile(const QString &fileName)
+bool MainWindow::loadFile(const QString &fileName)
 {
+    QEmployeeShiftsTable *spreadsheet = m_centralView->employeeShiftsTable();
+    if (!spreadsheet->readFile(fileName)) {
+        statusBar()->showMessage(tr("Loading canceled"), 2000);
+        return false;
+    }
 
+    setCurrentFile(fileName);
+    statusBar()->showMessage(tr("File loaded"), 2000);
+    return true;
 }
 
 bool MainWindow::saveFile(const QString &fileName)
 {
-    return false;
+    QEmployeeShiftsTable *spreadsheet = m_centralView->employeeShiftsTable();
+    if (!spreadsheet->writeFile(fileName)) {
+        statusBar()->showMessage(tr("Saving canceled"), 2000);
+        return false;
+    }
+
+    setCurrentFile(fileName);
+    statusBar()->showMessage(tr("File saved"), 2000);
+    return true;
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)
 {
-    return QString();
+    return QFileInfo(fullFileName).fileName();
 }
 
 void MainWindow::updateRecentFileActions()
 {
+    QSettings settings("Algorithmos", "QALShifts");
+    recentFiles = settings.value("recentFiles").toStringList();
+    QMutableStringListIterator i(recentFiles);
+    while (i.hasNext()) {
+        if (!QFile::exists(i.next()))
+            i.remove();
+    }
 
+    for (int j = 0; j < MaxRecentFiles; ++j) {
+        if (j < recentFiles.count()) {
+            QString text = tr("&%1 %2")
+                           .arg(j + 1)
+                           .arg(strippedName(recentFiles[j]));
+            recentFileActions[j]->setText(text);
+            recentFileActions[j]->setData(recentFiles[j]);
+            recentFileActions[j]->setVisible(true);
+        } else {
+            recentFileActions[j]->setVisible(false);
+        }
+    }
 }
 
-void MainWindow::updateRecentFiles(const QString &)
+void MainWindow::updateRecentFiles(const QString &fileName)
 {
+    QSettings settings("Algorithmos", "QALShifts");
+    recentFiles = settings.value("recentFiles").toStringList();
+    recentFiles.removeAll(fileName);
+    recentFiles.prepend(fileName);
+    while (recentFiles.size() > MaxRecentFiles)
+        recentFiles.removeLast();
 
+    settings.setValue("recentFiles", recentFiles);
+    updateRecentFileActions();
 }
 
 void MainWindow::selectStartDate()
@@ -165,22 +235,43 @@ void MainWindow::selectStartDate()
 
 void MainWindow::newFile()
 {
-
+    QEmployeeShiftsTable *spreadsheet = m_centralView->employeeShiftsTable();
+    if (maybeSave()) {
+        spreadsheet->clear();
+        selectStartDate();
+        setCurrentFile("");
+    }
 }
 
 void MainWindow::open()
 {
-
+    if (maybeSave()) {
+        QString fileName = QFileDialog::getOpenFileName(this,
+                                   tr("Open Aliagas Shifts"), ".",
+                                   tr("Aliagas Shifts files (*.alsh)"));
+        if (!fileName.isEmpty())
+            loadFile(fileName);
+    }
 }
 
 bool MainWindow::save()
 {
-    return false;
+    if (curFile.isEmpty()) {
+        return saveAs();
+    } else {
+        return saveFile(curFile);
+    }
 }
 
 bool MainWindow::saveAs()
 {
-    return false;
+    QString fileName = QFileDialog::getSaveFileName(this,
+                               tr("Save Shifts"), ".",
+                               tr("Aliagas Shifts files (*.alsh)"));
+    if (fileName.isEmpty())
+        return false;
+
+    return saveFile(fileName);
 }
 
 bool MainWindow::saveAll()
@@ -195,7 +286,8 @@ void MainWindow::about()
 
 void MainWindow::documentWasModified()
 {
-
+    setWindowModified(true);
+    updateStatusBar();
 }
 
 void MainWindow::openRecentFile()
@@ -210,7 +302,19 @@ void MainWindow::openRecentFile()
 
 void MainWindow::setCurrentFile(const QString &fileName)
 {
+    curFile = fileName;
+    setWindowModified(false);
 
+    QString shownName = "Untitled";
+    if (!curFile.isEmpty()) {
+        shownName = strippedName(curFile);
+        recentFiles.removeAll(curFile);
+        recentFiles.prepend(curFile);
+        updateRecentFileActions();
+    }
+
+    setWindowTitle(tr("%1[*] - %2").arg(shownName)
+                                   .arg(tr("Aliagas Shifts")));
 }
 
 void MainWindow::fileprint()
