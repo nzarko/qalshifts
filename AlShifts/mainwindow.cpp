@@ -160,6 +160,7 @@ bool MainWindow::loadFile(const QString &fileName)
     }
 
     setCurrentFile(fileName);
+    updateRecentFiles(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
     return true;
 }
@@ -241,6 +242,7 @@ void MainWindow::newFile()
         selectStartDate();
         setCurrentFile("");
     }
+    //updateRecentFiles();
 }
 
 void MainWindow::open()

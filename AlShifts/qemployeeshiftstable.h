@@ -122,7 +122,7 @@ signals:
 private slots:
     void somethingChanged();
 private:
-    enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49 };
+    enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49, EmployeeType=Qt::UserRole+3 };
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.
     void populateVHeader(EmployeeMap &e_map);

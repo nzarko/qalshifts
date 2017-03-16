@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QTableWidget>
 
 #include "qemployee.h"
 #include "utils.h"
@@ -63,6 +64,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
         int solve(EmployeeGroup &eg);
         Shifts & initShifts(QDateTime dt = QDateTime::currentDateTime());
         Shifts &shifts();
+        Shifts &updateShifts(QTableWidget *table);
 
         void setEmployeeMatrixFile(const QString &fileName);
         void setBFuelManagersMatrixFile(const QString &fileName);

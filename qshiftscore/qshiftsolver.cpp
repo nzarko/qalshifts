@@ -281,6 +281,13 @@ StringList QShiftSolver::m_reqBranches = StringList();
         return m_pShifts;
     }
 
+    Shifts &QShiftSolver::updateShifts(QTableWidget *table)
+    {
+        Q_UNUSED(table);
+        ///TODO : Implement me!
+        return m_pShifts;
+    }
+
     void QShiftSolver::setEmployeeMatrixFile(const QString &fileName)
     {
         m_matrixFile = fileName;

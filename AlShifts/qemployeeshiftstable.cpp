@@ -147,16 +147,36 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
 
     clear();
 
+
 //    quint16 row;
 //    quint16 column;
 //    QString str;
 
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
-//    while (!in.atEnd()) {
-//        in >> row >> column >> str;
-//        setFormula(row, column, str);
-//    }
-//    QApplication::restoreOverrideCursor();
+    QTableWidgetItem *curItem = Q_NULLPTR;
+    QShiftsTableItem *shItem = Q_NULLPTR;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    for(int col =0; col < ColumnCount && !in.atEnd(); ++col) {
+        curItem = new QTableWidgetItem();
+        in >> *curItem;
+        setHorizontalHeaderItem(col, curItem);
+    }
+    for(int row = 0; row < RowCount && !in.atEnd(); ++row) {
+        curItem = new QTableWidgetItem();
+        in >> *curItem;
+        setVerticalHeaderItem(row,curItem);
+        if(curItem->text() == "Blank") {
+            curItem->setText("");
+            continue;
+        }
+        for(int col = 0; col < ColumnCount && !in.atEnd(); ++col) {
+            shItem = new QShiftsTableItem();
+            in >> *shItem;
+            setItem(row,col,shItem);
+        }
+    }
+    file.close();
+    QApplication::restoreOverrideCursor();
+    emit populationChanged(true);
     return true;
 }
 
@@ -176,15 +196,30 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
 
     out << quint32(MagicNumber);
 
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
-//    for (int row = 0; row < RowCount; ++row) {
-//        for (int column = 0; column < ColumnCount; ++column) {
-//            QString str = formula(row, column);
-//            if (!str.isEmpty())
-//                out << quint16(row) << quint16(column) << str;
-//        }
-//    }
-//    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QTableWidgetItem *curItem;
+    for(int col = 0; col < ColumnCount; ++col) { //Save Horizontal header items first
+        curItem = horizontalHeaderItem(col);
+        if(curItem) {
+            out << *curItem;
+        }
+    }
+    for (int row = 0; row < RowCount; ++row) {
+        if(verticalHeaderItem(row))
+            out << *verticalHeaderItem(row);
+        else {
+            QTableWidgetItem *blankItem = new QTableWidgetItem("Blank");
+            out << *blankItem;
+            delete blankItem;
+            continue;
+        }
+        for (int column = 0; column < ColumnCount; ++column) {
+            if(item(row,column))
+                out << *item(row,column);
+        }
+    }
+    file.close();
+    QApplication::restoreOverrideCursor();
     return true;
 }
 
@@ -523,6 +558,7 @@ void QEmployeeShiftsTable::populateVHeader(const QVector<Algorithmos::QEmployee 
         QTableWidgetItem *headerItem = new QTableWidgetItem();
         headerItem->setText(em_vec[i]->name());
         headerItem->setData(Qt::UserRole, em_vec[i]->toStringList());
+        headerItem->setData(EmployeeType, (int)em_vec[i]->employeeType());
         headerItem->setToolTip(em_vec[i]->toString());
         setVerticalHeaderItem(r, headerItem);
         m_eRow.insert(em_vec[i]->ID(),r);
