@@ -26,6 +26,9 @@ void QShiftsCore::init()
 {
     m_solver = Q_NULLPTR;
 
+    bManagers.clear();
+    bfManagers.clear();
+    bEmployees.clear();
     QDir path ;
     path = QDir(path.currentPath());
     qDebug() << "Current path : "<< path.absolutePath() << endl;

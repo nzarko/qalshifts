@@ -8,9 +8,14 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QFile>
+#include <QLineEdit>
+#include <QAbstractItemView>
 
 #include <QHeaderView>
 #include <QApplication>
+
+#include <algorithm>
+
 #include "qemployeeshiftstable.h"
 
 #include "qshifttableitemdelegate.h"
@@ -33,10 +38,17 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     setAlternatingRowColors(true);
 
     horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+    verticalHeaderView = new HeaderView(Qt::Vertical, this);
+    headerDelegate = new HeaderDelegate(Qt::Vertical, verticalHeaderView);
+    verticalHeaderView->setItemDelegate(headerDelegate);
+    setVerticalHeader(verticalHeaderView);
     verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+    verticalHeader()->setSectionsClickable(true);
+    //connect(verticalHeader(),&QHeaderView::sectionDoubleClicked,this, &QEmployeeShiftsTable::editHeader);
 
     QShiftTableItemDelegate *i_del = new QShiftTableItemDelegate();
     setItemDelegate(i_del);    
+
 
     connect(this, SIGNAL(itemChanged(QTableWidgetItem *)),
             this, SLOT(somethingChanged()));
@@ -121,6 +133,7 @@ void QEmployeeShiftsTable::clear()
 //    }
 
     setCurrentCell(0, 0);
+    QEmployeeShiftsTable::set_r(0);
 }
 
 bool QEmployeeShiftsTable::readFile(const QString &fileName)
@@ -146,11 +159,6 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
     }
 
     clear();
-
-
-//    quint16 row;
-//    quint16 column;
-//    QString str;
 
     QTableWidgetItem *curItem = Q_NULLPTR;
     QShiftsTableItem *shItem = Q_NULLPTR;
@@ -206,9 +214,10 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
     }
     for (int row = 0; row < RowCount; ++row) {
         if(verticalHeaderItem(row))
-            out << *verticalHeaderItem(row);
+            out << *(verticalHeaderItem(row));
         else {
-            QTableWidgetItem *blankItem = new QTableWidgetItem("Blank");
+            QTableWidgetItem *blankItem = new QTableWidgetItem();
+            blankItem->setText("Blank");
             out << *blankItem;
             delete blankItem;
             continue;
@@ -220,6 +229,9 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
     }
     file.close();
     QApplication::restoreOverrideCursor();
+
+    //Temporary
+    saveShifts();
     return true;
 }
 
@@ -255,9 +267,14 @@ StringListArray QEmployeeShiftsTable::createEmployeesSolverData(int col, int shi
 
     int startRow = emtypeRange.value(Algorithmos::BFUELMANAGER).startRow,
             endRow = emtypeRange.value(Algorithmos::BFUELMANAGER).endRow;
+    QString txt = item(startRow+2,col)->text();
+    startRow = (txt.contains(",") || txt != "BR4") ? (startRow+2) : (startRow + 3);
+    //Shifts shifts = s_solver->shifts();
+    //int req = shifts[col]->shiftDate().date().dayOfWeek()==7 ? 2 : 3;
+    //int req = 0;
 
     bool is_ok;
-    for(int i = startRow; i < endRow; i++) {
+    for(int i = startRow; i < endRow; i++) {        
         int st = item(i,col)->data(Algorithmos::STIROLE).toInt(&is_ok);
         QString txt = item(i,col)->text();
         //if(!is_ok) continue;
@@ -291,6 +308,20 @@ StringListArray QEmployeeShiftsTable::createEmployeesSolverData(int col, int shi
             res.push_back(sl);
             bsdata_vec.push_back(bsdata);
         }
+    }
+
+    if(!res.empty()) {
+        //Reverse both res and bsdata_vec.
+        QVector<BranchSolverData*>result;
+        result.reserve( bsdata_vec.size() ); // reserve is new in Qt 4.7
+        std::reverse_copy( bsdata_vec.begin(), bsdata_vec.end(), std::back_inserter( result ) );
+        bsdata_vec = result;
+
+        std::reverse(res.begin(),res.end());
+        StringListArray res_trun;
+        //res_trun.resize(3);
+        std::copy_n(res.begin(),3,std::back_inserter(res_trun));
+        return res_trun;
     }
     return res;
 }
@@ -416,42 +447,44 @@ void QEmployeeShiftsTable::solve(int col)
     QMapIterator<Algorithmos::EmployeeType, ETRange> m_iter(emtypeRange);
     while(m_iter.hasNext()) {
         m_iter.next();
-        ETRange range = m_iter.value();
-        if(m_iter.key() == Algorithmos::BFUELMANAGER)
-            Algorithmos::QShiftSolver::set_required_branches({"BR1", "BR4"});
-        QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                                  /*emtypeRange.value(Algorithmos::BMANAGER),*/
-                                                                                  range,
-                                                                                  col,(int)Algorithmos::EARLY));
-        if(!solution.empty()) {
-            for(int i=0; i<solution.size(); i++) {
-                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+        ETRange range = m_iter.value();        
+        if(m_iter.key() == Algorithmos::BMANAGER) {
+
+            QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                                      /*emtypeRange.value(Algorithmos::BMANAGER),*/
+                                                                                      range,
+                                                                                      col,(int)Algorithmos::EARLY));
+            if(!solution.empty()) {
+                for(int i=0; i<solution.size(); i++) {
+                    item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+                }
+            } else {
+                QTableWidgetItem *tw_item;
+                for(int i =0; i < bsdata_vec.size(); i++) {
+                    tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                    QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+                    tw_item->setText(txt);
+                }
             }
-        } else {
-            QTableWidgetItem *tw_item;
-            for(int i =0; i < bsdata_vec.size(); i++) {
-                tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
-                QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
-                tw_item->setText(txt);
-            }
-        }
-        solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
-                                                                      /*emtypeRange.value(Algorithmos::BMANAGER),*/
-                                                                      range,
-                                                                      col,(int)Algorithmos::LATE));
-        if(!solution.empty()) {
-            for(int i=0; i<solution.size(); i++) {
-                item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
-            }
-        }else {
-            QTableWidgetItem *tw_item;
-            for(int i =0; i < bsdata_vec.size(); i++) {
-                tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
-                QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
-                tw_item->setText(txt);
+            solution = Algorithmos::QShiftSolver::solve_branch_shifts(createSolverData(
+                                                                          /*emtypeRange.value(Algorithmos::BMANAGER),*/
+                                                                          range,
+                                                                          col,(int)Algorithmos::LATE));
+            if(!solution.empty()) {
+                for(int i=0; i<solution.size(); i++) {
+                    item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+                }
+            }else {
+                QTableWidgetItem *tw_item;
+                for(int i =0; i < bsdata_vec.size(); i++) {
+                    tw_item = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                    QString txt = tw_item->data(Qt::UserRole+1).toStringList().join(",");
+                    tw_item->setText(txt);
+                }
             }
         }
     }
+    solveBR4(col);
     is_in_solve_fun = false;
 }
 
@@ -491,6 +524,25 @@ void QEmployeeShiftsTable::swapShifts()
     swapShifts(selectedItems()[0], selectedItems()[1]);
 }
 
+void QEmployeeShiftsTable::solveBR4(int col)
+{
+    ETRange range = {fmanRange.startRow, fmanRange.startRow + 3};
+
+    auto count = 0;
+    for(auto i = range.startRow; i < range.endRow; ++i) {
+        QTableWidgetItem *theItem = item(i,col);
+        if(theItem) {
+            if (theItem->data(Algorithmos::STIROLE).toInt() == 3)
+                continue;
+            if(theItem->data(Qt::UserRole + 1).toStringList().contains("BR4") && count < 2) {
+                theItem->setText("BR4");
+                ++count;
+            }
+        }
+
+    }
+}
+
 void QEmployeeShiftsTable::rearrangeEmployeesShift()
 {    
 
@@ -508,9 +560,18 @@ void QEmployeeShiftsTable::rearrangeEmployeesShift()
             QStringList solution = Algorithmos::QShiftSolver::solve_branch_shifts(sla);
             qDebug() << "Solution for column " << col << shift_name <<" shift :" << solution << endl;
             if(!solution.empty()) {
-                Q_ASSERT(solution.size()==bsdata_vec.size());
-                for(int i=0; i<solution.size(); i++) {
+                Q_ASSERT(solution.size()<=bsdata_vec.size());
+                int i;
+                for(i=0; i<solution.size(); i++) {
                     item(bsdata_vec[i]->row, bsdata_vec[i]->col)->setText(solution[i]);
+                }
+                if(solution.size() < bsdata_vec.size()) {
+                    for(i=solution.size(); i < bsdata_vec.size(); ++i) {
+                        QTableWidgetItem *tw_item  = item(bsdata_vec[i]->row, bsdata_vec[i]->col);
+                        tw_item->setData(Algorithmos::STIROLE,Algorithmos::AVAILABLE);
+                        QString txt = tr("Available \n %1").arg(tw_item->text());
+                        tw_item->setText(txt);
+                    }
                 }
             } else {
                 QTableWidgetItem *tw_item;
@@ -630,7 +691,59 @@ void QEmployeeShiftsTable::fillTableByEmployeeCategory(EmployeeMap &m_map, int j
 
 void QEmployeeShiftsTable::set_r(int val)
 {
-    r= val;
+    QEmployeeShiftsTable::r= val;
+}
+
+void QEmployeeShiftsTable::saveShifts()
+{
+    QFile file("mgrshmat.bmrx"); //Managers files (binary mode)
+    if(!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(this,tr("Error writing!"),
+                              tr("Error while trying to write %1 file").arg(file.fileName()),
+                              QMessageBox::Ok);
+    }
+    QDataStream out(&file);
+    //For Managers
+    for(auto row = 0; row < 7; ++row)
+        for(auto col = 0; col < ColumnCount; ++col) {
+            out << item(row,col)->data(Algorithmos::STIROLE).toInt();
+        }
+
+    qDebug() << tr("File %1 saved succesfull!").arg(file.fileName()) << endl;
+    file.close();
+    /* *****************
+     * Fuel Managers
+     * *****************/
+    QFile filefm("fmgrshmat.bmrx");
+    if(!filefm.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(this,tr("Error writing!"),
+                              tr("Error while trying to write %1 file").arg(filefm.fileName()),
+                              QMessageBox::Ok);
+    }
+    QDataStream outfm(&filefm);
+    for(auto row = 8; row < 15; ++row)
+        for(auto col = 0; col < ColumnCount; ++col) {
+            outfm << item(row,col)->data(Algorithmos::STIROLE).toInt();
+        }
+    qDebug() << "File " << filefm.fileName() << " saved succesfull!" << endl;
+    filefm.close();
+
+    /* *****************
+     * Fuel Employees
+     * *****************/
+    QFile filefe("feemplshmat.bmrx");
+    if(!filefe.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(this,tr("Error writing!"),
+                              tr("Error while trying to write %1 file").arg(filefe.fileName()),
+                              QMessageBox::Ok);
+    }
+    QDataStream outfe(&filefe);
+    for(auto row = 16; row < 23; ++row)
+        for(auto col = 0; col < ColumnCount; ++col) {
+            outfe << item(row,col)->data(Algorithmos::STIROLE).toInt();
+        }
+    qDebug() << "File " << filefe.fileName() << " saved succesfull!" << endl;
+    filefe.close();
 }
 
 void QEmployeeShiftsTable::loadBFuelShifts()
@@ -652,6 +765,60 @@ void QEmployeeShiftsTable::loadBFuelShifts()
         item(values[0].toInt(),values[1].toInt())->setData(Algorithmos::STIROLE,values[2].toInt());
     }
     f.close();
+}
+
+void QEmployeeShiftsTable::updateShifts(int col)
+{
+    ///TODO : Implement me!!
+}
+
+void QEmployeeShiftsTable::updateShifts()
+{
+    for(auto j = 0; j < columnCount(); ++j)
+        updateShifts(j);
+}
+
+void QEmployeeShiftsTable::editHeader(int row)
+{
+    qDebug() << verticalHeaderItem(row)->text() << " --> clicked. " << endl;
+    QHeaderView *header = verticalHeader();
+    QLineEdit *le = new QLineEdit(verticalHeader()->viewport());
+    connect(le, &QLineEdit::editingFinished, [=]() {
+        verticalHeaderItem(row)->setText(le->text());
+        le->setHidden(true);
+        le->deleteLater();
+    });
+    le->setAlignment(Qt::AlignTop);
+    le->setHidden(true);
+    scrollToItem(verticalHeaderItem(row));
+    auto edit_geometry = le->geometry();
+    edit_geometry.setWidth(verticalHeader()->sectionSize(row));
+    edit_geometry.setTop(header->sectionPosition(row));
+    edit_geometry.setHeight(header->sectionSize(row));
+    edit_geometry.setLeft(0);
+    edit_geometry.setWidth(header->width());
+    edit_geometry.adjust(1,1,-1,-1);
+    //edit_geometry.moveLeft(verticalHeader()->sectionViewportPosition(row));
+    le->setGeometry(edit_geometry);
+    le->setFrame(false);
+    le->setText(verticalHeaderItem(row)->text());
+    le->setHidden(false);
+    le->setFocus();
+    le->selectAll();
+    //le->deleteLater();
+}
+
+void QEmployeeShiftsTable::doneEditing()
+{
+
+}
+
+void QEmployeeShiftsTable::forceIntermittent()
+{
+    QList<QTableWidgetItem *> selected = selectedItems();
+    for(auto sitem : selected ) {
+        sitem->setData(Algorithmos::STIROLE, (int)Algorithmos::INTERMITTENT);
+    }
 }
 
 void QEmployeeShiftsTable::somethingChanged()

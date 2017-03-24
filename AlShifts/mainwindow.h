@@ -74,6 +74,7 @@ private slots:
     void printPreview(QPrinter *printer);
     void showPreferencesDialog();
     void updateStatusBar();
+    void changeView(bool checked);
 
 protected:
     void closeEvent(QCloseEvent *event);

@@ -10,6 +10,7 @@ QShiftsTableItem::QShiftsTableItem(int type)
     itemBgColor.insert(Algorithmos::EARLY,QBrush(QColor(Qt::red)));
     itemBgColor.insert(Algorithmos::LATE, QBrush(QColor(Qt::green)));
     itemBgColor.insert(Algorithmos::INTERMITTENT, QBrush(QColor(Qt::cyan)));
+    itemBgColor.insert(Algorithmos::AVAILABLE, QBrush(QColor(255, 153, 204)));
 }
 
 void QShiftsTableItem::setData(int role, const QVariant &value)

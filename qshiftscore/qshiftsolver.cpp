@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QDir>
+#include <QDataStream>
 
 
 #include "qshiftsolver.h"
@@ -132,7 +134,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
         : QObject(parent),
           m_smatrix(7,49),
           fm_smatrix(7,49),
-          ef_smatrix(8,49)
+          ef_smatrix(7,49)
     {
         init_matrix_with_zeros(m_smatrix);
         init_matrix_with_zeros(fm_smatrix);
@@ -146,7 +148,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
         QObject(parent),
         m_smatrix(7,49),
         fm_smatrix(7,49),
-        ef_smatrix(8,49)
+        ef_smatrix(7,49)
     {
         qDebug() << "From QShiftSolver ctor :\n"
                  << "Managers contains : " << m_manGroup.size() << " managers!\n"
@@ -177,19 +179,20 @@ StringList QShiftSolver::m_reqBranches = StringList();
 
     Shifts &QShiftSolver::initShifts(QDateTime dt)
     {
+        m_pShifts.clear();
         //Initialize shifts.
         //We'll start from Managers (more easy than the others).
         m_currentShift = new QShiftDay(dt);
         QDateTime shift_date = m_currentShift->shiftDate();
 
         ///TODO : implement matrix solution.
-        m_smatrix = create_managers_shifts_matrix();
-        fm_smatrix = create_fuel_managers_shifts_matrix();
+        m_smatrix = create_managers_shifts_matrix("mgrshmat.bmrx");
+        fm_smatrix = create_fuel_managers_shifts_matrix("fmgrshmat.bmrx");
         //fm_smatrix = m_smatrix;
         //qDebug() << m_smatrix << endl;
 
         //Create the employees matrix
-        ef_smatrix = create_employees_shifts_matrix();
+        ef_smatrix = create_employees_shifts_matrix("feemplshmat.bmrx");
         //qDebug() << ef_smatrix << endl;
 
         //Fill the Shifts vector compining names from
@@ -197,7 +200,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
         QVector<QEmployee *> early_vec,f_early_vec,e_early_vec;
         QVector<QEmployee *> late_vec,f_late_vec,e_late_vec;
         QVector<QEmployee *> dayof_vec,f_dayoff_vec,e_dayoff_vec;
-        QVector<QEmployee *> e_intermittent_vec;
+        QVector<QEmployee *> f_intermittent_vec, e_intermittent_vec;
         for(size_t j = 0; j < m_smatrix.size2(); j++) {
             for(size_t i = 0; i < m_smatrix.size1(); i++) {
                 Algorithmos::ShiftType type = (Algorithmos::ShiftType)m_smatrix(i,j);
@@ -231,6 +234,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
                     f_dayoff_vec.push_back(m_fuelManGroup[i]);
                     break;
                 case Algorithmos::INTERMITTENT:
+                    f_intermittent_vec.push_back(m_fuelManGroup[i]);
                     break;
                 }
             }
@@ -257,6 +261,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
             m_currentShift->bManagers().insert(Algorithmos::DAYOFF, dayof_vec);
             m_currentShift->bfManagers().insert(Algorithmos::EARLY,f_early_vec);
             m_currentShift->bfManagers().insert(Algorithmos::LATE, f_late_vec);
+            m_currentShift->bfManagers().insert(Algorithmos::INTERMITTENT,f_intermittent_vec);
             m_currentShift->bfManagers().insert(Algorithmos::DAYOFF, f_dayoff_vec);
             m_currentShift->fEmployees().insert(Algorithmos::EARLY,e_early_vec);
             m_currentShift->fEmployees().insert(Algorithmos::LATE, e_late_vec);
@@ -270,7 +275,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
             early_vec.clear(); f_early_vec.clear(); e_early_vec.clear();
             late_vec.clear(); f_late_vec.clear(); e_late_vec.clear();
             dayof_vec.clear(); f_dayoff_vec.clear(); e_dayoff_vec.clear();
-            e_intermittent_vec.clear();
+            e_intermittent_vec.clear();f_intermittent_vec.clear();
         }
 
         return m_pShifts;
@@ -298,59 +303,82 @@ StringList QShiftSolver::m_reqBranches = StringList();
         m_bfmMatrixFile = fileName;
     }
 
-    UBlas::matrix<int> &QShiftSolver::create_managers_shifts_matrix()
+    UBlas::matrix<int> &QShiftSolver::create_managers_shifts_matrix(const QString  &file_name)
     {
-        size_t i,j=0;
-        m_smatrix(0,1) = 1;
-        for(j = 0; j < m_smatrix.size2(); j+=8)
-            for(i=0; i<m_smatrix.size1();i++) {
-                if ( i + j < m_smatrix.size2()) {
-                    m_smatrix(i,i+j) = 3;
-                    //neighours must have specific values
-                    if (i + j> 0 && j + i + 1 < m_smatrix.size2()) {
-                        m_smatrix(i,i+j-1) = 0;
-                        m_smatrix(i, i + j + 1) = 1;
+        if(file_name.isEmpty()) {
+            size_t i,j=0;
+            m_smatrix(0,1) = 1;
+            for(j = 0; j < m_smatrix.size2(); j+=8)
+                for(i=0; i<m_smatrix.size1();i++) {
+                    if ( i + j < m_smatrix.size2()) {
+                        m_smatrix(i,i+j) = 3;
+                        //neighours must have specific values
+                        if (i + j> 0 && j + i + 1 < m_smatrix.size2()) {
+                            m_smatrix(i,i+j-1) = 0;
+                            m_smatrix(i, i + j + 1) = 1;
+                        }
                     }
                 }
+            //First column
+            m_smatrix(2,0) = 1;
+            m_smatrix(5,0) = 1;
+            m_smatrix(6,0) = 1;
+            //Last Column
+            m_smatrix(1,48) = 1;
+            m_smatrix(3,48) = 1;
+            m_smatrix(5,48) = 1;
+            //Rest of columns
+            for(uint j = 1; j < m_smatrix.size2() - 1; j++) {
+                for(uint i = 0; i < m_smatrix.size1(); i++) {
+                    if(m_smatrix(i,j) == 3 || m_smatrix(i,j-1) == 3 || m_smatrix(i,j+1) == 3)
+                        continue;
+                    m_smatrix(i,j) = (m_smatrix(i,j-1)+ 1) % 2;
+                }
             }
-        //First column
-        m_smatrix(2,0) = 1;
-        m_smatrix(5,0) = 1;
-        m_smatrix(6,0) = 1;
-        //Last Column
-        m_smatrix(1,48) = 1;
-        m_smatrix(3,48) = 1;
-        m_smatrix(5,48) = 1;
-        //Rest of columns
-        for(uint j = 1; j < m_smatrix.size2() - 1; j++) {
-            for(uint i = 0; i < m_smatrix.size1(); i++) {
-                if(m_smatrix(i,j) == 3 || m_smatrix(i,j-1) == 3 || m_smatrix(i,j+1) == 3)
-                    continue;
-                m_smatrix(i,j) = (m_smatrix(i,j-1)+ 1) % 2;
+
+            //Special treatment for "naked days" :
+            //days without dayoff shift.
+            //Starts from column 7
+            int r = 6;
+            for(uint j = 7; j < m_smatrix.size2(); j += 8) {
+                m_smatrix(r,j) = 3;
+                r--;
             }
-        }
 
-        //Special treatment for "naked days" :
-        //days without dayoff shift.
-        //Starts from column 7
-        int r = 6;
-        for(uint j = 7; j < m_smatrix.size2(); j += 8) {
-            m_smatrix(r,j) = 3;
-            r--;
-        }
+            //finishing out
+            for(size_t j = 1; j < m_smatrix.size2(); j++) {
+                if(count_col_zeros(m_smatrix,j) == 4) {
+                    int r = find003(m_smatrix,j);
+                    if (r != -1)
+                        m_smatrix(r,j) = 1;
+                }
+            }
+        } else {
+            QDir path ;
+            path = QDir(path.currentPath());
+            qDebug() << "Current path : "<< path.absolutePath() << endl;
+            path.cdUp();
+            if(path.cd("Data")) {
+                qDebug() << "Current path : " << path.absolutePath() << endl;
+                QFile file(path.absolutePath()+"/" + file_name/*mgrshmat.bmrx*/);
+                QFileInfo info(file);
+                qDebug() << "File path :" << info.absoluteFilePath() << endl;
+                if(!file.open(QIODevice::ReadOnly)){
+                    qCritical() << "Error reading managers shifts file." << endl;
+                    return m_smatrix;
+                }
 
-        //finishing out
-        for(size_t j = 1; j < m_smatrix.size2(); j++) {
-            if(count_col_zeros(m_smatrix,j) == 4) {
-                int r = find003(m_smatrix,j);
-                if (r != -1)
-                    m_smatrix(r,j) = 1;
+                QDataStream in(&file);
+                for(auto i = 0; i< m_smatrix.size1(); ++i)
+                    for(auto j = 0; j < m_smatrix.size2() && !in.atEnd(); ++j) {
+                        in >> m_smatrix(i,j);
+                    }
             }
         }
         return m_smatrix;
     }
 
-    UBlas::matrix<int> &QShiftSolver::create_fuel_managers_shifts_matrix()
+    UBlas::matrix<int> &QShiftSolver::create_fuel_managers_shifts_matrix(const QString &file_name)
     {
         /*size_t i,j=0;
         fm_smatrix(0,1) = 1;
@@ -404,7 +432,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
 
         }*/
 
-        fm_smatrix = m_smatrix;
+        /* fm_smatrix = m_smatrix;
         //Check for Employees in rows 2 and 4. They must not have the same shift in the same day
         for(size_t j = 1; j < ef_smatrix.size2()- 1; j++) {
             if (fm_smatrix(2,j) == fm_smatrix(4,j)) {
@@ -424,6 +452,33 @@ StringList QShiftSolver::m_reqBranches = StringList();
         fm_smatrix(2,48) = fm_smatrix(3,48) = 0;
         fm_smatrix(4,48) = fm_smatrix(5,48) = 1;
         fm_smatrix(6,48) = 0;
+        */
+
+        if(file_name.isEmpty()) {
+            fm_smatrix = m_smatrix;
+        } else {
+            QDir path ;
+            path = QDir(path.currentPath());
+            qDebug() << "Current path : "<< path.absolutePath() << endl;
+            path.cdUp();
+            if(path.cd("Data")) {
+                qDebug() << "Current path : " << path.absolutePath() << endl;
+                QFile file(path.absolutePath()+"/" + file_name/*fmgrshmat.bmrx*/);
+                QFileInfo info(file);
+                qDebug() << "File path :" << info.absoluteFilePath() << endl;
+                if(!file.open(QIODevice::ReadOnly)){
+                    qCritical() << "Error reading fuel managers shifts file." << endl;
+                    return m_smatrix;
+                }
+
+                QDataStream in(&file);
+                for(auto i = 0; i< fm_smatrix.size1(); ++i)
+                    for(auto j = 0; j < fm_smatrix.size2() && !in.atEnd(); ++j) {
+                        in >> fm_smatrix(i,j);
+                    }
+            }
+        }
+
         return fm_smatrix;
     }
 
@@ -437,10 +492,8 @@ StringList QShiftSolver::m_reqBranches = StringList();
         return fm_smatrix;
     }
 
-    UBlas::matrix<int> &QShiftSolver::create_employees_shifts_matrix()
+    UBlas::matrix<int> &QShiftSolver::create_employees_shifts_matrix(const QString &file_name)
     {
-        ///TODO : Implement me!!!
-        ///
        /* size_t i,j=0;
         ef_smatrix(0,1) = 1;
         for(j = 0; j < ef_smatrix.size2(); j+=8)
@@ -484,19 +537,26 @@ StringList QShiftSolver::m_reqBranches = StringList();
         /* *************************************** *
          * Read the ef_smatrix contents from file
          * *************************************** */
-        QFile f(m_matrixFile);
-        if(!f.open(QIODevice::ReadOnly))
-            qDebug() << " Error while trying to read " << f.fileName() << " file. " << endl;
-
-        QTextStream ts(&f);
-        ///TODO Finish me!!
-        for(size_t i = 0; i < ef_smatrix.size1(); i++) {
-            for(size_t j = 0; j < ef_smatrix.size2()&& !ts.atEnd(); j++) {
-                ef_smatrix(i,j) = ts.readLine().toInt();
+        QDir path ;
+        path = QDir(path.currentPath());
+        qDebug() << "Current path : "<< path.absolutePath() << endl;
+        path.cdUp();
+        if(path.cd("Data")) {
+            qDebug() << "Current path : " << path.absolutePath() << endl;
+            QFile file(path.absolutePath()+"/" + file_name/*feemplshmat.bmrx*/);
+            QFileInfo info(file);
+            qDebug() << "File path :" << info.absoluteFilePath() << endl;
+            if(!file.open(QIODevice::ReadOnly)){
+                qCritical() << "Error reading fuel employees shifts file." << endl;
+                return ef_smatrix;
             }
+
+            QDataStream in(&file);
+            for(auto i = 0; i< ef_smatrix.size1(); ++i)
+                for(auto j = 0; j < ef_smatrix.size2() && !in.atEnd(); ++j) {
+                    in >> ef_smatrix(i,j);
+                }
         }
-        qDebug() << "ef_smatrix loaded succesful" << endl;
-        f.close();
         return ef_smatrix;
     }
 

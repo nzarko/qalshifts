@@ -62,6 +62,7 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <addaction name="actionWeekly"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -256,6 +257,25 @@
    </property>
    <property name="text">
     <string>Prepare</string>
+   </property>
+  </action>
+  <action name="actionForce_Intermittent">
+   <property name="text">
+    <string>Force Intermittent</string>
+   </property>
+   <property name="toolTip">
+    <string>Make the shift of the cells of type intermittent</string>
+   </property>
+  </action>
+  <action name="actionWeekly">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Weekly</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

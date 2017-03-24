@@ -70,6 +70,7 @@ void MainWindow::setupActions()
 
     m_centralView->employeeShiftsTable()->addAction(ui->actionSwap_Shifts);
     m_centralView->employeeShiftsTable()->addAction(ui->actionRearrange_Employees_Shift);
+    m_centralView->employeeShiftsTable()->addAction(ui->actionForce_Intermittent);
     m_centralView->employeeShiftsTable()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(ui->actionSwap_Shifts, SIGNAL(triggered()),
             m_centralView->employeeShiftsTable(), SLOT(swapShifts()));
@@ -77,6 +78,8 @@ void MainWindow::setupActions()
             m_centralView->employeeShiftsTable(), &QEmployeeShiftsTable::rearrangeEmployeesShift);
     connect(ui->actionPrepare, &QAction::triggered,
              m_centralView->employeeShiftsTable(), &QEmployeeShiftsTable::loadBFuelShifts);
+    connect(ui->actionForce_Intermittent, &QAction::triggered, m_centralView->employeeShiftsTable(),
+            &QEmployeeShiftsTable::forceIntermittent);
 
     /* ************************************ *
           Recent File Menu
@@ -92,6 +95,11 @@ void MainWindow::setupActions()
         recentFilesMenu->addAction(recentFileActions[i]);
     }
     updateRecentFileActions();
+
+    /* *********************************** *
+     *      View Menu                      *
+     * *********************************** */
+    connect(ui->actionWeekly, &QAction::toggled,this,&MainWindow::changeView);
 
 }
 
@@ -342,6 +350,11 @@ void MainWindow::showPreferencesDialog()
 void MainWindow::updateStatusBar()
 {
     locationLabel->setText(m_centralView->employeeShiftsTable()->currentLocation());
+}
+
+void MainWindow::changeView(bool checked)
+{
+    m_centralView->cvStackedWnd()->setCurrentIndex((int)checked);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

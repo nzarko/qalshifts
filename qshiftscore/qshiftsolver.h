@@ -74,7 +74,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * Create the shifts matrix for managers.
          * @return a 7x49 matrix with initial shifts. (Not the optimal)
          */
-        UBlas::matrix<int> &create_managers_shifts_matrix();
+        UBlas::matrix<int> &create_managers_shifts_matrix(const QString &file_name="");
         /**
          * @brief create_fuel_managers_shifts_matrix
          * Create the shifts matrix for fuel managers.
@@ -83,7 +83,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * of this array are valid fuel managers shifts. The last two rows
          * will be used with fuel employee array to cover the gaps.
          */
-        UBlas::matrix<int> &create_fuel_managers_shifts_matrix();
+        UBlas::matrix<int> &create_fuel_managers_shifts_matrix(const QString &file_name="");
         /**
          * @brief managersShiftsMatrix
          * @return the managers shifts matrix.
@@ -101,7 +101,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * Create the shifts matrix for employees
          * @return a 8x49 matrix with initial shifts. (Not the optimal)
          */
-        UBlas::matrix<int> &create_employees_shifts_matrix();
+        UBlas::matrix<int> &create_employees_shifts_matrix(const QString &file_name="");
 
         /**
          * @brief employeeShiftsMatrix
@@ -114,7 +114,7 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * @param lsa an array of StringList (branches)
          * @return The optimal StringList (if any) or an empty list if there is no solution.
          */
-        static QStringList solve_branch_shifts(StringListArray lsa);
+        static QStringList solve_branch_shifts(StringListArray lsa);        
 
         /**
          * @brief set_required_branches set's the required branches to be present
@@ -148,6 +148,8 @@ typedef QMap<Algorithmos::ShiftType, QVector<QEmployee*> > EmployeeMap;
          * @return tha maximum number of constraints have not been met.
          */
         int solve_managers();
+
+
         /**
          * @brief count_col_zeros
          * @param mat Shifts matrix

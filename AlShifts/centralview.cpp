@@ -4,6 +4,7 @@
 #include "centralview.h"
 #include "qemployeeshiftstable.h"
 #include "legendform.h"
+#include "qemployeeshiftsweeklyreport.h"
 
 CentralView::CentralView(QWidget *parent) : QWidget(parent)
 {
@@ -20,6 +21,10 @@ CentralView::CentralView(QWidget *parent) : QWidget(parent)
 
     vBox->addWidget(m_stackWnd);
     setLayout(vBox);
+
+    m_reportWnd = new QEmployeeShiftsWeeklyReport();
+    m_stackWnd->addWidget(m_reportWnd);
+    m_stackWnd->setCurrentIndex(0);
 }
 
 void CentralView::populate()

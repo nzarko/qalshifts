@@ -97,6 +97,9 @@ namespace Algorithmos {
         case INTERMITTENT:
             name = QObject::tr("Intermittent");
             break;
+        case AVAILABLE:
+            name = QObject::tr("Available");
+            break;
         default:
             name = "Unknown";
         }

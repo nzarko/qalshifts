@@ -9,7 +9,7 @@ typedef std::vector<std::vector<std::string> > StringListArray;
 
     enum QSHIFTSCORE_EXPORT EmployeeType { BMANAGER, BFUELMANAGER, FUELMANAGER ,INVALID};
     //Do not change the order bellow.
-    enum QSHIFTSCORE_EXPORT ShiftType { EARLY, LATE, INTERMITTENT,DAYOFF };
+    enum QSHIFTSCORE_EXPORT ShiftType { EARLY, LATE, INTERMITTENT,DAYOFF,AVAILABLE };
 
 
     QString EmployeeTypeName(EmployeeType type);

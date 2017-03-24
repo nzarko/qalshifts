@@ -11,18 +11,12 @@
             "name": "Γαντζούλα Μαρία",
             "position": "YK",
             "branches": [ "BR2" ]
-        },
-        {
-            "id": "3",
-            "name": "Γκύλιας Κίμων",
-            "position": "YB",
-            "branches": [ "BR1", "BR3" ]
-        },
+        },       
         {
             "id": "4",
             "name": "Διαμαντής Βασίλειος",
             "position": "YB",
-            "branches": [ "BR1", "BR4" ]
+            "branches": [ "BR4" ]
         },
         {
             "id": "5",
@@ -35,25 +29,13 @@
             "name": "Καρανάσιος Γεώργιος",
             "position": "B",
             "branches": [ "BR2" ]
-        },
-        {
-            "id": "7",
-            "name": "Κελεπούρη Αθανασία",
-            "position": "YB",
-            "branches": [ "BR4" ]
-        },
+        },        
         {
             "id": "8",
             "name": "Μαγούλα Δέσποινα",
             "position": "YK",
             "branches": [ "BR3", "BR5" ]
-        },
-        {
-            "id": "9",
-            "name": "Μησιάκας Αθανάσιος",
-            "position": "YB",
-            "branches": [ "BR1", "BR5" ]
-        },
+        },        
         {
             "id": "19",
             "name": "Φόλια Χρυσοβαλάντου",
@@ -127,11 +109,22 @@
             "branches": [ "BR3" ]
         },
         {
-            "id":"22",
-            "name": "Νέος Υπάλληλος 1",
-            "position": "B",
-            "branches": ["BR2", "BR3","BR5"]
+            "id": "3",
+            "name": "Γκύλιας Κίμων",
+            "position": "YB",
+            "branches": [ "BR2" ]
+        },
+        {
+            "id": "9",
+            "name": "Μησιάκας Αθανάσιος",
+            "position": "YB",
+            "branches": [ "BR5" ]
+        },
+        {
+            "id": "7",
+            "name": "Κελεπούρη Αθανασία",
+            "position": "YB",
+            "branches": [ "BR5" ]
         }
-
     ]
 }

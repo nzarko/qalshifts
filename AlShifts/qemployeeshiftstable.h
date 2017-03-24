@@ -4,6 +4,8 @@
 #include <QTableWidget>
 #include "qshiftscore.h"
 #include "qshiftstableitem.h"
+#include "headerdelegate.h"
+#include "headerview.h"
 
 QT_BEGIN_NAMESPACE
 class QPrinter;
@@ -113,16 +115,25 @@ public slots:
      */
     void updateActions();
     void swapShifts();
+    void solveBR4(int col);
     void rearrangeEmployeesShift();
     void loadBFuelShifts();
+    void updateShifts(int col);
+    void updateShifts();
+    void editHeader(int row);
+    void doneEditing();
+    void forceIntermittent();
 
 signals:
     void modified();
+    void shiftChanged(int col);
 
 private slots:
     void somethingChanged();
 private:
     enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49, EmployeeType=Qt::UserRole+3 };
+    HeaderDelegate *headerDelegate;
+    HeaderView *verticalHeaderView;
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.
     void populateVHeader(EmployeeMap &e_map);
@@ -149,6 +160,18 @@ private:
     QMap<Algorithmos::EmployeeType, ETRange> emtypeRange;
     ETRange manRange, fmanRange,feRange;
     bool is_in_solve_fun;
+
+    /**
+     * @brief saveShifts
+     * Internal use only. In production version will be removed
+     * Save's shifts in file. We will use this function three times:
+     * 1) for Managers
+     * 2) for fuel managers
+     * 3) for employees
+     * after we have solved the shifts tables.
+     * After that we can use the files for initializing the shifts table.
+     */
+    void saveShifts();
 
 signals:
     void populationChanged(bool);

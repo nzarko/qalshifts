@@ -32,7 +32,10 @@ SOURCES += main.cpp\
     qshiftstableitem.cpp \
     legendform.cpp \
     qshifttableitemdelegate.cpp \
-    qdateselector.cpp
+    qdateselector.cpp \
+    headerview.cpp \
+    headerdelegate.cpp \
+    qemployeeshiftsweeklyreport.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -40,10 +43,14 @@ HEADERS  += mainwindow.h \
     qshiftstableitem.h \
     legendform.h \
     qshifttableitemdelegate.h \
-    qdateselector.h
+    qdateselector.h \
+    headerview.h \
+    headerdelegate.h \
+    qemployeeshiftsweeklyreport.h
 
 FORMS    += mainwindow.ui \
-    legendform.ui
+    legendform.ui \
+    qemployeeshiftsweeklyreport.ui
 
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1
