@@ -20,9 +20,9 @@
         },
         {
             "id": "5",
-            "name": "Καλτσούδα Σωτηρία",
+            "name": "Καραλή Κωνσταντίνα",
             "position": "YK",
-            "branches": [ "BR3", "BR5" ]
+            "branches": [ "BR2","BR3", "BR5" ]
         },
         {
             "id": "6",
@@ -52,7 +52,7 @@
             "id": "11",
             "name": "Νικολάου Ιωάννα",
             "position": "YB-YK",
-            "branches": [ "BR2", "BR3","BR4" ]
+            "branches": [ "BR2", "BR3","BR4","BR5" ]
         },
         {
             "id": "12",
@@ -112,7 +112,7 @@
             "id": "3",
             "name": "Γκύλιας Κίμων",
             "position": "YB",
-            "branches": [ "BR2" ]
+            "branches": [ "BR2","BR3","BR4" ]
         },
         {
             "id": "9",
@@ -124,7 +124,7 @@
             "id": "7",
             "name": "Κελεπούρη Αθανασία",
             "position": "YB",
-            "branches": [ "BR5" ]
+            "branches": [ "BR3","BR4","BR5" ]
         }
     ]
 }
