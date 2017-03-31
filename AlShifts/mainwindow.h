@@ -24,10 +24,12 @@ class QDateSelector;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
+    static MainWindow* instance();
+private:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static MainWindow* m_pInstance;
 
 private:
     Ui::MainWindow *ui;

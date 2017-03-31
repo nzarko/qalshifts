@@ -37,7 +37,14 @@ SOURCES += main.cpp\
     headerdelegate.cpp \
     qemployeeshiftsweeklyreport.cpp \
     weekreportinfo.cpp \
-    printview.cpp
+    printview.cpp \
+    fancylineedit.cpp \
+    historycompleter.cpp \
+    manhattanstyle.cpp \
+    qtcassert.cpp \
+    styleanimator.cpp \
+    stylehelper.cpp \
+    configuration.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -50,7 +57,14 @@ HEADERS  += mainwindow.h \
     headerdelegate.h \
     qemployeeshiftsweeklyreport.h \
     weekreportinfo.h \
-    printview.h
+    printview.h \
+    fancylineedit.h \
+    historycompleter.h \
+    manhattanstyle.h \
+    qtcassert.h \
+    styleanimator.h \
+    stylehelper.h \
+    configuration.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \

@@ -30,6 +30,17 @@
 #include "qdateselector.h"
 #include "printview.h"
 
+
+MainWindow* MainWindow::m_pInstance = nullptr;
+
+MainWindow* MainWindow::instance()
+{
+    if ( !m_pInstance )
+        m_pInstance = new MainWindow;
+
+    return m_pInstance;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
