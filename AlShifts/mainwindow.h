@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDateTime>
+#include <QMap>
 
 namespace Ui {
 class MainWindow;
@@ -13,6 +14,7 @@ class QMenu;
 class QAction;
 class QPrinter;
 class QLabel;
+class QComboBox;
 class QCloseEvent;
 QT_END_NAMESPACE
 
@@ -35,14 +37,20 @@ private:
     QString curFile;
     QStringList recentFiles;
     QAction *separatorAction;
+    QToolBar *weekViewToolBar;
+    QComboBox *weekCB;
+    QComboBox *branchCB;
+    QMap<QString, QString> branches;
 
     void setupActions();
     void createStatusBar();
+    void createToolBar();
     void readSettings();
     void writeSettings();
     bool maybeSave();
     bool loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
+    void updateWeekCBItems();
 
     QString strippedName(const QString &fullFileName);
     void updateRecentFileActions();
@@ -75,6 +83,8 @@ private slots:
     void showPreferencesDialog();
     void updateStatusBar();
     void changeView(bool checked);
+    void weekViewChanged(int week);
+    void branchChanged(int branch);
 
 protected:
     void closeEvent(QCloseEvent *event);

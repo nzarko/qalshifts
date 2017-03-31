@@ -95,6 +95,8 @@
    <addaction name="actionSolve"/>
    <addaction name="actionRearrange_Employees_Shift"/>
    <addaction name="actionPrepare"/>
+   <addaction name="separator"/>
+   <addaction name="actionWeekly"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
@@ -270,6 +272,10 @@
   <action name="actionWeekly">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/weekview</normaloff>:/icons/weekview</iconset>
    </property>
    <property name="text">
     <string>Weekly</string>

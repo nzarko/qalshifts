@@ -1,3 +1,4 @@
+#include <QAction>
 #include <QDebug>
 #include <QStringList>
 #include <QPrintDialog>
@@ -15,6 +16,7 @@
 #include <QApplication>
 
 #include <algorithm>
+#include <cstdlib>
 
 #include "qemployeeshiftstable.h"
 
@@ -44,6 +46,10 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     setVerticalHeader(verticalHeaderView);
     verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
     verticalHeader()->setSectionsClickable(true);
+    removeRowAction = new QAction(tr("Remove Row"));
+    verticalHeader()->addAction(removeRowAction);
+    verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
+    connect(removeRowAction, &QAction::triggered,this, &QEmployeeShiftsTable::removeCurrentRow);
     //connect(verticalHeader(),&QHeaderView::sectionDoubleClicked,this, &QEmployeeShiftsTable::editHeader);
 
     QShiftTableItemDelegate *i_del = new QShiftTableItemDelegate();
@@ -185,6 +191,12 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
     file.close();
     QApplication::restoreOverrideCursor();
     emit populationChanged(true);
+    //Try to extract m_startDate from first headerItem
+    m_startDate = QDateTime::fromString(horizontalHeaderItem(0)->text(),"ddd dd \nMMM yyyy");
+    if(m_startDate.isValid())
+        qDebug() << "QEmployeeShiftsTable::readFile-->m_startDate-->" << m_startDate.toString("dd/MM/yyyy") << endl;
+    else
+        qDebug() << "QEmployeeShiftsTable::readFile : Error parsing Date from first header item" << endl;
     return true;
 }
 
@@ -233,6 +245,11 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
     //Temporary
     saveShifts();
     return true;
+}
+
+QDate QEmployeeShiftsTable::startDate()
+{
+    return m_startDate.date();
 }
 
 StringListArray QEmployeeShiftsTable::createSolverData(ETRange range,int col,int shift_type)
@@ -310,7 +327,7 @@ StringListArray QEmployeeShiftsTable::createEmployeesSolverData(int col, int shi
         }
     }
 
-    if(!res.empty()) {
+    if(!res.empty() && res.size() >= 3) {
         //Reverse both res and bsdata_vec.
         QVector<BranchSolverData*>result;
         result.reserve( bsdata_vec.size() ); // reserve is new in Qt 4.7
@@ -329,6 +346,15 @@ StringListArray QEmployeeShiftsTable::createEmployeesSolverData(int col, int shi
 void QEmployeeShiftsTable::setStartDate(QDateTime dt)
 {
     m_startDate = dt;
+}
+
+int QEmployeeShiftsTable::columnForDate(const QDate &date)
+{
+    qint64 duration = -date.daysTo(m_startDate.date());
+    Q_ASSERT_X(duration >= 0, "Division", "Duration must be positive number!!");
+    lldiv_t result = std::div(duration,(qint64)7);
+    qDebug() << "Column for Date : " << date.toString("dd/MM/yyyy") << " ==> " << result.quot*7 << endl;
+    return result.quot * 7;
 }
 
 QString QEmployeeShiftsTable::currentLocation()
@@ -721,7 +747,7 @@ void QEmployeeShiftsTable::saveShifts()
                               QMessageBox::Ok);
     }
     QDataStream outfm(&filefm);
-    for(auto row = 8; row < 15; ++row)
+    for(auto row = 8; row < 14; ++row)
         for(auto col = 0; col < ColumnCount; ++col) {
             outfm << item(row,col)->data(Algorithmos::STIROLE).toInt();
         }
@@ -738,7 +764,7 @@ void QEmployeeShiftsTable::saveShifts()
                               QMessageBox::Ok);
     }
     QDataStream outfe(&filefe);
-    for(auto row = 16; row < 23; ++row)
+    for(auto row = 15; row < 22; ++row)
         for(auto col = 0; col < ColumnCount; ++col) {
             outfe << item(row,col)->data(Algorithmos::STIROLE).toInt();
         }
@@ -824,6 +850,13 @@ void QEmployeeShiftsTable::forceIntermittent()
 void QEmployeeShiftsTable::somethingChanged()
 {
     emit modified();
+}
+
+void QEmployeeShiftsTable::removeCurrentRow()
+{
+//    QModelIndex index = this->indexAt(pos);
+//    qDebug() << "Index at right click : " << index.row() << endl;
+    this->removeRow(this->currentRow());
 }
 
 QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator +(const int k)

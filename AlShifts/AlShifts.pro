@@ -35,7 +35,9 @@ SOURCES += main.cpp\
     qdateselector.cpp \
     headerview.cpp \
     headerdelegate.cpp \
-    qemployeeshiftsweeklyreport.cpp
+    qemployeeshiftsweeklyreport.cpp \
+    weekreportinfo.cpp \
+    printview.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -46,7 +48,9 @@ HEADERS  += mainwindow.h \
     qdateselector.h \
     headerview.h \
     headerdelegate.h \
-    qemployeeshiftsweeklyreport.h
+    qemployeeshiftsweeklyreport.h \
+    weekreportinfo.h \
+    printview.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \

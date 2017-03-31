@@ -20,6 +20,7 @@
         <file alias="doc_open">icons/document-open.png</file>
         <file alias="swap_shifts">icons/swap_shifts.png</file>
         <file alias="rearrange">icons/recur.png</file>
+        <file alias="weekview">icons/view-calendar-week.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

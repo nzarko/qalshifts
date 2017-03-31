@@ -12,29 +12,52 @@
 #include <QFileInfo>
 #include <QLabel>
 #include <QFileDialog>
+#include <QToolBar>
+#include <QComboBox>
+
 #include <QPrintDialog>
+#include <QPrinter>
 #include <QPrintPreviewDialog>
+#include <QProgressDialog>
+#include <QPainter>
+
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "centralview.h"
 #include "qemployeeshiftstable.h"
+#include "qemployeeshiftsweeklyreport.h"
 #include "qdateselector.h"
+#include "printview.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    m_startDate(QDate::currentDate()),
+    weekViewToolBar(0),
+    weekCB(0),
+    branchCB(0),
     dateSelectorDlg(0)
 {
     ui->setupUi(this);
     move(500,100);
     m_centralView = new CentralView();
-    setCentralWidget(m_centralView);
+    setCentralWidget(m_centralView);    
+    //Fill up branch Combo box
+
+    branches.clear();
+    branches.insert("ALL",tr("All"));
+    branches.insert("BR2", tr("Kalampakas 104"));
+    branches.insert("BR3",tr("Pylis 39"));
+    branches.insert("BR4",tr("Pylis 98"));
+    branches.insert("BR5",tr("Karditsis 54"));
+
     setupActions();
-    createStatusBar();
+    createStatusBar();    
 
     //setWindowState(Qt::WindowMaximized);
     readSettings();
+    createToolBar();
     setCurrentFile("");
 }
 
@@ -63,7 +86,7 @@ void MainWindow::setupActions()
     connect(m_centralView->employeeShiftsTable(),SIGNAL(populationChanged(bool)),ui->actionSolve,
             SLOT(setEnabled(bool)));
     connect(ui->actionClear_Shifts,SIGNAL(triggered()),m_centralView->employeeShiftsTable(), SLOT(clearShifts()));
-    connect(ui->actionprint,SIGNAL(triggered()), m_centralView->employeeShiftsTable(),SLOT(print()));
+    connect(ui->actionprint,&QAction::triggered, this, &MainWindow::fileprint);
     connect(ui->actionPrint_Preview,SIGNAL(triggered()), m_centralView->employeeShiftsTable(), SLOT(printPreview()));
     connect(ui->actionHtml,SIGNAL(triggered()),m_centralView->employeeShiftsTable(), SLOT(exportToHtml()));
     connect(ui->actionSolve, SIGNAL(triggered()), m_centralView->employeeShiftsTable(), SLOT(solve()));
@@ -115,6 +138,53 @@ void MainWindow::createStatusBar()
     connect(esht, &QEmployeeShiftsTable::modified,
             this, &MainWindow::documentWasModified);
     updateStatusBar();
+}
+
+void MainWindow::createToolBar()
+{
+
+    if(!weekViewToolBar) {
+        weekViewToolBar = addToolBar(tr("Week report"));
+        weekViewToolBar->setObjectName("weekViewToolBar");
+    }
+
+    if(!weekCB)
+        weekCB = new QComboBox(weekViewToolBar);
+    weekCB->clear();
+    QString lst;
+    QDate cdate = m_startDate;
+    QDate ddate = m_startDate.addDays(6);
+    QString format = "dd/MM/yyyy";
+    for(auto i = 1; i <= 7; ++i) {
+        lst = tr("Week %1 ( %2 - %3 )").arg(i)
+               .arg(cdate.toString(format))
+               .arg(ddate.toString(format));
+        weekCB->addItem(lst,cdate);
+        cdate = ddate.addDays(1);
+        ddate = cdate.addDays(6);
+    }
+    weekCB->setCurrentIndex(0);
+
+    if(!branchCB)
+        branchCB = new QComboBox(weekViewToolBar);
+
+    branchCB->clear();
+    QMapIterator<QString, QString> iter(branches);
+    while(iter.hasNext()) {
+        iter.next();
+        branchCB->addItem(iter.value(),iter.key());
+    }
+    branchCB->setCurrentIndex(0);
+
+    weekViewToolBar->addWidget(weekCB);
+    weekViewToolBar->addSeparator();
+    weekViewToolBar->addWidget(branchCB);
+    weekViewToolBar->setVisible(false);
+    connect(weekCB, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+          this,&MainWindow::weekViewChanged);
+    connect(branchCB, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+          this, &MainWindow::branchChanged);
+
 }
 
 void MainWindow::readSettings()
@@ -170,6 +240,10 @@ bool MainWindow::loadFile(const QString &fileName)
     setCurrentFile(fileName);
     updateRecentFiles(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
+    //Everything it's ok. So we can change startDate and update
+    // the weekViewToolBar.
+    m_startDate = spreadsheet->startDate();
+    updateWeekCBItems();
     return true;
 }
 
@@ -184,6 +258,24 @@ bool MainWindow::saveFile(const QString &fileName)
     setCurrentFile(fileName);
     statusBar()->showMessage(tr("File saved"), 2000);
     return true;
+}
+
+void MainWindow::updateWeekCBItems()
+{
+    weekCB->clear();
+    QString lst;
+    QDate cdate = m_startDate;
+    QDate ddate = m_startDate.addDays(6);
+    QString format = "dd/MM/yyyy";
+    for(auto i = 1; i <= 7; ++i) {
+        lst = tr("Week %1 ( %2 - %3 )").arg(i)
+               .arg(cdate.toString(format))
+               .arg(ddate.toString(format));
+        weekCB->addItem(lst,cdate);
+        cdate = ddate.addDays(1);
+        ddate = cdate.addDays(6);
+    }
+    weekCB->setCurrentIndex(0);
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)
@@ -248,7 +340,8 @@ void MainWindow::newFile()
     if (maybeSave()) {
         spreadsheet->clear();
         selectStartDate();
-        setCurrentFile("");
+        updateWeekCBItems();
+        setCurrentFile("");        
     }
     //updateRecentFiles();
 }
@@ -329,6 +422,87 @@ void MainWindow::setCurrentFile(const QString &fileName)
 
 void MainWindow::fileprint()
 {
+    const int ItemSize = 256;
+#if !defined(QT_NO_PRINTER) && !defined(QT_NO_PRINTDIALOG)
+      QPrinter printer(QPrinter::ScreenResolution);
+      QPrintDialog dlg(&printer);
+      PrintView view;
+      QAbstractItemModel *model;
+      switch(m_centralView->cvStackedWnd()->currentIndex()) {
+      case 0: //QEmployeeShiftsTable
+          model = m_centralView->employeeShiftsTable()->model();
+          break;
+      case 1:
+          model = m_centralView->employeeReportTable()->tableModel();
+          break;
+      }
+
+      view.setModel(model);
+      view.resizeColumnsToContents();
+      view.resizeRowsToContents();
+
+      //connect(&dlg, &QPrintPreviewDialog::paintRequested, &view, &PrintView::print);
+      if (dlg.exec() != QDialog::Accepted) {
+          return;
+      }
+
+//      QPainter painter;
+//      painter.begin(&printer);
+
+      int rows = model->rowCount(QModelIndex());
+      int columns = model->columnCount(QModelIndex());
+      int sourceWidth = (columns + 1) * ItemSize;
+      int sourceHeight = (rows + 1) * ItemSize;
+
+     // painter.save();
+
+      double xscale = printer.pageRect().width() / double(sourceWidth);
+      double yscale = printer.pageRect().height() / double(sourceHeight);
+      double scale = qMin(xscale, yscale);
+
+//      painter.translate(printer.paperRect().x() + printer.pageRect().width() / 2,
+//                        printer.paperRect().y() + printer.pageRect().height() / 2);
+//      painter.scale(scale,scale);
+//      painter.translate(-sourceWidth / 2, -sourceHeight / 2);
+
+      QStyleOptionViewItem option;
+      QModelIndex parent = QModelIndex();
+
+      QProgressDialog progress(tr("Printing..."), tr("Cancel"), 0, rows, this);
+      progress.setWindowModality(Qt::ApplicationModal);
+      float y = ItemSize / 2;
+
+      for (int row = 0; row < rows; ++row) {
+          progress.setValue(row);
+          qApp->processEvents();
+          if (progress.wasCanceled())
+              break;
+
+          float x = ItemSize / 2;
+
+//          for (int column = 0; column < columns; ++column) {
+//              option.rect = QRect(int(x), int(y), ItemSize, ItemSize);
+//              view.itemDelegate()->paint(&painter, option,
+//                                          model->index(row, column, parent));
+//              x = x + ItemSize;
+//          }
+//          y = y + ItemSize;
+      }
+      progress.setValue(rows);
+
+//      painter.restore();
+//      painter.end();
+
+      if (progress.wasCanceled()) {
+          QMessageBox::information(this, tr("Printing canceled"),
+                                   tr("The printing process was canceled."), QMessageBox::Cancel);
+      }
+      view.print(&printer);
+  #else
+      QMessageBox::information(this, tr("Printing canceled"),
+                               tr("Printing is not supported on this Qt build"), QMessageBox::Cancel);
+  #endif
+    //m_centralView->employeeReportTable()->print();
 
 }
 
@@ -355,6 +529,31 @@ void MainWindow::updateStatusBar()
 void MainWindow::changeView(bool checked)
 {
     m_centralView->cvStackedWnd()->setCurrentIndex((int)checked);
+    weekViewToolBar->setVisible(checked);
+    m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+}
+
+void MainWindow::weekViewChanged(int week)
+{
+    /**
+      Write your code here!!
+      Implement weekCB index changed
+      */
+    qDebug() << "Week view changed! Index : " << week << endl;
+    m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+}
+
+void MainWindow::branchChanged(int branch)
+{
+    /**
+      Write your code here!!
+      Activated when the user change the branch.
+      */
+    qDebug() << "Branch view changed! Index : " << branch << endl;
+    if( m_centralView->cvStackedWnd()->currentIndex() == 1) {
+        QString branchID = branchCB->currentData().toString();
+        m_centralView->employeeReportTable()->branchChanged(branchID);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

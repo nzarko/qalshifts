@@ -8,6 +8,7 @@
 #include "headerview.h"
 
 QT_BEGIN_NAMESPACE
+class QAction;
 class QPrinter;
 class QPrintDialog;
 class QPrintPreviewDialog;
@@ -37,6 +38,7 @@ public:
     void clear();
     bool readFile(const QString &fileName);
     bool writeFile(const QString &fileName);
+    QDate startDate();
 
     /**
      * @brief The BranchSolverData struct
@@ -90,6 +92,13 @@ public:
      */
     void setStartDate(QDateTime dt);
 
+    /**
+     * @brief columnForDate calculate witch column have the date date
+     * @param date
+     * @return The column with the date
+     */
+    int columnForDate(const QDate &date);
+
     QString currentLocation();
 
 public slots:
@@ -130,7 +139,9 @@ signals:
 
 private slots:
     void somethingChanged();
+    void removeCurrentRow();
 private:
+    QAction *removeRowAction;
     enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49, EmployeeType=Qt::UserRole+3 };
     HeaderDelegate *headerDelegate;
     HeaderView *verticalHeaderView;

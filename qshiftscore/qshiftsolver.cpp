@@ -133,7 +133,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
     QShiftSolver::QShiftSolver(QObject *parent)
         : QObject(parent),
           m_smatrix(7,49),
-          fm_smatrix(7,49),
+          fm_smatrix(6,49),
           ef_smatrix(7,49)
     {
         init_matrix_with_zeros(m_smatrix);
@@ -147,7 +147,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
         m_fuelEmployeeGroup(fe),
         QObject(parent),
         m_smatrix(7,49),
-        fm_smatrix(7,49),
+        fm_smatrix(6,49),
         ef_smatrix(7,49)
     {
         qDebug() << "From QShiftSolver ctor :\n"
@@ -201,6 +201,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
         QVector<QEmployee *> late_vec,f_late_vec,e_late_vec;
         QVector<QEmployee *> dayof_vec,f_dayoff_vec,e_dayoff_vec;
         QVector<QEmployee *> f_intermittent_vec, e_intermittent_vec;
+        QVector<QEmployee *> f_available_vec, e_available_vec;
         for(size_t j = 0; j < m_smatrix.size2(); j++) {
             for(size_t i = 0; i < m_smatrix.size1(); i++) {
                 Algorithmos::ShiftType type = (Algorithmos::ShiftType)m_smatrix(i,j);
@@ -215,7 +216,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
                     dayof_vec.push_back(m_manGroup[i]);
                     break;
                 case Algorithmos::INTERMITTENT:
-                    break;
+                    break;                
                 }
             }
 
@@ -236,6 +237,9 @@ StringList QShiftSolver::m_reqBranches = StringList();
                 case Algorithmos::INTERMITTENT:
                     f_intermittent_vec.push_back(m_fuelManGroup[i]);
                     break;
+                case Algorithmos::AVAILABLE :
+                    f_available_vec.push_back(m_fuelManGroup[i]);
+                    break;
                 }
             }
             //For employees shift matrix need to take care in seperate loop.
@@ -254,6 +258,9 @@ StringList QShiftSolver::m_reqBranches = StringList();
                 case Algorithmos::INTERMITTENT:
                     e_intermittent_vec.push_back(m_fuelEmployeeGroup[i]);
                     break;
+                case Algorithmos::AVAILABLE :
+                    e_available_vec.push_back(m_fuelEmployeeGroup[i]);
+                    break;
                 }
             }
             m_currentShift->bManagers().insert(Algorithmos::EARLY,early_vec);
@@ -263,10 +270,12 @@ StringList QShiftSolver::m_reqBranches = StringList();
             m_currentShift->bfManagers().insert(Algorithmos::LATE, f_late_vec);
             m_currentShift->bfManagers().insert(Algorithmos::INTERMITTENT,f_intermittent_vec);
             m_currentShift->bfManagers().insert(Algorithmos::DAYOFF, f_dayoff_vec);
+            m_currentShift->bfManagers().insert(Algorithmos::AVAILABLE, f_available_vec);
             m_currentShift->fEmployees().insert(Algorithmos::EARLY,e_early_vec);
             m_currentShift->fEmployees().insert(Algorithmos::LATE, e_late_vec);
             m_currentShift->fEmployees().insert(Algorithmos::INTERMITTENT, e_intermittent_vec);
             m_currentShift->fEmployees().insert(Algorithmos::DAYOFF, e_dayoff_vec);
+            m_currentShift->fEmployees().insert(Algorithmos::AVAILABLE,e_available_vec);
             m_pShifts.push_back(m_currentShift);
 
             shift_date = shift_date.addDays(1);
@@ -276,6 +285,7 @@ StringList QShiftSolver::m_reqBranches = StringList();
             late_vec.clear(); f_late_vec.clear(); e_late_vec.clear();
             dayof_vec.clear(); f_dayoff_vec.clear(); e_dayoff_vec.clear();
             e_intermittent_vec.clear();f_intermittent_vec.clear();
+            f_available_vec.clear(); e_available_vec.clear();
         }
 
         return m_pShifts;
