@@ -20,6 +20,7 @@ QT_END_NAMESPACE
 
 class CentralView;
 class QDateSelector;
+class AlShiftsSettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -34,6 +35,7 @@ private:
 private:
     Ui::MainWindow *ui;
     CentralView *m_centralView;
+    AlShiftsSettingsDialog *settingsDlg;
 
     QLabel *locationLabel;
     QString curFile;

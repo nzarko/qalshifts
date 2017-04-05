@@ -18,14 +18,17 @@ class HeaderView : public QHeaderView
 public:
     HeaderView(Qt::Orientation orientation, QWidget* parent = 0);
     QRect sectionRect(int logicalIndex) const;
+    int getClickedRow() {return clickedRow; }
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void paintSection(QPainter* painter, const QRect& rect, int logicalIndex) const;
 
 private:
     int pick(const QPoint& pos) const;
     mutable QHash<int, QRect> sections;
+    int clickedRow;
 };
 
 #endif // HEADERVIEW_H

@@ -29,6 +29,7 @@
 #include "qemployeeshiftsweeklyreport.h"
 #include "qdateselector.h"
 #include "printview.h"
+#include "alshiftssettingsdialog.h"
 
 
 MainWindow* MainWindow::m_pInstance = nullptr;
@@ -48,7 +49,8 @@ MainWindow::MainWindow(QWidget *parent) :
     weekViewToolBar(0),
     weekCB(0),
     branchCB(0),
-    dateSelectorDlg(0)
+    dateSelectorDlg(0),
+    settingsDlg(0)
 {
     ui->setupUi(this);
     move(500,100);
@@ -81,7 +83,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupActions()
 {
-
+    connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows);
     connect(ui->actionNew,&QAction::triggered, this, &MainWindow::newFile);
     connect(ui->actionOpen, &QAction::triggered, this,
             &MainWindow::open);
@@ -134,7 +136,15 @@ void MainWindow::setupActions()
      *      View Menu                      *
      * *********************************** */
     connect(ui->actionWeekly, &QAction::toggled,this,&MainWindow::changeView);
+    ui->actionBranches_Full_Name->setChecked(false);
+    ui->actionBranches_Full_Name->setEnabled(false);
+    connect(ui->actionBranches_Full_Name,&QAction::toggled,this->m_centralView->employeeShiftsTable(),
+            &QEmployeeShiftsTable::showBranchFullNames);
 
+    /* *********************************** *
+     *      Settings Dialog                *
+     * *********************************** */
+    connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showPreferencesDialog);
 }
 
 void MainWindow::createStatusBar()
@@ -255,6 +265,8 @@ bool MainWindow::loadFile(const QString &fileName)
     // the weekViewToolBar.
     m_startDate = spreadsheet->startDate();
     updateWeekCBItems();
+    ui->actionBranches_Full_Name->setEnabled(true);
+    ui->actionBranches_Full_Name->setChecked(false);
     return true;
 }
 
@@ -352,7 +364,9 @@ void MainWindow::newFile()
         spreadsheet->clear();
         selectStartDate();
         updateWeekCBItems();
-        setCurrentFile("");        
+        setCurrentFile("");
+        ui->actionBranches_Full_Name->setEnabled(true);
+        ui->actionBranches_Full_Name->setChecked(false);
     }
     //updateRecentFiles();
 }
@@ -529,7 +543,11 @@ void MainWindow::printPreview(QPrinter *printer)
 
 void MainWindow::showPreferencesDialog()
 {
+    if (!settingsDlg)
+        settingsDlg = new AlShiftsSettingsDialog(this);
 
+    if(settingsDlg->exec() == QDialog::Accepted)
+         qDebug()<< "Options Dialog return OK";
 }
 
 void MainWindow::updateStatusBar()
@@ -551,6 +569,12 @@ void MainWindow::weekViewChanged(int week)
       Implement weekCB index changed
       */
     qDebug() << "Week view changed! Index : " << week << endl;
+    QString fn = tr("Week_%1-").arg(week+1);
+    QDate d = weekCB->currentData().toDate();
+    fn += d.toString("dd_MM-");
+    d= d.addDays(6);
+    fn += d.toString("dd_MM");
+    m_centralView->employeeReportTable()->setCVSFilename(fn);
     m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
 }
 

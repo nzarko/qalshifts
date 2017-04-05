@@ -132,6 +132,7 @@ public slots:
     void editHeader(int row);
     void doneEditing();
     void forceIntermittent();
+    void showBranchFullNames(bool toggled);
 
 signals:
     void modified();
@@ -147,6 +148,7 @@ private:
     HeaderView *verticalHeaderView;
     QMap<int,int> m_eRow; //Contains id - row pairs for employees.
     QMap<int, QBrush> itemBgColor; //item background color depending on shift type.
+    QMap<QString, QString> branchFullName;
     void populateVHeader(EmployeeMap &e_map);
     void populateVHeader(const QVector<QEmployee*> &em_vec);
     void populateShiftsTable(Shifts &shifts);

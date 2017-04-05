@@ -10,6 +10,7 @@ class QEmployeeShiftsWeeklyReport;
 }
 
 QT_BEGIN_NAMESPACE
+class QAction;
 class QDate;
 class QTableWidget;
 class QTableWidgetItem;
@@ -18,6 +19,8 @@ class QPrinter;
 QT_END_NAMESPACE
 
 class QEmployeeShiftsTable;
+class HeaderView;
+class HeaderDelegate;
 
 class QEmployeeShiftsWeeklyReport : public QWidget
 {
@@ -32,12 +35,23 @@ public:
     void updateWeekReport(const QString &brName);
     void updateWeekReport(int branch);
     QAbstractItemModel *tableModel() const;
+    void setCVSFilename(QString fileName) { cvsFilename = fileName ; }
 
 public slots:
     void branchChanged(const QString &branchID);
     void print();
     void printTable(QPrinter* printer);
+    void insertEmployeeRow();
+    void removeEmployeeRow();
+    void writeCSVFile(const QString &fileName);
+    void openWithExcel();
 private:
+    QString cvsFilename;
+    QAction *insertRowAction;
+    QAction *removeRowAction;
+    QAction *openWithExcelAction;
+    HeaderDelegate *headerDelegate;
+    HeaderView *verticalHeaderView;
     QVector <int> hidden_rows;
     Ui::QEmployeeShiftsWeeklyReport *ui;
     QEmployeeShiftsTable *pEST;

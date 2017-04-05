@@ -6,6 +6,13 @@
 #include <QProgressDialog>
 #include <QPainter>
 #include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
+#include <QDir>
+
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
 
 #include <algorithm>
 
@@ -21,6 +28,26 @@ QEmployeeShiftsWeeklyReport::QEmployeeShiftsWeeklyReport(QEmployeeShiftsTable *e
 {
     ui->setupUi(this);
     weekTable = ui->weekReportTableW;
+    verticalHeaderView = new HeaderView(Qt::Vertical, weekTable);
+    headerDelegate = new HeaderDelegate(Qt::Vertical, verticalHeaderView);
+    verticalHeaderView->setItemDelegate(headerDelegate);
+    verticalHeaderView->setSectionsClickable(true);
+    weekTable->setVerticalHeader(verticalHeaderView);
+
+    insertRowAction = new QAction(tr("Insert row"));
+    removeRowAction = new QAction(tr("Remove row"));
+    weekTable->verticalHeader()->addAction(insertRowAction);
+    weekTable->verticalHeader()->addAction(removeRowAction);
+    weekTable->verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    connect(insertRowAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::insertEmployeeRow);
+    connect(removeRowAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::removeEmployeeRow);
+
+    openWithExcelAction = new QAction(tr("Open with excel..."));
+    weekTable->addAction(openWithExcelAction);
+    weekTable->setContextMenuPolicy(Qt::ActionsContextMenu);
+    connect(openWithExcelAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::openWithExcel);
+
     branchFullName.insert("BR2", tr("Kalampakas 104"));
     branchFullName.insert("BR3",tr("Pylis 39"));
     branchFullName.insert("BR4",tr("Pylis 98"));
@@ -194,6 +221,64 @@ void QEmployeeShiftsWeeklyReport::printTable(QPrinter *printer)
 #endif
 }
 
+void QEmployeeShiftsWeeklyReport::insertEmployeeRow()
+{
+    weekTable->insertRow(verticalHeaderView->getClickedRow() + 1);
+}
+
+void QEmployeeShiftsWeeklyReport::removeEmployeeRow()
+{
+    weekTable->removeRow(verticalHeaderView->getClickedRow());
+}
+
+void QEmployeeShiftsWeeklyReport::writeCSVFile(const QString &fileName)
+{
+    QString result = "sep=,\n";
+    QTableWidgetItem *curItem = nullptr;
+    QString line = "";
+    for(int i = 0; i < 5; ++i) {
+        line = "";
+        for(int j = 0; j < weekTable->columnCount(); ++j) {
+            if(!wItem(i,j))
+                line += ",";
+            else line += wItem(i,j)->text() + ",";
+        }
+        line.remove(line.size()-1,1); //Remove last comma
+        result += line + "\n";
+    }
+
+    for(int i = 5; i < weekTable->rowCount(); ++i) {
+        if(!wItem(i,0)) continue;
+        if(wItem(i,0)->text()=="") continue;
+        line = "";
+        for(int j = 0; j < weekTable->columnCount(); ++j) {
+            curItem = wItem(i,j);
+            if(curItem)
+                line += curItem->text().simplified() + ",";
+        }
+        line.remove(line.size()-1,1); //Remove last comma
+        result += line + "\n";
+    }
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "Error writing file :" << file.fileName() << endl;
+    }
+    QTextStream ts(&file);
+    ts << result << "\n";
+    file.close();
+}
+
+void QEmployeeShiftsWeeklyReport::openWithExcel()
+{
+    QDir path;
+    path = QDir(path.currentPath());
+    cvsFilename = path.absolutePath() + "/" + cvsFilename + ".csv";
+    qDebug() << "cvsFilename : " << cvsFilename << endl;
+    writeCSVFile(cvsFilename);
+    ShellExecute(0,0,(const wchar_t*)cvsFilename.utf16(),0,0,SW_SHOW);
+}
+
 QTableWidgetItem *QEmployeeShiftsWeeklyReport::wItem(int row, int col)
 {
     return weekTable->item(row,col);
@@ -224,8 +309,12 @@ void QEmployeeShiftsWeeklyReport::initWeekTable()
     //weekTable->resizeRowsToContents();
 
     ui->weekReportTableW->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
-    weekTable->horizontalHeader()->hide();
-    weekTable->verticalHeader()->hide();
+//    weekTable->horizontalHeader()->hide();
+//    weekTable->verticalHeader()->hide();
+    for (int c = 0; c < weekTable->columnCount(); ++c) {
+        QString character(QChar('A' + c));
+        weekTable->setHorizontalHeaderItem(c, new QTableWidgetItem(character));
+    }
     //weekTable->resizeColumnToContents(1);
 
     ui->weekReportTableW->setSpan(0,0,1,9);

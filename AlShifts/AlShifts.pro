@@ -44,7 +44,9 @@ SOURCES += main.cpp\
     qtcassert.cpp \
     styleanimator.cpp \
     stylehelper.cpp \
-    configuration.cpp
+    configuration.cpp \
+    alshiftssettingsdialog.cpp \
+    employeeeditorform.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -64,11 +66,15 @@ HEADERS  += mainwindow.h \
     qtcassert.h \
     styleanimator.h \
     stylehelper.h \
-    configuration.h
+    configuration.h \
+    alshiftssettingsdialog.h \
+    employeeeditorform.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \
-    qemployeeshiftsweeklyreport.ui
+    qemployeeshiftsweeklyreport.ui \
+    alshiftssettingsdialog.ui \
+    employeeeditorform.ui
 
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1

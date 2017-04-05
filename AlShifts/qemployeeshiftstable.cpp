@@ -35,6 +35,11 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     itemBgColor.insert(Algorithmos::LATE, QBrush(QColor(Qt::green)));
     itemBgColor.insert(Algorithmos::INTERMITTENT, QBrush(QColor(Qt::blue)));
 
+    branchFullName.insert("BR2", tr("Kalampakas 104"));
+    branchFullName.insert("BR3",tr("Pylis 39"));
+    branchFullName.insert("BR4",tr("Pylis 98"));
+    branchFullName.insert("BR5", tr("Karditsis 54"));
+
     setColumnCount(49);
     setRowCount(30);
     setAlternatingRowColors(true);
@@ -46,10 +51,12 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     setVerticalHeader(verticalHeaderView);
     verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
     verticalHeader()->setSectionsClickable(true);
+
     removeRowAction = new QAction(tr("Remove Row"));
     verticalHeader()->addAction(removeRowAction);
     verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(removeRowAction, &QAction::triggered,this, &QEmployeeShiftsTable::removeCurrentRow);
+    connect(model(),SIGNAL(headerDataChanged(Qt::Orientation,int,int)),this, SLOT(somethingChanged()));
     //connect(verticalHeader(),&QHeaderView::sectionDoubleClicked,this, &QEmployeeShiftsTable::editHeader);
 
     QShiftTableItemDelegate *i_del = new QShiftTableItemDelegate();
@@ -225,8 +232,9 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
         }
     }
     for (int row = 0; row < RowCount; ++row) {
-        if(verticalHeaderItem(row))
-            out << *(verticalHeaderItem(row));
+        curItem = verticalHeaderItem(row);
+        if(curItem && curItem->text() != "")
+            out << *curItem;
         else {
             QTableWidgetItem *blankItem = new QTableWidgetItem();
             blankItem->setText("Blank");
@@ -235,8 +243,9 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
             continue;
         }
         for (int column = 0; column < ColumnCount; ++column) {
-            if(item(row,column))
-                out << *item(row,column);
+            curItem = item(row,column);
+            if(curItem)
+                out << *curItem;
         }
     }
     file.close();
@@ -772,6 +781,8 @@ void QEmployeeShiftsTable::saveShifts()
     filefe.close();
 }
 
+
+
 void QEmployeeShiftsTable::loadBFuelShifts()
 {
     QFile f(s_solver->bfmMatrixFile());
@@ -847,6 +858,30 @@ void QEmployeeShiftsTable::forceIntermittent()
     }
 }
 
+void QEmployeeShiftsTable::showBranchFullNames(bool toggled)
+{
+    /* TODO: Implement me! */
+    int shift_type =(int) Algorithmos::AVAILABLE;
+    for(int i=0; i < RowCount; ++i) {
+        for(int j = 0; j < ColumnCount; ++j) {
+            QTableWidgetItem *s_item = item(i,j);
+            if(s_item) {
+                if(s_item->data(Algorithmos::STIROLE).toInt() != shift_type) {
+                    if(toggled) {
+                        QString code = s_item->text();
+                        s_item->setText(branchFullName.value(code));
+                    } else{
+                        QString code = s_item->text();
+                        s_item->setText(branchFullName.key(code));
+                    }
+
+                }
+            }
+        }
+    }
+
+}
+
 void QEmployeeShiftsTable::somethingChanged()
 {
     emit modified();
@@ -856,7 +891,8 @@ void QEmployeeShiftsTable::removeCurrentRow()
 {
 //    QModelIndex index = this->indexAt(pos);
 //    qDebug() << "Index at right click : " << index.row() << endl;
-    this->removeRow(this->currentRow());
+    //HeaderView *hv = qobject_cast<HeaderView *> (verticalHeader());
+    this->removeRow(verticalHeaderView->getClickedRow());
 }
 
 QEmployeeShiftsTable::EmployeeTypeRowRange QEmployeeShiftsTable::EmployeeTypeRowRange::operator +(const int k)

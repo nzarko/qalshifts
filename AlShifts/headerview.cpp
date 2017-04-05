@@ -1,5 +1,6 @@
 #include <QMouseEvent>
 #include <QPainter>
+#include <QDebug>
 
 #include "headerview.h"
 
@@ -20,6 +21,18 @@ void HeaderView::mouseDoubleClickEvent(QMouseEvent *event) {
     const QModelIndex persistent = model()->index(idx, 0);
     if (event->button() & Qt::LeftButton)
         edit(persistent, QAbstractItemView::DoubleClicked, event);
+}
+
+void HeaderView::mouseReleaseEvent(QMouseEvent *event)
+{
+    QHeaderView::mouseReleaseEvent(event);
+    const int idx = visualIndexAt(pick(event->pos()));
+    if(event->button() & Qt::RightButton)
+    {
+        clickedRow = idx;
+        qDebug() << "Right click in row : " << clickedRow << endl;
+    }
+
 }
 
 void HeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const {

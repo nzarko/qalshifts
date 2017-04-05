@@ -21,6 +21,13 @@
         <file alias="swap_shifts">icons/swap_shifts.png</file>
         <file alias="rearrange">icons/recur.png</file>
         <file alias="weekview">icons/view-calendar-week.png</file>
+        <file alias="category_env">icons/category_core.png</file>
+        <file alias="category_help">icons/category_help.png</file>
+        <file alias="category_employees">icons/category_texteditor.png</file>
+        <file alias="settings">icons/configure.png</file>
+        <file alias="editadd">icons/editadd.png</file>
+        <file alias="editdelete">icons/editdelete.png</file>
+        <file alias="exit">icons/exit.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

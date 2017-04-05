@@ -44,6 +44,8 @@
     <addaction name="separator"/>
     <addaction name="actionprint"/>
     <addaction name="actionPrint_Preview"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -57,12 +59,15 @@
     <addaction name="actionSolve"/>
     <addaction name="actionSwap_Shifts"/>
     <addaction name="actionRearrange_Employees_Shift"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
      <string>&amp;View</string>
     </property>
     <addaction name="actionWeekly"/>
+    <addaction name="actionBranches_Full_Name"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -282,6 +287,44 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionBranches_Full_Name">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Branches Full Name</string>
+   </property>
+   <property name="toolTip">
+    <string>Show full name of the branches</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/settings</normaloff>:/icons/settings</iconset>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Configure QALShifts</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/exit</normaloff>:/icons/exit</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quit's the application</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
