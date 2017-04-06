@@ -4,6 +4,8 @@
 #include <QString>
 #include <QtGui/QFont>
 
+const int EID = Qt::UserRole + 10;//Employee ID for HeaderData
+
 class Configuration
 {
 public:

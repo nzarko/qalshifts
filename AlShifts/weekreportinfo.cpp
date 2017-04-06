@@ -36,7 +36,7 @@ QString WeekReportInfo::workingHours(Algorithmos::ShiftType st, const QString &b
         res = QObject::tr("DO");
         break;
     case Algorithmos::AVAILABLE:
-        res = "";
+        res = QObject::tr("AVAIL");
         break;
     }
     return res;

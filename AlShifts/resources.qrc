@@ -30,4 +30,7 @@
         <file alias="exit">icons/exit.png</file>
     </qresource>
     <qresource prefix="/"/>
+    <qresource prefix="/translations">
+        <file alias="qalshifts">translations/AlShifts_el.qm</file>
+    </qresource>
 </RCC>

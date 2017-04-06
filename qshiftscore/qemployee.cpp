@@ -2,6 +2,7 @@
 #include <QDebug>
 
 namespace Algorithmos {
+
     class QEmployeePrivate
     {
     public:

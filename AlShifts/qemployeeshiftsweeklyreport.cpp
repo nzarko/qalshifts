@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
+#include <QTranslator>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -128,7 +129,7 @@ void QEmployeeShiftsWeeklyReport::createWeekReport(const QDate &date)
          for(int j = 0; j < wri_vec[i].shifts.size(); ++j) {
              shift_type = (Algorithmos::ShiftType)wri_vec[i].shifts[j];
              int row;
-             if(wri_vec[i].branches[j] == "DO" || wri_vec[i].branches[j] == "AVAIL")
+             if(wri_vec[i].branches[j] == tr("DO") || wri_vec[i].branches[j] == tr("AVAIL"))
                  row = branchRow.first();
              else
                  row = branchRow.value(wri_vec[i].branches[j]);
@@ -289,9 +290,13 @@ QMap<QString, int> &QEmployeeShiftsWeeklyReport::getBranchLines(int &sr,
                                                                 QMap<QString, int> &bl)
 {
     QStringList lst = branches;
+
+    qDebug() <<"getBranchLines branches : "  << lst << endl;
+    QString s1 = QApplication::translate("QObject","DO");
+    QString s2 = QApplication::translate("QEmployeeShiftsWeeklyReport", "AVAIL");
     bl.clear();
-    lst.removeAll("DO");
-    lst.removeAll("AVAIL");
+    lst.removeAll(s1);
+    lst.removeAll(s2);
     std::sort(lst.begin(), lst.end());
     auto iter = std::unique(lst.begin(), lst.end());
     lst.erase(iter, lst.end());

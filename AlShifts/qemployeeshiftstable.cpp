@@ -22,6 +22,7 @@
 
 #include "qshifttableitemdelegate.h"
 #include "xlsx/xlsxdocument.h"
+#include "configuration.h"
 
 int QEmployeeShiftsTable::r = 0;
 
@@ -636,6 +637,7 @@ void QEmployeeShiftsTable::populateVHeader(EmployeeMap &e_map)
             headerItem = new QTableWidgetItem();
             headerItem->setText(e_vector[i]->name());
             headerItem->setData(Qt::UserRole,e_vector[i]->toStringList());
+            headerItem->setData(EID, e_vector[i]->ID());
             headerItem->setToolTip(e_vector[i]->toString());
             setVerticalHeaderItem(r,headerItem);
             m_eRow.insert(e_vector[i]->ID(),r);

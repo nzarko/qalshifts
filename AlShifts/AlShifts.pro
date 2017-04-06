@@ -90,3 +90,5 @@ DEPENDPATH += $$PWD/../qshiftscore
 
 RESOURCES += \
     resources.qrc
+
+TRANSLATIONS += translations/AlShifts_el.ts

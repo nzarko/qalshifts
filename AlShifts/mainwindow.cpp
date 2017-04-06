@@ -574,8 +574,10 @@ void MainWindow::weekViewChanged(int week)
     fn += d.toString("dd_MM-");
     d= d.addDays(6);
     fn += d.toString("dd_MM");
-    m_centralView->employeeReportTable()->setCVSFilename(fn);
-    m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+    if(week >= 0) {
+        m_centralView->employeeReportTable()->setCVSFilename(fn);
+        m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+    }
 }
 
 void MainWindow::branchChanged(int branch)
