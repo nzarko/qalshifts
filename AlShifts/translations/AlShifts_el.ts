@@ -449,7 +449,7 @@ Do you want to save your changes?</source>
         <location filename="../mainwindow.cpp" line="379"/>
         <location filename="../mainwindow.cpp" line="398"/>
         <source>Aliagas Shifts files (*.alsh)</source>
-        <translation>Αρχεία εργασιών Αλιάγας</translation>
+        <translation>Αρχεία εργασιών Αλιάγας (*.alsh)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="397"/>

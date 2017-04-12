@@ -13,9 +13,11 @@
 #include "employeeeditorform.h"
 #include "ui_employeeeditorform.h"
 
-EmployeeEditorForm::EmployeeEditorForm(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::EmployeeEditorForm)
+EmployeeEditorForm::EmployeeEditorForm(QAbstractSettingsWidget *parent) :
+    QAbstractSettingsWidget(parent),
+    ui(new Ui::EmployeeEditorForm),
+    isEmployeeTVPopulated(false),
+    curEmployee(nullptr)
 {
     ui->setupUi(this);
 
@@ -27,6 +29,11 @@ EmployeeEditorForm::EmployeeEditorForm(QWidget *parent) :
     ui->branchesCBox->addItem(branchFullName.value("BR3"),branchFullName.key(branchFullName.value("BR3")));
     ui->branchesCBox->addItem(branchFullName.value("BR4"),branchFullName.key(branchFullName.value("BR4")));
     ui->branchesCBox->addItem(branchFullName.value("BR5"),branchFullName.key(branchFullName.value("BR5")));
+
+    ui->emTypeCB->addItem(Algorithmos::EmployeeTypeName(Algorithmos::BMANAGER),Algorithmos::BMANAGER);
+    ui->emTypeCB->addItem(Algorithmos::EmployeeTypeName(Algorithmos::BFUELMANAGER),Algorithmos::BFUELMANAGER);
+    ui->emTypeCB->addItem(Algorithmos::EmployeeTypeName(Algorithmos::FUELMANAGER), Algorithmos::FUELMANAGER);
+    ui->emTypeCB->addItem(Algorithmos::EmployeeTypeName(Algorithmos::INVALID), Algorithmos::INVALID);
 
     ui->employeesTV->clear();
     initTV();
@@ -43,6 +50,8 @@ EmployeeEditorForm::EmployeeEditorForm(QWidget *parent) :
 
 EmployeeEditorForm::~EmployeeEditorForm()
 {
+    qDeleteAll(employees);
+    employees.clear();
     delete ui;
 }
 
@@ -110,6 +119,36 @@ void EmployeeEditorForm::populateTVFromFile(const QString &fileName)
             ++index;
         }
     }
+    isEmployeeTVPopulated = true;
+}
+
+bool EmployeeEditorForm::saveEmployees() const
+{
+    QFile saveFile(Algorithmos::getFilePath(Algorithmos::EMPLOYEES));
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QJsonObject root;
+    QJsonArray rootArray;
+    for(int i = 0; i < employees.size(); ++i) {
+        QJsonObject obj;
+        employees[i]->write(obj);
+        rootArray.append(obj);
+    }
+    root["Employees"] = rootArray;
+
+    QJsonDocument saveDoc(root);
+    saveFile.write(saveDoc.toJson());
+
+    return true;
+}
+
+bool EmployeeEditorForm::applyChanges() const
+{
+    return saveEmployees();
 }
 
 void EmployeeEditorForm::on_addBranchToList_clicked()
@@ -126,26 +165,29 @@ void EmployeeEditorForm::initTV()
     rootManItem = new QTreeWidgetItem(tv);
     rootManItem->setText(0,tr("Branch Managers"));
     rootManItem->setData(0,Qt::UserRole,Algorithmos::BMANAGER);
+    rootManItem->setExpanded(true);
 
     rootFuelManItem = new QTreeWidgetItem(tv);
     rootFuelManItem->setText(0,tr("Branch - Fuel Managers"));
     rootFuelManItem->setData(0,Qt::UserRole,Algorithmos::BFUELMANAGER);
+    rootFuelManItem->setExpanded(true);
 
     rootFuelEmplItem = new QTreeWidgetItem(tv);
     rootFuelEmplItem->setText(0,tr("Fuel Employees"));
     rootFuelEmplItem->setData(0,Qt::UserRole, Algorithmos::FUELMANAGER);
+    rootFuelEmplItem->setExpanded(true);
 }
 
 void EmployeeEditorForm::on_employeesTV_itemClicked(QTreeWidgetItem *item, int column)
 {
     using namespace Algorithmos;
     if(item->parent()) { //item is child
-        QEmployee *employee = employees[item->data(column,Qt::UserRole).toInt()];
-        if(employee) {
-            ui->nameLE->setText(employee->name());
-            ui->employeeTypeLE->setText(EmployeeTypeName(employee->employeeType()));
+        curEmployee = employees[item->data(column,Qt::UserRole).toInt()];
+        if(curEmployee) {
+            ui->nameLE->setText(curEmployee->name());
+            ui->emTypeCB->setCurrentIndex((int)curEmployee->employeeType());
             ui->availableBranchesLV->clear();
-            for(auto br : employee->branches()) {
+            for(auto br : curEmployee->branches()) {
                 QListWidgetItem *lItem = new QListWidgetItem(branchFullName.value(br),ui->availableBranchesLV);
                 lItem->setData(Qt::UserRole,branchFullName.key(lItem->text()));
                 lItem->setToolTip(lItem->data(Qt::UserRole).toString());
@@ -153,4 +195,44 @@ void EmployeeEditorForm::on_employeesTV_itemClicked(QTreeWidgetItem *item, int c
         }
     } else
         qDebug() << "Top level item clicked!" << endl;
+}
+
+void EmployeeEditorForm::on_employeesTV_itemParentChanged(QTreeWidgetItem *droppedItem)
+{
+    using namespace Algorithmos;
+    QTreeWidgetItem *parent = droppedItem->parent();
+    if(parent) {
+        EmployeeType eType = (EmployeeType)parent->data(0,Qt::UserRole).toInt();
+        QEmployee *empl = employees[droppedItem->data(0,Qt::UserRole).toInt()];
+        if(empl) {
+            empl->setEmployeeType(eType);
+        }
+    }
+}
+
+void EmployeeEditorForm::on_emTypeCB_currentIndexChanged(int index)
+{
+    qDebug() << "emTypeCB index changed : " << index << endl;
+    if(!isEmployeeTVPopulated)
+        return;
+
+    //ui->employeesTV->setUpdatesEnabled(false);
+    if (index != 3) {
+        QTreeWidgetItem *pItem = ui->employeesTV->currentItem();
+        QTreeWidgetItem *parent = pItem->parent();
+        qDebug() << "Parent of selected item : " << parent->text(0) << endl;
+        //qDebug() << "index of parent : " << ui->employeesTV->indexOfTopLevelItem(parent) << endl;
+        if(pItem && parent) {
+            int pIndex = ui->employeesTV->indexOfTopLevelItem(parent);
+            if(pIndex == index) return;
+            QTreeWidgetItem *p2Item = parent->takeChild(parent->indexOfChild(pItem));
+            ui->employeesTV->topLevelItems().at(index)->addChild(p2Item); //Add it to proper topLevelItem.
+            Algorithmos::QEmployee *empl = employees[p2Item->data(0,Qt::UserRole).toInt()];
+            if(empl) {
+                empl->setEmployeeType((Algorithmos::EmployeeType)index);
+            }
+            ui->employeesTV->setCurrentItem(p2Item);
+        }
+    }
+    //ui->employeesTV->setUpdatesEnabled(true);
 }

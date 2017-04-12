@@ -46,7 +46,10 @@ SOURCES += main.cpp\
     stylehelper.cpp \
     configuration.cpp \
     alshiftssettingsdialog.cpp \
-    employeeeditorform.cpp
+    employeeeditorform.cpp \
+    alshiftstreewidget.cpp \
+    qabstractsettingswidget.cpp \
+    qstaffweeklyreport.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -68,7 +71,10 @@ HEADERS  += mainwindow.h \
     stylehelper.h \
     configuration.h \
     alshiftssettingsdialog.h \
-    employeeeditorform.h
+    employeeeditorform.h \
+    alshiftstreewidget.h \
+    qabstractsettingswidget.h \
+    qstaffweeklyreport.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \

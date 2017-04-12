@@ -5,6 +5,7 @@
 #include "qemployeeshiftstable.h"
 #include "legendform.h"
 #include "qemployeeshiftsweeklyreport.h"
+#include "qstaffweeklyreport.h"
 
 CentralView::CentralView(QWidget *parent) : QWidget(parent)
 {
@@ -24,6 +25,9 @@ CentralView::CentralView(QWidget *parent) : QWidget(parent)
 
     m_reportWnd = new QEmployeeShiftsWeeklyReport(m_emplTable);
     m_stackWnd->addWidget(m_reportWnd);
+
+    m_staffReportTbl = new QStaffWeeklyReport(m_emplTable);
+    m_stackWnd->addWidget(m_staffReportTbl);
     m_stackWnd->setCurrentIndex(0);
 }
 

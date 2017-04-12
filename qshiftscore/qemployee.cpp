@@ -1,3 +1,6 @@
+#include <QJsonArray>
+#include <QJsonValue>
+
 #include "qemployee.h"
 #include <QDebug>
 
@@ -126,6 +129,11 @@ namespace Algorithmos {
         return m_pPriv->branches();
     }
 
+    void QEmployee::addBranch(const QString &id)
+    {
+        m_pPriv->addBranch(id);
+    }
+
     QStringList QEmployee::toStringList()
     {
         return m_pPriv->toStringList();
@@ -134,6 +142,27 @@ namespace Algorithmos {
     QString QEmployee::toString()
     {
         return m_pPriv->toString();
+    }
+
+    void QEmployee::read(QJsonObject &json)
+    {
+        setID(json["id"].toInt());
+        setName(json["name"].toString());
+        setEmployeeType(setEmployeeTypeByName(json["position"].toString()));
+        QJsonArray br_arr = json["branches"].toArray();
+        for(auto b : br_arr) {
+            addBranch( b.toString());
+        }
+    }
+
+    void QEmployee::write(QJsonObject &json)
+    {
+        QJsonArray json_branches;
+        json["id"] = QString::number(this->ID());
+        json["name"] = name();
+        json["position"] = EmployeeTypeShortName(employeeType());
+        json_branches = QJsonArray::fromStringList(branches());
+        json["branches"] = json_branches;
     }
 
     QEmployeePrivate::QEmployeePrivate(EmployeeType type):m_eType(type)

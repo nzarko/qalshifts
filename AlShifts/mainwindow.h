@@ -89,6 +89,7 @@ private slots:
     void changeView(bool checked);
     void weekViewChanged(int week);
     void branchChanged(int branch);
+    void toggleStaffWeekView(bool checked);
 
 protected:
     void closeEvent(QCloseEvent *event);

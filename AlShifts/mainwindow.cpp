@@ -27,6 +27,7 @@
 #include "centralview.h"
 #include "qemployeeshiftstable.h"
 #include "qemployeeshiftsweeklyreport.h"
+#include "qstaffweeklyreport.h"
 #include "qdateselector.h"
 #include "printview.h"
 #include "alshiftssettingsdialog.h"
@@ -136,6 +137,7 @@ void MainWindow::setupActions()
      *      View Menu                      *
      * *********************************** */
     connect(ui->actionWeekly, &QAction::toggled,this,&MainWindow::changeView);
+    connect(ui->actionStuff_Week, &QAction::toggled, this, &MainWindow::toggleStaffWeekView);
     ui->actionBranches_Full_Name->setChecked(false);
     ui->actionBranches_Full_Name->setEnabled(false);
     connect(ui->actionBranches_Full_Name,&QAction::toggled,this->m_centralView->employeeShiftsTable(),
@@ -460,6 +462,10 @@ void MainWindow::fileprint()
       case 1:
           model = m_centralView->employeeReportTable()->tableModel();
           break;
+      case 2:
+          model = m_centralView->staffReportTable()->model();
+          printer.setOrientation(QPrinter::Landscape);
+          break;
       }
 
       view.setModel(model);
@@ -559,24 +565,30 @@ void MainWindow::changeView(bool checked)
 {
     m_centralView->cvStackedWnd()->setCurrentIndex((int)checked);
     weekViewToolBar->setVisible(checked);
+    if(!branchCB->isEnabled())
+        branchCB->setEnabled(true);
     m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
 }
 
 void MainWindow::weekViewChanged(int week)
 {
-    /**
-      Write your code here!!
-      Implement weekCB index changed
-      */
+    int viewIndex = m_centralView->cvStackedWnd()->currentIndex();
+
     qDebug() << "Week view changed! Index : " << week << endl;
     QString fn = tr("Week_%1-").arg(week+1);
     QDate d = weekCB->currentData().toDate();
     fn += d.toString("dd_MM-");
     d= d.addDays(6);
     fn += d.toString("dd_MM");
-    if(week >= 0) {
-        m_centralView->employeeReportTable()->setCVSFilename(fn);
-        m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+    if(viewIndex == 1) {
+        if(week >= 0) {
+            m_centralView->employeeReportTable()->setCVSFilename(fn);
+            m_centralView->employeeReportTable()->createWeekReport(weekCB->currentData().toDate());
+        }
+    } else if (viewIndex == 2) {
+        ///ToDO : Handle your code here for stuff view.
+        m_centralView->staffReportTable()->setCSVFilename(fn);
+        m_centralView->staffReportTable()->createWeekReport(weekCB->currentData().toDate());
     }
 }
 
@@ -591,6 +603,18 @@ void MainWindow::branchChanged(int branch)
         QString branchID = branchCB->currentData().toString();
         m_centralView->employeeReportTable()->branchChanged(branchID);
     }
+}
+
+void MainWindow::toggleStaffWeekView(bool checked)
+{
+    int index = checked ? 2 : 0;
+    m_centralView->cvStackedWnd()->setCurrentIndex(index);
+    if(index == 2 && !weekViewToolBar->isVisible()) {
+        weekViewToolBar->setVisible(true);
+        m_centralView->staffReportTable()->createWeekReport(weekCB->currentData().toDate());
+        branchCB->setEnabled(false);
+    }
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

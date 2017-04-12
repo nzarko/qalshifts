@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QJsonObject>
+
 #include "qshiftscore_global.h"
 #include "qconstraint.h"
 #include "utils.h"
@@ -37,6 +39,9 @@ namespace Algorithmos {
 
         QStringList toStringList();
         QString toString();
+
+        void read(QJsonObject &json);
+        void write(QJsonObject &json);
 
     private:
         QEmployeePrivate *m_pPriv;

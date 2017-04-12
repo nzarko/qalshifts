@@ -28,9 +28,11 @@
         <file alias="editadd">icons/editadd.png</file>
         <file alias="editdelete">icons/editdelete.png</file>
         <file alias="exit">icons/exit.png</file>
+        <file alias="stuff_week">icons/stuff_week.png</file>
     </qresource>
     <qresource prefix="/"/>
     <qresource prefix="/translations">
         <file alias="qalshifts">translations/AlShifts_el.qm</file>
+        <file alias="qshiftscore">translations/qshiftscore_el.qm</file>
     </qresource>
 </RCC>

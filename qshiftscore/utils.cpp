@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QTextCodec>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QDebug>
 
@@ -30,6 +31,30 @@ namespace Algorithmos {
             break;
         case Algorithmos::FUELMANAGER:
             name = QObject::tr("Fuel Employee");
+            break;
+        case Algorithmos::INVALID:
+            name = QObject::tr("Invalid");
+            break;
+        }
+        return name;
+    }
+
+    QString EmployeeTypeShortName(EmployeeType type)
+    {
+        QString name;
+        switch (type)
+        {
+        case Algorithmos::BMANAGER:
+            name = QObject::tr("YK");
+            break;
+        case Algorithmos::BFUELMANAGER:
+            name = QObject::tr("YB");
+            break;
+        case Algorithmos::FUELMANAGER:
+            name = QObject::tr("B");
+            break;
+        case Algorithmos::INVALID:
+            name = QObject::tr("Invalid");
             break;
         }
         return name;
@@ -183,6 +208,37 @@ namespace Algorithmos {
         fm.close();
         qDebug() << "Fuel managers array changes saved succesfully in : " << fm.fileName() << " file." << endl;
         */
+    }
+
+    QString getFilePath(const DataFileID &id)
+    {
+        QDir path ;
+        QString result;
+        path = QDir(path.currentPath());
+        qDebug() << "Current path : "<< path.absolutePath() << endl;
+        path.cdUp();
+        if(path.cd("Data")) {
+            qDebug() << "Current path : " << path.absolutePath() << endl;
+
+            switch (id) {
+            case EMPLOYEES:
+                result = path.absolutePath()+"/employeeswb.json";
+                break;
+            case MMATRIX:
+                result = path.absolutePath();
+                break;
+            case FMMATRIX:
+                result = path.absolutePath();
+                break;
+            case FEMATRIX:
+                result = path.absolutePath();
+                break;
+            default:
+                result = path.absolutePath();
+                break;
+            }
+        }
+        return result;
     }
 
 }

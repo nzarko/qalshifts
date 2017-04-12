@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="employeesTV">
+     <widget class="AlShiftsTreeWidget" name="employeesTV">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -38,8 +38,20 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="dragEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::DragDrop</enum>
+      </property>
+      <property name="defaultDropAction">
+       <enum>Qt::MoveAction</enum>
+      </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
+      </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideRight</enum>
       </property>
       <property name="allColumnsShowFocus">
        <bool>true</bool>
@@ -81,7 +93,7 @@
             <widget class="QLineEdit" name="nameLE"/>
            </item>
            <item>
-            <widget class="QLineEdit" name="employeeTypeLE"/>
+            <widget class="QComboBox" name="emTypeCB"/>
            </item>
           </layout>
          </item>
@@ -116,6 +128,9 @@
            </item>
            <item>
             <widget class="QListWidget" name="availableBranchesLV">
+             <property name="dragEnabled">
+              <bool>false</bool>
+             </property>
              <property name="alternatingRowColors">
               <bool>true</bool>
              </property>
@@ -131,6 +146,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AlShiftsTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>alshiftstreewidget.h</header>
+   <slots>
+    <signal>itemParentChanged(QTreeWidgetItem*)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

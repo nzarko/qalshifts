@@ -7,6 +7,7 @@
 class QEmployeeShiftsTable;
 class LegendForm;
 class QEmployeeShiftsWeeklyReport;
+class QStaffWeeklyReport;
 
 class CentralView : public QWidget
 {
@@ -16,6 +17,7 @@ public:
 
     QEmployeeShiftsTable *employeeShiftsTable() {return m_emplTable;  }
     QEmployeeShiftsWeeklyReport *employeeReportTable() { return m_reportWnd; }
+    QStaffWeeklyReport *staffReportTable() { return m_staffReportTbl; }
     QStackedWidget *cvStackedWnd() { return m_stackWnd; }
 
 signals:
@@ -28,6 +30,7 @@ private:
     QStackedWidget *m_stackWnd;
     LegendForm *m_legendForm;
     QEmployeeShiftsWeeklyReport *m_reportWnd;
+    QStaffWeeklyReport *m_staffReportTbl;
 };
 
 #endif // CENTRALVIEW_H

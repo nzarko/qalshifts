@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QLocale>
 #include <QTranslator>
+#include <QLibraryInfo>
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,14 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("algorithmos.com");
     QCoreApplication::setApplicationName("qalshifts");
 
+    QTranslator qtTranslator;
+    if (qtTranslator.load(QLocale(),QLatin1String("qt"), QLatin1String("_"),
+                          QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+        qDebug() << "Qt translation dir : " << QLibraryInfo::location(QLibraryInfo::TranslationsPath) << endl;
+        a.installTranslator(&qtTranslator);
+    } else
+        qDebug() << "Qt translations dir not found." << endl;
+
     QTranslator translator;
     // look up e.g. :/translations/myapp_de.qm
     if (translator.load(QLocale(), QLatin1String("qalshifts"), QLatin1String("_"), QLatin1String(":/translations")))
@@ -21,6 +30,12 @@ int main(int argc, char *argv[])
     else
         qDebug() << "Could load translation file" << endl;
 
+    QTranslator sc_translator;
+    // look up e.g. :/translations/myapp_de.qm
+    if (sc_translator.load(QLocale(), QLatin1String("qshiftscore"), QLatin1String("_"), QLatin1String(":/translations")))
+        a.installTranslator(&sc_translator);
+    else
+        qDebug() << "Could load translation file" << endl;
 
     QString basename = a.style()->objectName();
     a.setStyle(new ManhattanStyle(basename));

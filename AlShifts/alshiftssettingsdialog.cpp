@@ -15,6 +15,7 @@ AlShiftsSettingsDialog::AlShiftsSettingsDialog(QWidget *parent) :
     ui(new Ui::AlShiftsSettingsDialog)
 {
     ui->setupUi(this);
+    resize(800,500);
     ui->searchLE->setPlaceholderText(tr("Type here to search"));
 
     eEditForm = new EmployeeEditorForm();
@@ -50,6 +51,7 @@ void AlShiftsSettingsDialog::reject()
 void AlShiftsSettingsDialog::applyChanges()
 {
     qDebug() << "Apply clicked!" << endl;
+    eEditForm->saveEmployees();
 }
 
 void AlShiftsSettingsDialog::on_listWidget_itemChanged(QListWidgetItem *item)
