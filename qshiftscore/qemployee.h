@@ -36,6 +36,7 @@ namespace Algorithmos {
 
         const QStringList &branches() const;
         void addBranch(const QString & id);
+        void takeBranch(const QString &id);
 
         QStringList toStringList();
         QString toString();
@@ -53,7 +54,7 @@ namespace Algorithmos {
      * @param e
      * @return
      */
-    QDebug operator << (QDebug dbg, const QEmployee *e);
+    QDebug QSHIFTSCORE_EXPORT operator << (QDebug dbg, const QEmployee *e);
 
     /**
      * @brief The QEmployeeFactory class

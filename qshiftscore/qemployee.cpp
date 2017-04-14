@@ -31,6 +31,7 @@ namespace Algorithmos {
 
         const QStringList &branches() const;
         void addBranch(const QString & id);
+        void takeBranch(const QString &id);
 
         /**
          * @brief toStringList
@@ -132,6 +133,11 @@ namespace Algorithmos {
     void QEmployee::addBranch(const QString &id)
     {
         m_pPriv->addBranch(id);
+    }
+
+    void QEmployee::takeBranch(const QString &id)
+    {
+        m_pPriv->takeBranch(id);
     }
 
     QStringList QEmployee::toStringList()
@@ -236,7 +242,13 @@ namespace Algorithmos {
 
     void QEmployeePrivate::addBranch(const QString &id)
     {
-        m_branches << id;
+        if(!m_branches.contains(id))
+            m_branches << id;
+    }
+
+    void QEmployeePrivate::takeBranch(const QString &id)
+    {
+        m_branches.removeOne(id);
     }
 
     QStringList QEmployeePrivate::toStringList()

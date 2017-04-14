@@ -119,8 +119,17 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>Add</string>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/icons/add_employee</normaloff>:/icons/add_employee</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="deleteFromListBtn">
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/icons/deletefromlist</normaloff>:/icons/deletefromlist</iconset>
                </property>
               </widget>
              </item>
@@ -136,6 +145,17 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="updateBtn">
+             <property name="text">
+              <string>Update</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/icons/rearrange</normaloff>:/icons/rearrange</iconset>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -145,17 +165,52 @@
     </widget>
    </item>
   </layout>
+  <action name="actionNew_Employee">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/add_employee</normaloff>:/icons/add_employee</iconset>
+   </property>
+   <property name="text">
+    <string>Create new Employee</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/edit_employee</normaloff>:/icons/edit_employee</iconset>
+   </property>
+   <property name="text">
+    <string>Edit</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Current Employee</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/editdelete</normaloff>:/icons/editdelete</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Current Employee</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>AlShiftsTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>alshiftstreewidget.h</header>
-   <slots>
-    <signal>itemParentChanged(QTreeWidgetItem*)</signal>
-   </slots>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

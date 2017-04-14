@@ -4,6 +4,8 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDebug>
+#include <QMessageBox>
+#include <QStringList>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -37,6 +39,10 @@ EmployeeEditorForm::EmployeeEditorForm(QAbstractSettingsWidget *parent) :
 
     ui->employeesTV->clear();
     initTV();
+    ui->employeesTV->addAction(ui->actionNew_Employee);
+    ui->employeesTV->addAction(ui->actionEdit);
+    ui->employeesTV->addAction(ui->actionDelete);
+    ui->employeesTV->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     QDir path ;
     path = QDir(path.currentPath());
@@ -153,10 +159,20 @@ bool EmployeeEditorForm::applyChanges() const
 
 void EmployeeEditorForm::on_addBranchToList_clicked()
 {
-    QListWidgetItem *lItem = new QListWidgetItem(ui->branchesCBox->currentText());
-    lItem->setData(Qt::UserRole,ui->branchesCBox->currentData());
-    ui->availableBranchesLV->insertItem(0,lItem);
-    lItem->setToolTip(lItem->data(Qt::UserRole).toString());
+    //Update employees
+    QTreeWidgetItem *cItem = ui->employeesTV->currentItem();
+    Algorithmos::QEmployee *ce = employees[cItem->data(0,Qt::UserRole).toInt()];
+    int l1 = ce->branches().size();
+    qDebug() << "Current employee before : " << ce << endl;
+    ce->addBranch(ui->branchesCBox->currentData().toString());
+    qDebug() << "Current employee after : "  << ce << endl;
+    int l2 = ce->branches().size();
+    if(l1 != l2) {
+        QListWidgetItem *lItem = new QListWidgetItem(ui->branchesCBox->currentText());
+        lItem->setData(Qt::UserRole,ui->branchesCBox->currentData());
+        ui->availableBranchesLV->insertItem(0,lItem);
+        lItem->setToolTip(lItem->data(Qt::UserRole).toString());
+    }
 }
 
 void EmployeeEditorForm::initTV()
@@ -176,6 +192,13 @@ void EmployeeEditorForm::initTV()
     rootFuelEmplItem->setText(0,tr("Fuel Employees"));
     rootFuelEmplItem->setData(0,Qt::UserRole, Algorithmos::FUELMANAGER);
     rootFuelEmplItem->setExpanded(true);
+}
+
+void EmployeeEditorForm::clearForm()
+{
+    ui->nameLE->clear();
+    ui->branchesCBox->setCurrentIndex(0);
+    ui->availableBranchesLV->clear();
 }
 
 void EmployeeEditorForm::on_employeesTV_itemClicked(QTreeWidgetItem *item, int column)
@@ -199,19 +222,23 @@ void EmployeeEditorForm::on_employeesTV_itemClicked(QTreeWidgetItem *item, int c
 
 void EmployeeEditorForm::on_employeesTV_itemParentChanged(QTreeWidgetItem *droppedItem)
 {
+    qDebug() << "on_employeesTV_itemParentChanged ";
     using namespace Algorithmos;
     QTreeWidgetItem *parent = droppedItem->parent();
     if(parent) {
         EmployeeType eType = (EmployeeType)parent->data(0,Qt::UserRole).toInt();
         QEmployee *empl = employees[droppedItem->data(0,Qt::UserRole).toInt()];
+        qDebug() << "Employee Before " << empl ;
         if(empl) {
             empl->setEmployeeType(eType);
+            qDebug() << "Employee After " << empl;
         }
     }
 }
 
 void EmployeeEditorForm::on_emTypeCB_currentIndexChanged(int index)
 {
+    qDebug() << "on_emTypeCB_currentIndexChanged ";
     qDebug() << "emTypeCB index changed : " << index << endl;
     if(!isEmployeeTVPopulated)
         return;
@@ -228,11 +255,92 @@ void EmployeeEditorForm::on_emTypeCB_currentIndexChanged(int index)
             QTreeWidgetItem *p2Item = parent->takeChild(parent->indexOfChild(pItem));
             ui->employeesTV->topLevelItems().at(index)->addChild(p2Item); //Add it to proper topLevelItem.
             Algorithmos::QEmployee *empl = employees[p2Item->data(0,Qt::UserRole).toInt()];
+            qDebug() << "Employee Before " << empl ;
             if(empl) {
                 empl->setEmployeeType((Algorithmos::EmployeeType)index);
+                qDebug() << "Employee After " << empl;
             }
             ui->employeesTV->setCurrentItem(p2Item);
         }
     }
     //ui->employeesTV->setUpdatesEnabled(true);
+}
+
+void EmployeeEditorForm::on_updateBtn_clicked()
+{
+
+}
+
+void EmployeeEditorForm::on_nameLE_textEdited(const QString &arg1)
+{
+    using namespace Algorithmos;
+    auto cItem = ui->employeesTV->currentItem();
+    QEmployee *curEmployee = employees[cItem->data(0,Qt::UserRole).toInt()];
+    cItem->setText(0,arg1);
+    curEmployee->setName(arg1);
+
+    qDebug() << "on_nameLE_textEdited --> employees vector : "
+             << employees[cItem->data(0,Qt::UserRole).toInt()]->name() << endl;
+}
+
+void EmployeeEditorForm::on_actionNew_Employee_triggered()
+{
+    clearForm();
+    ui->employeesTV->addEmptyItem();
+    QTreeWidgetItem *parent = ui->employeesTV->currentItem()->parent();
+    if(parent) {
+        int index = ui->employeesTV->indexOfTopLevelItem(parent);
+        ui->nameLE->setText(ui->employeesTV->currentItem()->text(0));
+        ui->nameLE->setFocus();
+        Algorithmos::QEmployee *ne = Algorithmos::createEmployee(employees.size(),tr("New Employee"),
+                                                                 (Algorithmos::EmployeeType)index,
+                                                                 QStringList());
+        employees.push_back(ne);
+        ui->employeesTV->currentItem()->setData(0,Qt::UserRole,employees.size()-1);
+        qDebug() << "Currently added employee : " << employees.last();
+    }
+}
+
+void EmployeeEditorForm::on_actionEdit_triggered()
+{
+    ui->nameLE->selectAll();
+    ui->nameLE->setFocus();
+}
+
+void EmployeeEditorForm::on_employeesTV_itemChanged(QTreeWidgetItem *item, int column)
+{
+    qDebug() << "Item : " << item->text(column) << " changed" << endl;
+}
+
+void EmployeeEditorForm::on_actionDelete_triggered()
+{
+    qDebug() << "on_actionDelete_triggered :" << ui->employeesTV->currentItem()->text(0);
+    QTreeWidgetItem *cItem = ui->employeesTV->currentItem();
+    QTreeWidgetItem *parent = cItem->parent();
+
+    if(parent) {
+        int ret = QMessageBox::question(this, tr("Are you sure ?"),
+                                        tr("Are you sure you want to delete %1\nfrom your employees list?")
+                                        .arg(cItem->text(0)),
+                                        QMessageBox::Yes | QMessageBox::No);
+        if(ret == QMessageBox::Yes) {
+            qDebug() << "employees vector before : " << employees;
+            employees.remove(cItem->data(0,Qt::UserRole).toInt());
+            parent->takeChild(parent->indexOfChild(cItem));
+            qDebug() << "employees vector after : " << employees;
+        }
+    }
+}
+
+void EmployeeEditorForm::on_deleteFromListBtn_clicked()
+{
+    qDebug() << "on_deleteFromListBtn_clicked : " ;
+    QListWidgetItem *cListItem = ui->availableBranchesLV->currentItem();
+    QTreeWidgetItem *cItem = ui->employeesTV->currentItem();
+    Algorithmos::QEmployee *ce = employees[cItem->data(0,Qt::UserRole).toInt()];
+    qDebug() << "Employee before : " << ce;
+    ce->takeBranch(cListItem->data(Qt::UserRole).toString());
+    qDebug() << "Employee after : " << ce;
+
+    ui->availableBranchesLV->takeItem(ui->availableBranchesLV->currentIndex().row());
 }

@@ -58,6 +58,20 @@ private slots:
 
     void on_emTypeCB_currentIndexChanged(int index);
 
+    void on_updateBtn_clicked();
+
+    void on_nameLE_textEdited(const QString &arg1);
+
+    void on_actionNew_Employee_triggered();
+
+    void on_actionEdit_triggered();
+
+    void on_employeesTV_itemChanged(QTreeWidgetItem *item, int column);
+
+    void on_actionDelete_triggered();
+
+    void on_deleteFromListBtn_clicked();
+
 private:
     Ui::EmployeeEditorForm *ui;
     QTreeWidgetItem *rootManItem;
@@ -68,6 +82,7 @@ private:
 
     void initTV();
     bool isEmployeeTVPopulated;
+    void clearForm();
 
     Algorithmos::QEmployee *curEmployee; //The employee selected in ui->employeeTV
 };

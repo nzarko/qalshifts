@@ -147,22 +147,27 @@ void AlShiftsTreeWidget::addEmptyItem()
     QTreeWidgetItem *ci = itemAt(startPos);
     if ( ci )
     {
-        QTreeWidgetItem *ni = new QTreeWidgetItem(ci);
+        QTreeWidgetItem *ni = Q_NULLPTR;
+        if(ci->parent())
+            ni = new QTreeWidgetItem(ci->parent());
+        else
+            ni = new QTreeWidgetItem(ci);
         flags = ni->flags();
         ni->setFlags(flags | Qt::ItemIsEditable);
+        ni->setText(0,tr("New Employee"));
         setCurrentItem(ni);
-        editItem(ni,0);
+        //editItem(ni,0);
         //TODO : Handle the database code here!
     }
-    else
-    {
-        QTreeWidgetItem *nti = new QTreeWidgetItem();
-        flags = nti->flags();
-        nti->setFlags(flags | Qt::ItemIsEditable);
-        addTopLevelItem(nti);
-        setCurrentItem(nti);
-        editItem(nti);
-        //TODO : Handle the database code here!
-    }
+//    else
+//    {
+//        QTreeWidgetItem *nti = new QTreeWidgetItem();
+//        flags = nti->flags();
+//        nti->setFlags(flags | Qt::ItemIsEditable);
+//        addTopLevelItem(nti);
+//        setCurrentItem(nti);
+//        editItem(nti);
+//        //TODO : Handle the database code here!
+//    }
     emit newItemInserted();
 }

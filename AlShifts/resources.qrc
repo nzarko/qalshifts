@@ -29,6 +29,9 @@
         <file alias="editdelete">icons/editdelete.png</file>
         <file alias="exit">icons/exit.png</file>
         <file alias="stuff_week">icons/stuff_week.png</file>
+        <file alias="add_employee">icons/edit-add-4.png</file>
+        <file alias="edit_employee">icons/edit-table-cell.png</file>
+        <file alias="deletefromlist">icons/delete.png</file>
     </qresource>
     <qresource prefix="/"/>
     <qresource prefix="/translations">
