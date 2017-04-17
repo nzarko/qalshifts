@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>624</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -75,6 +75,8 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -340,6 +342,23 @@
    </property>
    <property name="text">
     <string>Stuff Week</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/app_icon</normaloff>:/icons/app_icon</iconset>
+   </property>
+   <property name="text">
+    <string>About ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about application</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt ...</string>
    </property>
   </action>
  </widget>

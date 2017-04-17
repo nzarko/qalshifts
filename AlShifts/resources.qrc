@@ -32,6 +32,8 @@
         <file alias="add_employee">icons/edit-add-4.png</file>
         <file alias="edit_employee">icons/edit-table-cell.png</file>
         <file alias="deletefromlist">icons/delete.png</file>
+        <file alias="app_icon">icons/ALShift.png</file>
+        <file alias="AboutApp">icons/ALShiftAboutDlg.png</file>
     </qresource>
     <qresource prefix="/"/>
     <qresource prefix="/translations">

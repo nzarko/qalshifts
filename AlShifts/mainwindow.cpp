@@ -31,6 +31,7 @@
 #include "qdateselector.h"
 #include "printview.h"
 #include "alshiftssettingsdialog.h"
+#include "aboutdialog.h"
 
 
 MainWindow* MainWindow::m_pInstance = nullptr;
@@ -147,6 +148,12 @@ void MainWindow::setupActions()
      *      Settings Dialog                *
      * *********************************** */
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showPreferencesDialog);
+
+    /* *********************************** *
+     *      Help Menu                      *
+     * *********************************** */
+    connect(ui->actionAbout_Qt, &QAction::triggered, qApp, &QApplication::aboutQt);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 }
 
 void MainWindow::createStatusBar()
@@ -411,7 +418,8 @@ bool MainWindow::saveAll()
 
 void MainWindow::about()
 {
-
+    AboutDialog aboutDlg(this);
+    aboutDlg.exec();
 }
 
 void MainWindow::documentWasModified()
@@ -552,8 +560,11 @@ void MainWindow::showPreferencesDialog()
     if (!settingsDlg)
         settingsDlg = new AlShiftsSettingsDialog(this);
 
-    if(settingsDlg->exec() == QDialog::Accepted)
+    if(settingsDlg->exec() == QDialog::Accepted) {
          qDebug()<< "Options Dialog return OK";
+         m_centralView->employeeShiftsTable()->updateVHeader();
+    }
+
 }
 
 void MainWindow::updateStatusBar()

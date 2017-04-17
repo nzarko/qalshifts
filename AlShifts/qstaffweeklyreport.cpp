@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
+#include <QProcess>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -486,5 +487,33 @@ void QStaffWeeklyReport::openWithExcel()
     csvFilename = path.absolutePath() + "/" + csvFilename + ".csv";
     qDebug() << "cvsFilename : " << csvFilename << endl;
     writeCSVFile(csvFilename);
-    ShellExecute(0,0,(const wchar_t*)csvFilename.utf16(),0,0,SW_SHOW);
+#ifdef Q_OS_WIN
+    ShellExecute(0,0,(const wchar_t*)cvsFilename.utf16(),0,0,SW_SHOW);
+#else
+    QProcess process;
+    QString command = "libreoffice";
+    QStringList args;
+    args << "--calc" << csvFilename;
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.start(command,args);
+    connect(&process,
+    static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+    [&process,this](int exitCode, QProcess::ExitStatus exitStatus){
+        QString message = tr("Process %1 ").arg(process.program()) + tr(" finished with code : %2").arg(exitCode);
+        this->setToolTip(message);
+         });
+    connect(&process,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::errorOccurred),
+            [&process,this](QProcess::ProcessError error) {
+        QString message;
+        if(error == QProcess::FailedToStart) {
+            message = tr("Program %1 not found or it is not in your path!\n Check your installation!!")
+                    .arg(process.program());
+            this->setToolTip(message);
+        }
+    });
+    process.waitForFinished();
+
+#endif
+
 }

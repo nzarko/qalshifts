@@ -884,6 +884,39 @@ void QEmployeeShiftsTable::showBranchFullNames(bool toggled)
 
 }
 
+void QEmployeeShiftsTable::updateVHeader()
+{
+    qDebug() << "QEmployeeShiftsTable::updateVHeader --> ";
+    if(!is_empty) {
+        //Shifts shifts = s_solver->initShifts(m_startDate);
+        s_core.init();
+        set_r(0);
+        Q_ASSERT_X(QEmployeeShiftsTable::r == 0, "r initialization", "r does not initialized properly");
+        manRange.startRow = r;
+        populateVHeader(s_core.branchManagers());
+        manRange.endRow = r;
+        r++;
+        fmanRange.startRow = r;
+        populateVHeader(s_core.branchFuelManagers());
+        fmanRange.endRow = r;
+        r++;
+        feRange.startRow = r;
+        populateVHeader(s_core.fuelEmployees());
+        feRange.endRow = r;
+
+        qDebug() << "managers : (" << manRange.startRow << ", " << manRange.endRow << ")" << '\n'
+                 << "fuel managers : (" << fmanRange.startRow << ", " << fmanRange.endRow << ")" << '\n'
+                 << "fuel employees : (" << feRange.startRow << ", " << feRange.endRow << ")"
+                 << endl;
+
+        emtypeRange.insert(Algorithmos::BMANAGER,manRange);
+        emtypeRange.insert(Algorithmos::BFUELMANAGER,fmanRange);
+        emtypeRange.insert(Algorithmos::FUELMANAGER, feRange);
+        qDebug() << "Changes sould be visible now!" << endl;
+    } else
+        s_core.init();
+}
+
 void QEmployeeShiftsTable::somethingChanged()
 {
     emit modified();

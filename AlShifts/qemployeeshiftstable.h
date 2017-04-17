@@ -133,6 +133,7 @@ public slots:
     void doneEditing();
     void forceIntermittent();
     void showBranchFullNames(bool toggled);
+    void updateVHeader();
 
 signals:
     void modified();
