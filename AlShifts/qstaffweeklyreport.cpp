@@ -488,7 +488,7 @@ void QStaffWeeklyReport::openWithExcel()
     qDebug() << "cvsFilename : " << csvFilename << endl;
     writeCSVFile(csvFilename);
 #ifdef Q_OS_WIN
-    ShellExecute(0,0,(const wchar_t*)cvsFilename.utf16(),0,0,SW_SHOW);
+    ShellExecute(0,0,(const wchar_t*)csvFilename.utf16(),0,0,SW_SHOW);
 #else
     QProcess process;
     QString command = "libreoffice";
