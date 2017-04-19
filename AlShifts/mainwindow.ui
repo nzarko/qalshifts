@@ -114,6 +114,9 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Populate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/populate</normaloff>:/icons/populate</iconset>
@@ -150,6 +153,9 @@
    </property>
   </action>
   <action name="actionPrint_Preview">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/document-print-preview</normaloff>:/icons/document-print-preview</iconset>
@@ -267,6 +273,9 @@
    </property>
   </action>
   <action name="actionPrepare">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/icons/doc_save_as</normaloff>:/icons/doc_save_as</iconset>
