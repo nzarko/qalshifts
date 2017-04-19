@@ -31,7 +31,7 @@ QStaffWeeklyReport::QStaffWeeklyReport(QEmployeeShiftsTable *empl, QWidget *pare
         fuelweekDaysRow.insert(i,wdr);
     }
 
-    openWithExcelAction = new QAction(tr("Open with excel ..."));
+    openWithExcelAction = new QAction(tr("Open with excel ..."),this);
     addAction(openWithExcelAction);
     setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(openWithExcelAction, &QAction::triggered, this, &QStaffWeeklyReport::openWithExcel);
@@ -474,8 +474,10 @@ bool QStaffWeeklyReport::writeCSVFile(const QString &filename)
         qDebug() << "Error writing file :" << file.fileName() << endl;
         return false;
     }
-    QTextStream ts(&file);
-    ts << result << "\n";
+    QTextStream *ts = new QTextStream(&file);
+    ts->setCodec("Windows-1253");
+    *ts << result << "\n";
+    ts->flush();
     file.close();
     return true;
 }

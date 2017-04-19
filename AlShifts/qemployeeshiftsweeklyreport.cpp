@@ -36,8 +36,8 @@ QEmployeeShiftsWeeklyReport::QEmployeeShiftsWeeklyReport(QEmployeeShiftsTable *e
     verticalHeaderView->setSectionsClickable(true);
     weekTable->setVerticalHeader(verticalHeaderView);
 
-    insertRowAction = new QAction(tr("Insert row"));
-    removeRowAction = new QAction(tr("Remove row"));
+    insertRowAction = new QAction(tr("Insert row"),this);
+    removeRowAction = new QAction(tr("Remove row"),this);
     weekTable->verticalHeader()->addAction(insertRowAction);
     weekTable->verticalHeader()->addAction(removeRowAction);
     weekTable->verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -45,7 +45,7 @@ QEmployeeShiftsWeeklyReport::QEmployeeShiftsWeeklyReport(QEmployeeShiftsTable *e
     connect(insertRowAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::insertEmployeeRow);
     connect(removeRowAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::removeEmployeeRow);
 
-    openWithExcelAction = new QAction(tr("Open with excel..."));
+    openWithExcelAction = new QAction(tr("Open with excel..."),this);
     weekTable->addAction(openWithExcelAction);
     weekTable->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(openWithExcelAction, &QAction::triggered, this, &QEmployeeShiftsWeeklyReport::openWithExcel);
@@ -266,8 +266,10 @@ void QEmployeeShiftsWeeklyReport::writeCSVFile(const QString &fileName)
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "Error writing file :" << file.fileName() << endl;
     }
-    QTextStream ts(&file);
-    ts << result << "\n";
+    QTextStream *ts = new QTextStream(&file);
+    ts->setCodec("Windows-1253");
+    *ts << result << "\n";
+    ts->flush();
     file.close();
 }
 

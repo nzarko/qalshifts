@@ -32,6 +32,7 @@
 #include "printview.h"
 #include "alshiftssettingsdialog.h"
 #include "aboutdialog.h"
+#include "stuffprintview.h"
 
 
 MainWindow* MainWindow::m_pInstance = nullptr;
@@ -461,24 +462,27 @@ void MainWindow::fileprint()
 #if !defined(QT_NO_PRINTER) && !defined(QT_NO_PRINTDIALOG)
       QPrinter printer(QPrinter::ScreenResolution);
       QPrintDialog dlg(&printer);
-      PrintView view;
+      AbstractPrintView *view = nullptr;
       QAbstractItemModel *model;
       switch(m_centralView->cvStackedWnd()->currentIndex()) {
       case 0: //QEmployeeShiftsTable
           model = m_centralView->employeeShiftsTable()->model();
+          view = new PrintView();
           break;
       case 1:
           model = m_centralView->employeeReportTable()->tableModel();
+          view = new PrintView();
           break;
       case 2:
           model = m_centralView->staffReportTable()->model();
+          view  = new StuffPrintView();
           printer.setOrientation(QPrinter::Landscape);
           break;
       }
 
-      view.setModel(model);
-      view.resizeColumnsToContents();
-      view.resizeRowsToContents();
+      view->setModel(model);
+      view->resizeColumnsToContents();
+      view->resizeRowsToContents();
 
       //connect(&dlg, &QPrintPreviewDialog::paintRequested, &view, &PrintView::print);
       if (dlg.exec() != QDialog::Accepted) {
@@ -521,7 +525,7 @@ void MainWindow::fileprint()
 
 //          for (int column = 0; column < columns; ++column) {
 //              option.rect = QRect(int(x), int(y), ItemSize, ItemSize);
-//              view.itemDelegate()->paint(&painter, option,
+//              view->itemDelegate()->paint(&painter, option,
 //                                          model->index(row, column, parent));
 //              x = x + ItemSize;
 //          }
@@ -536,7 +540,7 @@ void MainWindow::fileprint()
           QMessageBox::information(this, tr("Printing canceled"),
                                    tr("The printing process was canceled."), QMessageBox::Cancel);
       }
-      view.print(&printer);
+      view->print(&printer);
   #else
       QMessageBox::information(this, tr("Printing canceled"),
                                tr("Printing is not supported on this Qt build"), QMessageBox::Cancel);

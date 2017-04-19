@@ -6,22 +6,22 @@
     <message>
         <location filename="../aboutdialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Περί </translation>
     </message>
     <message>
         <location filename="../aboutdialog.ui" line="42"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;QALShifts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;QALShifts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../aboutdialog.ui" line="58"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;0.8.5&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;0.8.5&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../aboutdialog.ui" line="88"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A simple employee rostering application for &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://www.aliagas.eu/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;Aliagas S.A.&lt;/span&gt;&lt;/a&gt;&lt;a href=&quot;http://www.aliagas.eu/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#000000;&quot;&gt;Petroleum &amp;amp; Bitumen Products.&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Noto Sans,Arial,sans-serif&apos;; font-size:10pt; color:#303942;&quot;&gt;Copyright 2016 - 2017 Nick Zarkadas &lt;/span&gt;&lt;a href=&quot;nzarko17@gmail.com&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;nzarko17@gmail.com. &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;All rights reserved.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;QALShifts made posible with the &lt;/span&gt;&lt;a href=&quot;http://www.gnu.org&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;GNU&apos;s&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;open source tools and &lt;br/&gt;programs.&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;Created under the &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.en.html&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;GPL v3 &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;licence.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Μια απλή εφαρμογή ανάθεσης βάρδιων για την εταιρεία &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://www.aliagas.eu/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;Aliagas S.A.&lt;/span&gt;&lt;/a&gt;&lt;a href=&quot;http://www.aliagas.eu/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#000000;&quot;&gt;Petroleum &amp;amp; Bitumen Products.&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Noto Sans,Arial,sans-serif&apos;; font-size:10pt; color:#303942;&quot;&gt;Copyright 2016 - 2017 Νίκος Ζαρκάδας &lt;/span&gt;&lt;a href=&quot;nzarko17@gmail.com&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;nzarko17@gmail.com. &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Με επιφύλαξη κάθε πνευματικού δικαιόματος.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;Η εφαρμογή QALShifts κατασκευάστηκε με τη &lt;br/&gt;βοήθεια των εργαλείων ανοιχτού κώδικα της  &lt;/span&gt;&lt;a href=&quot;http://www.gnu.org&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;GNU&apos;s&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#000000;&quot;&gt;Διανέμεται με τους όρους της &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.en.html&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#2980b9;&quot;&gt;GPL v3 &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;άδειας χρήσης.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../alshiftstreewidget.cpp" line="157"/>
         <source>New Employee</source>
-        <translation type="unfinished"></translation>
+        <translation>Νέος Υπάλληλος</translation>
     </message>
 </context>
 <context>
@@ -75,37 +75,37 @@
     <message>
         <location filename="../employeeeditorform.ui" line="151"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Ενημέρωση</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="174"/>
         <source>Create new Employee</source>
-        <translation type="unfinished"></translation>
+        <translation>Δημιουργία νέου υπαλλήλου</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="183"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Επεξεργασία</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="186"/>
         <source>Edit Current Employee</source>
-        <translation type="unfinished"></translation>
+        <translation>Επεξεργασία τρέχον υπαλλήλου</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="195"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Διαγραφή</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="198"/>
         <source>Delete Current Employee</source>
-        <translation type="unfinished"></translation>
+        <translation>Διαγραφή τρέχον υπαλλήλου</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.ui" line="201"/>
         <source>Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Del</translation>
     </message>
     <message>
         <source>Add</source>
@@ -149,18 +149,19 @@
     <message>
         <location filename="../employeeeditorform.cpp" line="295"/>
         <source>New Employee</source>
-        <translation type="unfinished"></translation>
+        <translation>Νέος Υπάλληλος</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.cpp" line="322"/>
         <source>Are you sure ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Είστε σίγουροι;</translation>
     </message>
     <message>
         <location filename="../employeeeditorform.cpp" line="323"/>
         <source>Are you sure you want to delete %1
 from your employees list?</source>
-        <translation type="unfinished"></translation>
+        <translation>Είστε σίγουροι ότι θέλετε να διαγράψετε τον (την) %1
+από τη λίστα των υπαλλήλων?</translation>
     </message>
 </context>
 <context>
@@ -446,22 +447,22 @@ from your employees list?</source>
     <message>
         <location filename="../mainwindow.ui" line="348"/>
         <source>Stuff Week</source>
-        <translation type="unfinished"></translation>
+        <translation>Εβδομαδιαία διαχείρηση</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="357"/>
         <source>About ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Περί...</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="360"/>
         <source>Show information about application</source>
-        <translation type="unfinished"></translation>
+        <translation>Δείχνει πληροφορίες για την εφαρμογή</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="365"/>
         <source>About Qt ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Περί της Qt ...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="64"/>
@@ -791,18 +792,19 @@ Available branches : %1</source>
     <message>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="293"/>
         <source>Process %1 </source>
-        <translation type="unfinished"></translation>
+        <translation>Η Διεργασία %1 </translation>
     </message>
     <message>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="293"/>
         <source> finished with code : %2</source>
-        <translation type="unfinished"></translation>
+        <translation>τελείωσε με κωδικό εξόδου : %2</translation>
     </message>
     <message>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="301"/>
         <source>Program %1 not found or it is not in your path!
  Check your installation!!</source>
-        <translation type="unfinished"></translation>
+        <translation>Η εφαρμογή %1 δεν έχει εγκατασταθεί ή δεν βρίσκεται στο path!
+Παρακαλώ ελέγξτε την εγκατάσταση σας!!</translation>
     </message>
     <message>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="357"/>
@@ -865,7 +867,7 @@ Available branches : %1</source>
     <message>
         <location filename="../weekreportinfo.cpp" line="39"/>
         <source>AVAIL</source>
-        <translation type="unfinished">Δ</translation>
+        <translation>Δ</translation>
     </message>
 </context>
 <context>
@@ -876,7 +878,7 @@ Available branches : %1</source>
         <location filename="../qstaffweeklyreport.cpp" line="137"/>
         <location filename="../qstaffweeklyreport.cpp" line="386"/>
         <source>DO</source>
-        <translation type="unfinished">Ρ</translation>
+        <translation>Ρ</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="25"/>
@@ -884,40 +886,42 @@ Available branches : %1</source>
         <location filename="../qstaffweeklyreport.cpp" line="141"/>
         <location filename="../qstaffweeklyreport.cpp" line="388"/>
         <source>AVAIL</source>
-        <translation type="unfinished">Δ</translation>
+        <translation>Δ</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="34"/>
         <source>Open with excel ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Άνοιγμα σε εφαρμογή λογιστικού φύλλου (excel - libreoffice calc) ...</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="86"/>
         <location filename="../qstaffweeklyreport.cpp" line="147"/>
         <source>
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>
+%1</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="246"/>
         <source>%1η Εβδομάδα (%2 έως %3)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="502"/>
         <source>Process %1 </source>
-        <translation type="unfinished"></translation>
+        <translation>Η Διεργασία %1 </translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="502"/>
         <source> finished with code : %2</source>
-        <translation type="unfinished"></translation>
+        <translation>τελείωσε με κωδικό εξόδου : %2</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="510"/>
         <source>Program %1 not found or it is not in your path!
  Check your installation!!</source>
-        <translation type="unfinished"></translation>
+        <translation>Η εφαρμογή %1 δεν έχει εγκατασταθεί ή δεν βρίσκεται στο path!
+Παρακαλώ ελέγξτε την εγκατάσταση σας!!</translation>
     </message>
 </context>
 </TS>

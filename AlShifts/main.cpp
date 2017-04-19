@@ -9,6 +9,7 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::addLibraryPath(".");
     QApplication a(argc, argv);
     //The bellow info are being used with the default QSettings constructor.
     QCoreApplication::setOrganizationName("Algorithmos");

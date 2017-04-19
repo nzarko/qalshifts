@@ -53,7 +53,7 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     verticalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
     verticalHeader()->setSectionsClickable(true);
 
-    removeRowAction = new QAction(tr("Remove Row"));
+    removeRowAction = new QAction(tr("Remove Row"),this);
     verticalHeader()->addAction(removeRowAction);
     verticalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(removeRowAction, &QAction::triggered,this, &QEmployeeShiftsTable::removeCurrentRow);
@@ -162,7 +162,7 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
     }
 
     QDataStream in(&file);
-    in.setVersion(QDataStream::Qt_5_8);
+    in.setVersion(QDataStream::Qt_5_6);
 
     quint32 magic;
     in >> magic;
@@ -220,7 +220,7 @@ bool QEmployeeShiftsTable::writeFile(const QString &fileName)
     }
 
     QDataStream out(&file);
-    out.setVersion(QDataStream::Qt_5_8);
+    out.setVersion(QDataStream::Qt_5_6);
 
     out << quint32(MagicNumber);
 

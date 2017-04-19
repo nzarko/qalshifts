@@ -22,22 +22,22 @@
         <location filename="../utils.cpp" line="36"/>
         <location filename="../utils.cpp" line="57"/>
         <source>Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Μη έγκυρος</translation>
     </message>
     <message>
         <location filename="../utils.cpp" line="48"/>
         <source>YK</source>
-        <translation type="unfinished"></translation>
+        <translation>YK</translation>
     </message>
     <message>
         <location filename="../utils.cpp" line="51"/>
         <source>YB</source>
-        <translation type="unfinished"></translation>
+        <translation>ΥΒ</translation>
     </message>
     <message>
         <location filename="../utils.cpp" line="54"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>Β</translation>
     </message>
     <message>
         <location filename="../utils.cpp" line="114"/>

@@ -50,7 +50,9 @@ SOURCES += main.cpp\
     alshiftstreewidget.cpp \
     qabstractsettingswidget.cpp \
     qstaffweeklyreport.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    stuffprintview.cpp \
+    abstractprintview.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -76,7 +78,9 @@ HEADERS  += mainwindow.h \
     alshiftstreewidget.h \
     qabstractsettingswidget.h \
     qstaffweeklyreport.h \
-    aboutdialog.h
+    aboutdialog.h \
+    stuffprintview.h \
+    abstractprintview.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \
@@ -84,10 +88,15 @@ FORMS    += mainwindow.ui \
     alshiftssettingsdialog.ui \
     employeeeditorform.ui \
     aboutdialog.ui
-
+win32 {
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
+QMAKE_CFLAGS += /D _USING_V110_SDK71_
+QMAKE_CXXFLAGS += /D _USING_V110_SDK71_
+LIBS *= -L"%ProgramFiles(x86)%/Microsoft SDKs/Windows/7.1A/Lib"
+INCLUDEPATH += "%ProgramFiles(x86)%/Microsoft SDKs/Windows/7.1A/Include"
+}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/release/ -lqshiftscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qshiftscore/debug/ -lqshiftscore

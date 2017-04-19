@@ -42,7 +42,7 @@ void PrintView::print(QPrinter *p)
 //    render(printer);
 //#endif
 
-    QPrinter printer(QPrinter::ScreenResolution);
+    QPrinter *printer = p;
     auto rows = model()->rowCount(QModelIndex());
     auto cols = model()->columnCount(QModelIndex());
 
@@ -51,9 +51,9 @@ void PrintView::print(QPrinter *p)
         totalWidth += columnWidth(i);
 
     QPainter painter;
-    painter.begin(&printer);
+    painter.begin(printer);
 
-    auto pageSize = printer.pageRect();
+    auto pageSize = printer->pageRect();
     auto pageHeight = pageSize.height();
 
     auto scaleX = pageSize.width() / (totalWidth);
@@ -71,7 +71,7 @@ void PrintView::print(QPrinter *p)
         totalHeight += height;
         if( totalHeight > pageHeight) {
             totalHeight = height ;
-            printer.newPage();
+            printer->newPage();
             newPage = true;
         }
         for (auto col=0; col < cols; ++col) {

@@ -12,9 +12,15 @@ TARGET = qshiftscore
 TEMPLATE = lib
 
 DEFINES += QSHIFTSCORE_LIBRARY
+win32 {
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
+QMAKE_CFLAGS += /D _USING_V110_SDK71_
+QMAKE_CXXFLAGS += /D _USING_V110_SDK71_
+LIBS *= -L"%ProgramFiles(x86)%/Microsoft SDKs/Windows/7.1A/Lib"
+INCLUDEPATH += "%ProgramFiles(x86)%/Microsoft SDKs/Windows/7.1A/Include"
+}
 
 #win32 {
 copydata.commands = $(COPY_DIR) $$shell_path($$PWD/../Data)  $$shell_path($$OUT_PWD/../Data)

@@ -2,9 +2,10 @@
 #define PRINTVIEW_H
 
 #include <QTableView>
-class QPrinter;
 
-class PrintView : public QTableView
+#include "abstractprintview.h"
+
+class PrintView : public AbstractPrintView
 {
     Q_OBJECT
 
