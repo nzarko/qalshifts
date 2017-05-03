@@ -85,7 +85,7 @@ void QStaffWeeklyReport::createWeekReport(const QDate &date)
                     QString it = pItem->text();
                     it.push_back(tr("\n%1").arg(item_text));
                     pItem->setText(it);
-                } else {
+                } else {                    
                     pItem = new QTableWidgetItem(item_text);
                     setItem(item_row,branch_col,pItem);
                     if(s_type == Algorithmos::DAYOFF) {
@@ -94,9 +94,16 @@ void QStaffWeeklyReport::createWeekReport(const QDate &date)
                     }
                 }
             } else {
-                pItem = new QTableWidgetItem(name);
+                ///TODO : The bug is probably hidden here!!
+                /// Fix it!
                 item_row = (s_type == Algorithmos::EARLY) ? start_row : (start_row+1);
-                setItem(item_row,branch_col,pItem);
+                pItem = item(item_row,branch_col);
+                if(pItem) {
+                    pItem->setText(pItem->text()+"\n"+name);
+                } else {
+                    pItem = new QTableWidgetItem(name);
+                    setItem(item_row,branch_col,pItem);
+                }
             }
         }
     }
