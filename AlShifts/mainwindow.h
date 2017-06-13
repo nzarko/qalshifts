@@ -90,6 +90,9 @@ private slots:
     void weekViewChanged(int week);
     void branchChanged(int branch);
     void toggleStaffWeekView(bool checked);
+    void continueFromCurrent() ;
+
+    void on_actionClear_DO_Text_triggered();
 
 protected:
     void closeEvent(QCloseEvent *event);

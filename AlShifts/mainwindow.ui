@@ -37,7 +37,14 @@
      </property>
      <addaction name="actionHtml"/>
     </widget>
-    <addaction name="actionNew"/>
+    <widget class="QMenu" name="menuNew">
+     <property name="title">
+      <string>New...</string>
+     </property>
+     <addaction name="actionNew"/>
+     <addaction name="actionContinue_From_Current"/>
+    </widget>
+    <addaction name="menuNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -63,6 +70,7 @@
     <addaction name="actionSolve"/>
     <addaction name="actionSwap_Shifts"/>
     <addaction name="actionRearrange_Employees_Shift"/>
+    <addaction name="actionClear_DO_Text"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
    </widget>
@@ -197,7 +205,7 @@
      <normaloff>:/icons/doc_new</normaloff>:/icons/doc_new</iconset>
    </property>
    <property name="text">
-    <string>New</string>
+    <string>New From Scratch</string>
    </property>
    <property name="toolTip">
     <string>Create's new shifts table</string>
@@ -372,6 +380,30 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt ...</string>
+   </property>
+  </action>
+  <action name="actionClear_DO_Text">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/edit_clear</normaloff>:/icons/edit_clear</iconset>
+   </property>
+   <property name="text">
+    <string>Clear DO Text</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear Text from day off cells</string>
+   </property>
+  </action>
+  <action name="actionContinue_From_Current">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/populate</normaloff>:/icons/populate</iconset>
+   </property>
+   <property name="text">
+    <string>Continue From Current</string>
+   </property>
+   <property name="toolTip">
+    <string>Creates new Shifts program based on current shifts table</string>
    </property>
   </action>
  </widget>

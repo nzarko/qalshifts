@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QToolBar>
 #include <QComboBox>
+#include <QTimer>
 
 #include <QPrintDialog>
 #include <QPrinter>
@@ -88,6 +89,8 @@ void MainWindow::setupActions()
 {
     connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows);
     connect(ui->actionNew,&QAction::triggered, this, &MainWindow::newFile);
+    connect(ui->actionContinue_From_Current, &QAction::triggered,this, &MainWindow::continueFromCurrent);
+    ui->actionContinue_From_Current->setEnabled(false);
     connect(ui->actionOpen, &QAction::triggered, this,
             &MainWindow::open);
     connect(ui->actionSave, &QAction::triggered,this,
@@ -110,6 +113,7 @@ void MainWindow::setupActions()
     m_centralView->employeeShiftsTable()->addAction(ui->actionSwap_Shifts);
     m_centralView->employeeShiftsTable()->addAction(ui->actionRearrange_Employees_Shift);
     m_centralView->employeeShiftsTable()->addAction(ui->actionForce_Intermittent);
+    m_centralView->employeeShiftsTable()->addAction(ui->actionClear_DO_Text);
     m_centralView->employeeShiftsTable()->setContextMenuPolicy(Qt::ActionsContextMenu);
     connect(ui->actionSwap_Shifts, SIGNAL(triggered()),
             m_centralView->employeeShiftsTable(), SLOT(swapShifts()));
@@ -277,6 +281,7 @@ bool MainWindow::loadFile(const QString &fileName)
     updateWeekCBItems();
     ui->actionBranches_Full_Name->setEnabled(true);
     ui->actionBranches_Full_Name->setChecked(false);
+    ui->actionContinue_From_Current->setEnabled(true);
     return true;
 }
 
@@ -289,7 +294,9 @@ bool MainWindow::saveFile(const QString &fileName)
     }
 
     setCurrentFile(fileName);
+    updateRecentFiles(fileName);
     statusBar()->showMessage(tr("File saved"), 2000);
+    ui->actionContinue_From_Current->setEnabled(true);
     return true;
 }
 
@@ -379,6 +386,7 @@ void MainWindow::newFile()
         ui->actionBranches_Full_Name->setChecked(false);
     }
     //updateRecentFiles();
+    ui->actionContinue_From_Current->setEnabled(false);
 }
 
 void MainWindow::open()
@@ -632,6 +640,46 @@ void MainWindow::toggleStaffWeekView(bool checked)
 
 }
 
+void MainWindow::continueFromCurrent()
+{
+    /*
+     * 1. Get last date from shifts table.
+     * 2. Add a day to that date.
+     * 3. Set the current date to that date
+     * 4. Call newFile
+     * 5. Call Solve on shifts table.\
+     * end.
+     */
+    m_startDate = m_centralView->employeeShiftsTable()->dateForColumn(48);
+    QDate errorDate(1979,1,1);
+    if(m_startDate == errorDate) {
+        QMessageBox::critical(this,tr("Error continuing from previous"),
+                              tr("Could not continue from previous. Invalid start date!!"),
+                              QMessageBox::Ok);
+        return;
+    }
+    m_startDate = m_startDate.addDays(1);
+
+    QEmployeeShiftsTable *spreadsheet = m_centralView->employeeShiftsTable();
+    if (maybeSave()) {
+        spreadsheet->clear();
+        this->m_centralView->employeeShiftsTable()->setStartDate(QDateTime(m_startDate));
+        this->m_centralView->employeeShiftsTable()->populate();
+        qDebug() << "Selected date : " << m_startDate.toString("ddd dd MMM yyyy");
+        updateWeekCBItems();
+        setCurrentFile("");
+        ui->actionBranches_Full_Name->setEnabled(true);
+        ui->actionBranches_Full_Name->setChecked(false);
+        QTimer::singleShot(1000,[this] {
+            m_centralView->employeeShiftsTable()->solve();
+            m_centralView->employeeShiftsTable()->rearrangeEmployeesShift();
+        });
+    }
+
+    ui->actionContinue_From_Current->setEnabled(false);
+
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (maybeSave()) {
@@ -642,4 +690,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         event->ignore();
     }
+}
+
+void MainWindow::on_actionClear_DO_Text_triggered()
+{
+    ///TODO : Implement me!!
+    m_centralView->employeeShiftsTable()->clearDOText();
 }

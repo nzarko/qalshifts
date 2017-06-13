@@ -1,5 +1,5 @@
 #include <QAction>
-#include <QDebug>
+//#include <QDebug>
 #include <QStringList>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
@@ -41,8 +41,8 @@ QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     branchFullName.insert("BR4",tr("Pylis 98"));
     branchFullName.insert("BR5", tr("Karditsis 54"));
 
-    setColumnCount(49);
-    setRowCount(30);
+    setColumnCount(ColumnCount);
+    setRowCount(RowCount);
     setAlternatingRowColors(true);
 
     horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
@@ -182,12 +182,28 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
         in >> *curItem;
         setHorizontalHeaderItem(col, curItem);
     }
+    emtypeRange.clear();
+    manRange = {0,0};
+    fmanRange = {0, 0};
+    feRange = {0, 0};
+    QVector<ETRange *> etr_vec = {&manRange, &fmanRange, &feRange };
+    int curIndex = 0;
+
     for(int row = 0; row < RowCount && !in.atEnd(); ++row) {
         curItem = new QTableWidgetItem();
         in >> *curItem;
         setVerticalHeaderItem(row,curItem);
         if(curItem->text() == "Blank") {
             curItem->setText("");
+            ///TODO : fill emTypeRange with proper values
+            /// so the model be eligible to solve shift changes
+            /// v0.8.5
+            if(curIndex < 3) {
+                etr_vec[curIndex]->endRow = row - 1;
+                ++curIndex;
+                if(curIndex < 3)
+                    etr_vec[curIndex]->startRow = row + 1;
+            }
             continue;
         }
         for(int col = 0; col < ColumnCount && !in.atEnd(); ++col) {
@@ -199,6 +215,14 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
     file.close();
     QApplication::restoreOverrideCursor();
     emit populationChanged(true);
+    qDebug() << "QEmployeeShiftsTable::readFile --> ETRange : ";
+    qDebug() << "\t\tManagers : " << manRange.startRow << ", " << manRange.endRow;
+    qDebug() << "\t\tFuel Managers : " << fmanRange.startRow << ", " << fmanRange.endRow;
+    qDebug() << "\t\tFuel Employees : " << feRange.startRow << ", " << feRange.endRow;
+
+    emtypeRange.insert(Algorithmos::BMANAGER, manRange);
+    emtypeRange.insert(Algorithmos::BFUELMANAGER, fmanRange);
+    emtypeRange.insert(Algorithmos::FUELMANAGER, feRange);
     //Try to extract m_startDate from first headerItem
     m_startDate = QDateTime::fromString(horizontalHeaderItem(0)->text(),"ddd dd \nMMM yyyy");
     if(m_startDate.isValid())
@@ -365,6 +389,22 @@ int QEmployeeShiftsTable::columnForDate(const QDate &date)
     lldiv_t result = std::div(duration,(qint64)7);
     qDebug() << "Column for Date : " << date.toString("dd/MM/yyyy") << " ==> " << result.quot*7 << endl;
     return result.quot * 7;
+}
+
+QDate QEmployeeShiftsTable::dateForColumn(int col)
+{
+    QDate dt = QDate::currentDate();
+    if(is_empty) {
+        qDebug() << "Shifts table is empty. Fill it first then try again" << endl;
+    }
+    dt = QDate::fromString(horizontalHeaderItem(col)->text(),"ddd dd \nMMM yyyy");
+    if(!dt.isValid())
+    {
+        qDebug() << "Could not read date for column " << col << "!! See QEmployeeShiftsTable::dateForColumn(int col)"
+                 <<" for more info" << endl;
+        dt.setDate(1979,1,1);
+    }
+    return dt;
 }
 
 QString QEmployeeShiftsTable::currentLocation()
@@ -538,9 +578,27 @@ void QEmployeeShiftsTable::updateItemColumn(QTableWidgetItem *item)
 
 void QEmployeeShiftsTable::swapShifts(QTableWidgetItem *item1, QTableWidgetItem *item2)
 {
+   // QString txt; //in case that one of the items is DAYOFF
     int data1 = item1->data(Algorithmos::STIROLE).toInt();
+    int data2 = item2->data(Algorithmos::STIROLE).toInt();
+    if(data1 == data2 )
+        return;
+    else {
+        if (data1 == (int) Algorithmos::DAYOFF) {
+            item1->setText(item1->data(Qt::UserRole+1).toStringList().join(", "));
+            item2->setText("");
+        }
+        if (data2 == (int) Algorithmos::DAYOFF) {
+            item2->setText(item2->data(Qt::UserRole+1).toStringList().join(", "));
+            item1->setText("");
+        }
+    }
     item1->setData(Algorithmos::STIROLE,item2->data(Algorithmos::STIROLE));
     item2->setData(Algorithmos::STIROLE, data1);
+
+    updateToolTip(item1);
+    updateToolTip(item2);
+
     solve(item1->column());
 }
 
@@ -917,6 +975,28 @@ void QEmployeeShiftsTable::updateVHeader()
         s_core.init();
 }
 
+void QEmployeeShiftsTable::updateToolTip(QTableWidgetItem *item)
+{
+    using Algorithmos::shiftName;
+    Algorithmos::ShiftType s_type = (Algorithmos::ShiftType)item->data(Algorithmos::STIROLE).toInt();
+    QString tool_tip = tr("Shift type : %1").arg(shiftName(s_type));
+    tool_tip+= tr("\nAvailable branches : %1").arg(item->data(Qt::UserRole+1).toStringList().join(", "));
+    item->setToolTip(tool_tip);
+}
+
+void QEmployeeShiftsTable::clearDOText()
+{
+    QShiftsTableItem *sItem = Q_NULLPTR;
+    for(int i = 0; i < RowCount; ++i)
+        for(int j = 0; j < ColumnCount; ++j) {
+            sItem = dynamic_cast<QShiftsTableItem *>(item(i,j));
+            if(sItem) {
+                if(sItem->data(Algorithmos::STIROLE).toInt() ==(int) Algorithmos::DAYOFF)
+                    sItem->setText("");
+            }
+        }
+}
+
 void QEmployeeShiftsTable::somethingChanged()
 {
     emit modified();
@@ -958,4 +1038,10 @@ QEmployeeShiftsTable::EmployeeTypeRowRange &QEmployeeShiftsTable::EmployeeTypeRo
     this->endRow -= k;
     this->startRow -= k;
     return *this;
+}
+
+QDebug operator <<(QDebug dbg, const QEmployeeShiftsTable::EmployeeTypeRowRange e)
+{
+    dbg.nospace() << "Start Row : " << e.startRow << ", End Row : " << e.endRow;
+    return dbg;
 }

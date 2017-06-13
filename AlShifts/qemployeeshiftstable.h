@@ -2,6 +2,7 @@
 #define QEMPLOYEESHIFTSTABLE_H
 
 #include <QTableWidget>
+#include <QDebug>
 #include "qshiftscore.h"
 #include "qshiftstableitem.h"
 #include "headerdelegate.h"
@@ -66,6 +67,7 @@ public:
         EmployeeTypeRowRange operator -(const int k);
         EmployeeTypeRowRange &operator +=(const int k);
         EmployeeTypeRowRange &operator -=(const int k);
+        friend QDebug operator <<(QDebug dbg, const QEmployeeShiftsTable::EmployeeTypeRowRange e);
     } ETRange;      
 
     /**
@@ -98,6 +100,13 @@ public:
      * @return The column with the date
      */
     int columnForDate(const QDate &date);
+
+    /**
+     * @brief dateForColumn Get the date corresponding to column col
+     * @param col The column number
+     * @return Date representing in column col
+     */
+    QDate dateForColumn(int col);
 
     QString currentLocation();
 
@@ -134,6 +143,13 @@ public slots:
     void forceIntermittent();
     void showBranchFullNames(bool toggled);
     void updateVHeader();
+    void updateToolTip(QTableWidgetItem *item);
+
+    /**
+     * @brief clearDOText
+     * Clears text from Day Off cells
+     */
+    void clearDOText();
 
 signals:
     void modified();
