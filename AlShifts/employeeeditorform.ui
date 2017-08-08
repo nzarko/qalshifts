@@ -146,13 +146,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="updateBtn">
+            <widget class="QPushButton" name="editEmployeesFile">
+             <property name="toolTip">
+              <string>Opens (RAW json file) employees file in system editor to edit!</string>
+             </property>
+             <property name="statusTip">
+              <string>Opens (RAW json file) employees file in system editor to edit!</string>
+             </property>
              <property name="text">
-              <string>Update</string>
+              <string>Edit Employees File </string>
              </property>
              <property name="icon">
               <iconset resource="resources.qrc">
-               <normaloff>:/icons/rearrange</normaloff>:/icons/rearrange</iconset>
+               <normaloff>:/icons/doc_edit</normaloff>:/icons/doc_edit</iconset>
              </property>
             </widget>
            </item>

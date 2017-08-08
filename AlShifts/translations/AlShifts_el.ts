@@ -230,369 +230,408 @@ from your employees list?</source>
         <translation>Εξαγωγή ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="56"/>
+        <location filename="../mainwindow.ui" line="42"/>
+        <source>New...</source>
+        <translation>Νέο...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="63"/>
         <source>&amp;Edit</source>
         <translation>&amp;Επεξεργασία</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="61"/>
+        <location filename="../mainwindow.ui" line="68"/>
         <source>&amp;Tools</source>
         <translation>&amp;Εργαλεία</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="71"/>
+        <location filename="../mainwindow.ui" line="79"/>
         <source>&amp;View</source>
         <translation>&amp;Προβολή</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="80"/>
+        <location filename="../mainwindow.ui" line="88"/>
         <source>&amp;Help</source>
         <translation>&amp;Βοήθεια</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="122"/>
+        <location filename="../mainwindow.ui" line="133"/>
         <source>&amp;Populate</source>
         <translation>&amp;Γέμισμα</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="125"/>
+        <location filename="../mainwindow.ui" line="136"/>
         <source>Fill&apos;s table with initial values</source>
         <translation>Γεμίζει τον πίνακα με αρχικές τιμές</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="134"/>
+        <location filename="../mainwindow.ui" line="145"/>
         <source>Clear Shifts</source>
         <translation>Εκκαθάριση Βάρδιων</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="143"/>
+        <location filename="../mainwindow.ui" line="154"/>
         <source>print</source>
         <translation>Εκτύπωση</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="146"/>
+        <location filename="../mainwindow.ui" line="157"/>
         <source>Print&apos;s the current shifts table</source>
         <translation>Εκτυπώνει τον πίνακα βάρδιων</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="149"/>
+        <location filename="../mainwindow.ui" line="160"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="158"/>
+        <location filename="../mainwindow.ui" line="172"/>
         <source>Print Preview</source>
         <translation>Προεπισκόπηση Εκτύπωσης</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="161"/>
+        <location filename="../mainwindow.ui" line="175"/>
         <source>Show how printed table will look like.</source>
         <translation>Δείχνει πως φαίνεται εκτυπωμένος ο πίνακας  βάρδιων.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="170"/>
+        <location filename="../mainwindow.ui" line="184"/>
         <source>Html</source>
         <translation>Html</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="173"/>
+        <location filename="../mainwindow.ui" line="187"/>
         <source>Export current table to Html document</source>
         <translation>Εξαγωγή του πίνακα σε αρχείο HTML</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="182"/>
+        <location filename="../mainwindow.ui" line="196"/>
         <source>Solve</source>
         <translation>Επίλυση</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="185"/>
+        <location filename="../mainwindow.ui" line="199"/>
         <source>Try to find the optimal shifts solution.</source>
         <translation>Προσπαθεί να βρεί τη βέλτιστη λύση.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="194"/>
         <source>New</source>
-        <translation>Νέο</translation>
+        <translation type="vanished">Νέο</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="197"/>
+        <location filename="../mainwindow.ui" line="208"/>
+        <source>New From Scratch</source>
+        <translation>Από την αρχή</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="211"/>
         <source>Create&apos;s new shifts table</source>
         <translation>Δημιουργία νέου πίνακα βάρδιων</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="200"/>
+        <location filename="../mainwindow.ui" line="214"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="209"/>
+        <location filename="../mainwindow.ui" line="223"/>
         <source>Save</source>
         <translation>Αποθήκευση</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="212"/>
+        <location filename="../mainwindow.ui" line="226"/>
         <source>Save&apos;s shifts table to file</source>
         <translation>Αποθηκεύει τον πίνακα βάρδιων σε αρχείο</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="215"/>
+        <location filename="../mainwindow.ui" line="229"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="224"/>
+        <location filename="../mainwindow.ui" line="238"/>
         <source>Save As...</source>
         <translation>Αποθήκευση ως...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="227"/>
+        <location filename="../mainwindow.ui" line="241"/>
         <source>Save&apos;s shifts table with different name</source>
         <translation>Αποθηκεύει τον πίνακα βάρδιων με διαφορετικό όνομα από το υπάρχον</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="236"/>
+        <location filename="../mainwindow.ui" line="250"/>
         <source>Open...</source>
         <translation>Άνοιγμα...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="239"/>
+        <location filename="../mainwindow.ui" line="253"/>
         <source>Open Shifts table from file</source>
         <translation>Άνοιγμα αρχείου βάρδιων από αρχείο</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="242"/>
+        <location filename="../mainwindow.ui" line="256"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="251"/>
+        <location filename="../mainwindow.ui" line="265"/>
         <source>Swap Shifts</source>
         <translation>Ανταλλαγή βάρδιων</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="254"/>
+        <location filename="../mainwindow.ui" line="268"/>
         <source>Swap shifts types between items</source>
         <translation>Ανταλλάσει βάρδιες μεταξύ των στοιχείων</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="263"/>
+        <location filename="../mainwindow.ui" line="277"/>
         <source>Rearrange Employees Shift</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="266"/>
+        <location filename="../mainwindow.ui" line="280"/>
         <source>Rearrange fuel employees shifts for better performance.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="275"/>
+        <location filename="../mainwindow.ui" line="292"/>
         <source>Prepare</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="280"/>
+        <location filename="../mainwindow.ui" line="297"/>
         <source>Force Intermittent</source>
         <translation>Κάντο σπαστό</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="283"/>
+        <location filename="../mainwindow.ui" line="300"/>
         <source>Make the shift of the cells of type intermittent</source>
         <translation>Μετατρέπει τον τύπο βάρδιας των κελιών σε σπαστό ωράριο</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="295"/>
+        <location filename="../mainwindow.ui" line="312"/>
         <source>Weekly</source>
         <translation>Εβδομαδιαία αναφορά</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="298"/>
+        <location filename="../mainwindow.ui" line="315"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="306"/>
+        <location filename="../mainwindow.ui" line="323"/>
         <source>Branches Full Name</source>
         <translation>Πλήρες όνομα Υ/Κ</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="309"/>
+        <location filename="../mainwindow.ui" line="326"/>
         <source>Show full name of the branches</source>
         <translation>Εμφανίζει το πλήρες όνομα του Υ/Κ</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="318"/>
+        <location filename="../mainwindow.ui" line="335"/>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="321"/>
+        <location filename="../mainwindow.ui" line="338"/>
         <source>Configure QALShifts</source>
         <translation>Ρύθμιση QALShifts</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="330"/>
+        <location filename="../mainwindow.ui" line="347"/>
         <source>Exit</source>
         <translation>Έξοδος</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="333"/>
+        <location filename="../mainwindow.ui" line="350"/>
         <source>Quit&apos;s the application</source>
         <translation>Έξοδος από την εφαρμογή</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="336"/>
+        <location filename="../mainwindow.ui" line="353"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="348"/>
+        <location filename="../mainwindow.ui" line="365"/>
         <source>Stuff Week</source>
         <translation>Εβδομαδιαία διαχείρηση</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="357"/>
+        <location filename="../mainwindow.ui" line="374"/>
         <source>About ...</source>
         <translation>Περί...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="360"/>
+        <location filename="../mainwindow.ui" line="377"/>
         <source>Show information about application</source>
         <translation>Δείχνει πληροφορίες για την εφαρμογή</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="365"/>
+        <location filename="../mainwindow.ui" line="382"/>
         <source>About Qt ...</source>
         <translation>Περί της Qt ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="64"/>
+        <location filename="../mainwindow.ui" line="391"/>
+        <source>Clear DO Text</source>
+        <translation>Καθάρισμα Ρεπό</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="394"/>
+        <source>Clear Text from day off cells</source>
+        <translation>Καθαρίζει το κείμενο από τα κελιά Ρεπό</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="403"/>
+        <source>Continue From Current</source>
+        <translation>Συνέχεια από το προηγούμενο</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="406"/>
+        <source>Creates new Shifts program based on current shifts table</source>
+        <translation>Δημιουργεί καινούργιο πρόγραμμα βάρδιων βασισμένο στο υπάρχον πρόγραμμα</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="66"/>
         <source>All</source>
         <translation>Όλα</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="65"/>
+        <location filename="../mainwindow.cpp" line="67"/>
         <source>Kalampakas 104</source>
         <translation>Καλαμπάκας 104</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="66"/>
+        <location filename="../mainwindow.cpp" line="68"/>
         <source>Pylis 39</source>
         <translation>Πύλης 39</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="67"/>
+        <location filename="../mainwindow.cpp" line="69"/>
         <source>Pylis 98</source>
         <translation>Πύλης 98</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="68"/>
+        <location filename="../mainwindow.cpp" line="70"/>
         <source>Karditsis 54</source>
         <translation>Καρδίτσης 54</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="125"/>
+        <location filename="../mainwindow.cpp" line="130"/>
         <source>Recent Files ...</source>
         <translation>Πρόσφατα Αρχεία ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="177"/>
+        <location filename="../mainwindow.cpp" line="182"/>
         <source>Week report</source>
         <translation>Εβδομαδιαία Αναφορά</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="189"/>
-        <location filename="../mainwindow.cpp" line="303"/>
+        <location filename="../mainwindow.cpp" line="194"/>
+        <location filename="../mainwindow.cpp" line="311"/>
         <source>Week %1 ( %2 - %3 )</source>
         <translation>Εβδομάδα %1 ( %2 - %3 )</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="247"/>
-        <location filename="../mainwindow.cpp" line="455"/>
+        <location filename="../mainwindow.cpp" line="252"/>
+        <location filename="../mainwindow.cpp" line="464"/>
         <source>Aliagas Shifts</source>
         <translation>Πρόγραμμα Εργασίας Αλιάγας</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="248"/>
+        <location filename="../mainwindow.cpp" line="253"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
         <translation>Το αρχείο έχει τροποποιηθεί.\nΘέλετε να αποθηκεύσετε τις αλλαγές σας;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="266"/>
+        <location filename="../mainwindow.cpp" line="271"/>
         <source>Loading canceled</source>
         <translation>Η φόρτωση ακυρώθηκε</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="272"/>
+        <location filename="../mainwindow.cpp" line="277"/>
         <source>File loaded</source>
         <translation>Το αρχείο φορτώθηκε</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="286"/>
+        <location filename="../mainwindow.cpp" line="292"/>
         <source>Saving canceled</source>
         <translation>Η αποθήκευση ακυρώθηκε</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="291"/>
+        <location filename="../mainwindow.cpp" line="298"/>
         <source>File saved</source>
         <translation>Το αρχείο αποθηκεύτηκε</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="330"/>
+        <location filename="../mainwindow.cpp" line="338"/>
         <source>&amp;%1 %2</source>
         <translation>&amp;%1 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="387"/>
+        <location filename="../mainwindow.cpp" line="396"/>
         <source>Open Aliagas Shifts</source>
         <translation>Άνοιγμα αρχείου εργασιών Αλιάγας</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="388"/>
-        <location filename="../mainwindow.cpp" line="407"/>
+        <location filename="../mainwindow.cpp" line="397"/>
+        <location filename="../mainwindow.cpp" line="416"/>
         <source>Aliagas Shifts files (*.alsh)</source>
         <translation>Αρχεία εργασιών Αλιάγας (*.alsh)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="406"/>
+        <location filename="../mainwindow.cpp" line="415"/>
         <source>Save Shifts</source>
         <translation>Αποθέκευση πίνακα εργασιών</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="454"/>
+        <location filename="../mainwindow.cpp" line="463"/>
         <source>%1[*] - %2</source>
         <translation>%1[*] - %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="510"/>
+        <location filename="../mainwindow.cpp" line="522"/>
         <source>Printing...</source>
         <translation>Εκτύπωση...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="510"/>
+        <location filename="../mainwindow.cpp" line="522"/>
         <source>Cancel</source>
         <translation>Ακύρωση</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="536"/>
-        <location filename="../mainwindow.cpp" line="541"/>
+        <location filename="../mainwindow.cpp" line="548"/>
+        <location filename="../mainwindow.cpp" line="553"/>
         <source>Printing canceled</source>
         <translation>Η εκτύπωση ακυρώθηκε</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="537"/>
+        <location filename="../mainwindow.cpp" line="549"/>
         <source>The printing process was canceled.</source>
         <translation>Η διεργασία εκτύπωσης ακυρώθηκε.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="542"/>
+        <location filename="../mainwindow.cpp" line="554"/>
         <source>Printing is not supported on this Qt build</source>
         <translation>Η εκτύπωση δεν υποστηρίζεται σ&apos;αυτη την έκδοση της Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="589"/>
+        <location filename="../mainwindow.cpp" line="601"/>
         <source>Week_%1-</source>
         <translation>Εβδομάδα_%1-</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="656"/>
+        <source>Error continuing from previous</source>
+        <translation>Σφάλμα δημιουργίας προγράμματος</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="657"/>
+        <source>Could not continue from previous. Invalid start date!!</source>
+        <translation>Αδύνατη η συνέχεια του προηγούμενου προγράμματος. Άκυρη αρχική ημερομηνία!!</translation>
     </message>
 </context>
 <context>
@@ -625,7 +664,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../qemployeeshiftstable.cpp" line="157"/>
         <location filename="../qemployeeshiftstable.cpp" line="170"/>
-        <location filename="../qemployeeshiftstable.cpp" line="215"/>
+        <location filename="../qemployeeshiftstable.cpp" line="239"/>
         <source>Aliagas Shifts</source>
         <translation>Ωράριο Εργασίας - Αλιάγας</translation>
     </message>
@@ -641,65 +680,67 @@ Do you want to save your changes?</source>
         <translation>Ο τύπος του αρχείου δεν υποστηρίζετε.</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="216"/>
+        <location filename="../qemployeeshiftstable.cpp" line="240"/>
         <source>Cannot write file %1:
 %2.</source>
         <translation>Αδύνατη η εγγραφή του αρχείου %1:\ν%2.</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="406"/>
+        <location filename="../qemployeeshiftstable.cpp" line="446"/>
         <source>Aliagas Shifts Table from %1 to %2</source>
         <translation>Πρόγραμμα Εργασίας από %1 μέχρι %2</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="608"/>
+        <location filename="../qemployeeshiftstable.cpp" line="666"/>
         <source>Available 
  %1</source>
         <translation>Διαθέσιμος (η) %1</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="646"/>
-        <location filename="../qemployeeshiftstable.cpp" line="664"/>
+        <location filename="../qemployeeshiftstable.cpp" line="704"/>
+        <location filename="../qemployeeshiftstable.cpp" line="722"/>
         <source>Employee %1 : </source>
         <translation>Υπάλληλος %1:</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="715"/>
+        <location filename="../qemployeeshiftstable.cpp" line="773"/>
+        <location filename="../qemployeeshiftstable.cpp" line="982"/>
         <source>Shift type : %1</source>
         <translation>Είδος Βάρδιας : %1</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="716"/>
+        <location filename="../qemployeeshiftstable.cpp" line="774"/>
+        <location filename="../qemployeeshiftstable.cpp" line="983"/>
         <source>
 Available branches : %1</source>
         <translation>Διαθέσιμος στα υποκαταστήματα : %1</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="738"/>
-        <location filename="../qemployeeshiftstable.cpp" line="756"/>
-        <location filename="../qemployeeshiftstable.cpp" line="773"/>
+        <location filename="../qemployeeshiftstable.cpp" line="796"/>
+        <location filename="../qemployeeshiftstable.cpp" line="814"/>
+        <location filename="../qemployeeshiftstable.cpp" line="831"/>
         <source>Error writing!</source>
         <translation>Αδυναμία Εγγραφής!</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="739"/>
-        <location filename="../qemployeeshiftstable.cpp" line="757"/>
-        <location filename="../qemployeeshiftstable.cpp" line="774"/>
+        <location filename="../qemployeeshiftstable.cpp" line="797"/>
+        <location filename="../qemployeeshiftstable.cpp" line="815"/>
+        <location filename="../qemployeeshiftstable.cpp" line="832"/>
         <source>Error while trying to write %1 file</source>
         <translation>Αδύνατη η εγγραφή στο αρχείο %1</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="749"/>
+        <location filename="../qemployeeshiftstable.cpp" line="807"/>
         <source>File %1 saved succesfull!</source>
         <translation>Το αρχείο %1 αποθηκεύτηκε!!</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="792"/>
+        <location filename="../qemployeeshiftstable.cpp" line="850"/>
         <source>Error reading solution!</source>
         <translation>Λάθος στην ανάγνωση της λύσης!</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftstable.cpp" line="793"/>
+        <location filename="../qemployeeshiftstable.cpp" line="851"/>
         <source>Could not read %1 file. Check your installation!</source>
         <translation>Αδύνατη η ανάγνωση του αρχείου %1. Παρακαλώ ελέγξτε την εγκατάστση σας!</translation>
     </message>
@@ -760,7 +801,7 @@ Available branches : %1</source>
     <message>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="102"/>
         <location filename="../qemployeeshiftsweeklyreport.cpp" line="133"/>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="324"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="326"/>
         <source>AVAIL</source>
         <translation>Δ</translation>
     </message>
@@ -790,29 +831,29 @@ Available branches : %1</source>
         <translation>Η εκτύπωση δεν υποστηρίζεται σ&apos;αυτή την έκδοση της Qt</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="293"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="295"/>
         <source>Process %1 </source>
         <translation>Η Διεργασία %1 </translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="293"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="295"/>
         <source> finished with code : %2</source>
         <translation>τελείωσε με κωδικό εξόδου : %2</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="301"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="303"/>
         <source>Program %1 not found or it is not in your path!
  Check your installation!!</source>
         <translation>Η εφαρμογή %1 δεν έχει εγκατασταθεί ή δεν βρίσκεται στο path!
 Παρακαλώ ελέγξτε την εγκατάσταση σας!!</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="357"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="359"/>
         <source>Shifts program from 27/03 to 04/04</source>
         <translation>Πρόγραμμα εργασιών από 27/03 μέχρι 04/04</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="366"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="368"/>
         <source>%1
 %2
 %3</source>
@@ -821,37 +862,37 @@ Available branches : %1</source>
 %3</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="394"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="396"/>
         <source>MON</source>
         <translation>ΔΕΥ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="394"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="396"/>
         <source>TUE</source>
         <translation>ΤΡΙ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="394"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="396"/>
         <source>WED</source>
         <translation>ΤΕΤ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="395"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="397"/>
         <source>THI</source>
         <translation>ΠΕΜ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="395"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="397"/>
         <source>FRI</source>
         <translation>ΠΑΡ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="395"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="397"/>
         <source>SAT</source>
         <translation>ΣΑΒ</translation>
     </message>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="396"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="398"/>
         <source>SUN</source>
         <translation>ΚΥΡ</translation>
     </message>
@@ -859,7 +900,7 @@ Available branches : %1</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../qemployeeshiftsweeklyreport.cpp" line="323"/>
+        <location filename="../qemployeeshiftsweeklyreport.cpp" line="325"/>
         <location filename="../weekreportinfo.cpp" line="36"/>
         <source>DO</source>
         <translation>Ρ</translation>
@@ -875,16 +916,16 @@ Available branches : %1</source>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="24"/>
         <location filename="../qstaffweeklyreport.cpp" line="76"/>
-        <location filename="../qstaffweeklyreport.cpp" line="137"/>
-        <location filename="../qstaffweeklyreport.cpp" line="386"/>
+        <location filename="../qstaffweeklyreport.cpp" line="144"/>
+        <location filename="../qstaffweeklyreport.cpp" line="393"/>
         <source>DO</source>
         <translation>Ρ</translation>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="25"/>
         <location filename="../qstaffweeklyreport.cpp" line="80"/>
-        <location filename="../qstaffweeklyreport.cpp" line="141"/>
-        <location filename="../qstaffweeklyreport.cpp" line="388"/>
+        <location filename="../qstaffweeklyreport.cpp" line="148"/>
+        <location filename="../qstaffweeklyreport.cpp" line="395"/>
         <source>AVAIL</source>
         <translation>Δ</translation>
     </message>
@@ -895,29 +936,29 @@ Available branches : %1</source>
     </message>
     <message>
         <location filename="../qstaffweeklyreport.cpp" line="86"/>
-        <location filename="../qstaffweeklyreport.cpp" line="147"/>
+        <location filename="../qstaffweeklyreport.cpp" line="154"/>
         <source>
 %1</source>
         <translation>
 %1</translation>
     </message>
     <message>
-        <location filename="../qstaffweeklyreport.cpp" line="246"/>
+        <location filename="../qstaffweeklyreport.cpp" line="253"/>
         <source>%1η Εβδομάδα (%2 έως %3)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../qstaffweeklyreport.cpp" line="502"/>
+        <location filename="../qstaffweeklyreport.cpp" line="511"/>
         <source>Process %1 </source>
         <translation>Η Διεργασία %1 </translation>
     </message>
     <message>
-        <location filename="../qstaffweeklyreport.cpp" line="502"/>
+        <location filename="../qstaffweeklyreport.cpp" line="511"/>
         <source> finished with code : %2</source>
         <translation>τελείωσε με κωδικό εξόδου : %2</translation>
     </message>
     <message>
-        <location filename="../qstaffweeklyreport.cpp" line="510"/>
+        <location filename="../qstaffweeklyreport.cpp" line="519"/>
         <source>Program %1 not found or it is not in your path!
  Check your installation!!</source>
         <translation>Η εφαρμογή %1 δεν έχει εγκατασταθεί ή δεν βρίσκεται στο path!

@@ -72,6 +72,8 @@ private slots:
 
     void on_deleteFromListBtn_clicked();
 
+    void on_editEmployeesFile_clicked();
+
 private:
     Ui::EmployeeEditorForm *ui;
     QTreeWidgetItem *rootManItem;
@@ -79,6 +81,7 @@ private:
     QTreeWidgetItem *rootFuelEmplItem;
     QVector<Algorithmos::QEmployee*> employees;
     QMap<QString, QString> branchFullName;
+    QString jsonEmployeeFile;
 
     void initTV();
     bool isEmployeeTVPopulated;

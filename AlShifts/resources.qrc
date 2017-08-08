@@ -34,6 +34,7 @@
         <file alias="deletefromlist">icons/delete.png</file>
         <file alias="app_icon">icons/ALShift.png</file>
         <file alias="AboutApp">icons/ALShiftAboutDlg.png</file>
+        <file alias="doc_edit">icons/document-edit.png</file>
     </qresource>
     <qresource prefix="/"/>
     <qresource prefix="/translations">

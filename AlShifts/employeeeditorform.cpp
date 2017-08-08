@@ -2,10 +2,12 @@
 
 #include <QFile>
 #include <QDir>
+#include <QtGlobal>
 #include <QTextStream>
 #include <QDebug>
 #include <QMessageBox>
 #include <QStringList>
+#include <QProcess>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -50,6 +52,8 @@ EmployeeEditorForm::EmployeeEditorForm(QAbstractSettingsWidget *parent) :
     path.cdUp();
     if(path.cd("Data")) {
         QString filename = path.absolutePath()+"/employeeswb.json";
+        jsonEmployeeFile = filename;
+        qDebug() << " Employees Filename : " << jsonEmployeeFile << endl;
         populateTVFromFile(filename);
     }
 }
@@ -268,7 +272,7 @@ void EmployeeEditorForm::on_emTypeCB_currentIndexChanged(int index)
 
 void EmployeeEditorForm::on_updateBtn_clicked()
 {
-
+    qDebug() << "Edit Employees file clicked !!!" << endl;
 }
 
 void EmployeeEditorForm::on_nameLE_textEdited(const QString &arg1)
@@ -343,4 +347,34 @@ void EmployeeEditorForm::on_deleteFromListBtn_clicked()
     qDebug() << "Employee after : " << ce;
 
     ui->availableBranchesLV->takeItem(ui->availableBranchesLV->currentIndex().row());
+}
+
+void EmployeeEditorForm::on_editEmployeesFile_clicked()
+{
+    qDebug() << "Edit Employees file clicked !!!" << endl;
+    qputenv("PATH","%PATH%;C:\\Program Files (x86)\\Notepad++");
+    qDebug() << "PATH Variable: " << qgetenv("PATH") << endl;
+    QProcess process;
+    QString command = "notepad++.exe";
+    QStringList args;
+    args << jsonEmployeeFile;
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.start(command,args);
+    connect(&process,
+    static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+    [&process,this](int exitCode, QProcess::ExitStatus exitStatus){
+        QString message = tr("Process %1 ").arg(process.program()) + tr(" finished with code : %2").arg(exitCode);
+        this->setToolTip(message);
+         });
+    connect(&process,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::errorOccurred),
+            [&process,this](QProcess::ProcessError error) {
+        QString message;
+        if(error == QProcess::FailedToStart) {
+            message = tr("Program %1 not found or it is not in your path!\n Check your installation!!")
+                    .arg(process.program());
+            this->setToolTip(message);
+        }
+    });
+    process.waitForFinished();
 }

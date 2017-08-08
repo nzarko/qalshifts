@@ -48,7 +48,25 @@
             "position": "YK",
             "branches": [ "BR2", "BR5" ]
         },
-
+        {
+            "id": "14",
+            "name": "Σουλιώτη Γεωργία",
+            "position": "YK",
+            "branches": [ "BR2", "BR5" ]
+        },
+        {
+            "id": "21",
+            "name": "Χόνδρου Μαρία",
+            "position": "YK",
+            "branches": [ "BR3" ]
+        },
+        {
+            "id": "17",
+            "name": "Τέντα Αικατερίνη",
+            "position": "YK",
+            "branches": [ "BR2" ]
+        },
+        
         {
             "id": "12",
             "name": "Παπαϊωάννου Αργυρώ",
@@ -61,12 +79,7 @@
             "position": "B",
             "branches": [ "BR3" ]
         },
-        {
-            "id": "14",
-            "name": "Σουλιώτη Γεωργία",
-            "position": "YK",
-            "branches": [ "BR2", "BR5" ]
-        },
+        
         {
             "id": "15",
             "name": "Τασίόπουλος Απόστολος",
@@ -78,13 +91,7 @@
             "name": "Τασούλας Πέτρος",
             "position": "B",
             "branches": [ "BR2", "BR3","BR5" ]
-        },
-        {
-            "id": "17",
-            "name": "Τέντα Αικατερίνη",
-            "position": "YK",
-            "branches": [ "BR2" ]
-        },
+        },        
         {
             "id": "18",
             "name": "Τσακνής Αναστάσιος",
@@ -97,12 +104,7 @@
             "position": "B",
             "branches": [ "BR2" ]
         },
-        {
-            "id": "21",
-            "name": "Χόνδρου Μαρία",
-            "position": "YK",
-            "branches": [ "BR3" ]
-        },
+        
         {
             "id": "3",
             "name": "Γκύλιας Κίμων",
