@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QTranslator>
 #include <QProcess>
+#include <QLocale>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -26,6 +27,7 @@
 QEmployeeShiftsWeeklyReport::QEmployeeShiftsWeeklyReport(QEmployeeShiftsTable *empl, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QEmployeeShiftsWeeklyReport),
+    el_locale(QLocale::Greek, QLocale::Greece),
     pEST(empl)
 {
     ui->setupUi(this);
@@ -76,13 +78,16 @@ void QEmployeeShiftsWeeklyReport::createWeekReport(const QDate &date)
     initWeekTable();
     //Update title and date
     QDate dd = date;
+//    wItem(0,0)->setText(tr("Shifts Program from %1 to %2")
+//                        .arg(date.toString("dd/MM"))
+//                        .arg(date.addDays(6).toString("dd/MM")));
     wItem(0,0)->setText(tr("Shifts Program from %1 to %2")
-                        .arg(date.toString("dd/MM"))
-                        .arg(date.addDays(6).toString("dd/MM")));
+                        .arg(el_locale.toString(date, "dd/MM"))
+                        .arg(el_locale.toString(date.addDays(6)),"dd/MM"));
     for(int j = 2; j< 9; ++j) {
         wItem(2,j)->setText(dd.toString("dd"));
         dd = dd.addDays(1);
-        wItem(3,j)->setText(dd.toString("MMM").toUpper());
+        wItem(3,j)->setText(el_locale.toString(dd,"MMM").toUpper());
     }
 
     QVector<WeekReportInfo> wri_vec;

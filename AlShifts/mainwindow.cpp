@@ -15,6 +15,7 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QTimer>
+#include <QDesktopServices>
 
 #include <QPrintDialog>
 #include <QPrinter>
@@ -34,6 +35,7 @@
 #include "alshiftssettingsdialog.h"
 #include "aboutdialog.h"
 #include "stuffprintview.h"
+#include "managersdoreportdialog.h"
 
 
 MainWindow* MainWindow::m_pInstance = nullptr;
@@ -148,6 +150,7 @@ void MainWindow::setupActions()
     ui->actionBranches_Full_Name->setEnabled(false);
     connect(ui->actionBranches_Full_Name,&QAction::toggled,this->m_centralView->employeeShiftsTable(),
             &QEmployeeShiftsTable::showBranchFullNames);
+    ui->actionManagers_Dayoff_Report->setEnabled(false);
 
     /* *********************************** *
      *      Settings Dialog                *
@@ -282,6 +285,7 @@ bool MainWindow::loadFile(const QString &fileName)
     ui->actionBranches_Full_Name->setEnabled(true);
     ui->actionBranches_Full_Name->setChecked(false);
     ui->actionContinue_From_Current->setEnabled(true);
+    ui->actionManagers_Dayoff_Report->setEnabled(true);
     return true;
 }
 
@@ -387,6 +391,7 @@ void MainWindow::newFile()
     }
     //updateRecentFiles();
     ui->actionContinue_From_Current->setEnabled(false);
+    ui->actionManagers_Dayoff_Report->setEnabled(true);
 }
 
 void MainWindow::open()
@@ -696,4 +701,18 @@ void MainWindow::on_actionClear_DO_Text_triggered()
 {
     ///TODO : Implement me!!
     m_centralView->employeeShiftsTable()->clearDOText();
+}
+
+void MainWindow::on_actionManagers_Dayoff_Report_triggered()
+{
+    ManagersDOReportDialog mDOdlg(m_centralView->employeeShiftsTable(),this);
+#if defined (QWEBENGINEPAGE_PRINT)
+    mDOdlg.exec();
+#else
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
+    QDesktopServices::openUrl(mDOdlg.getReportURL());
+    QApplication::restoreOverrideCursor();
+#endif
+
 }

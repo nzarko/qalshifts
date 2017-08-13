@@ -4,13 +4,17 @@
 #
 #-------------------------------------------------
 
-QT       += core gui printsupport
+QT       += core gui printsupport webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = AlShifts
 TEMPLATE = app
 unix:CONFIG += c++11
+
+win32 {
+QMAKE_CXXFLAGS += /utf-8
+}
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -52,7 +56,8 @@ SOURCES += main.cpp\
     qstaffweeklyreport.cpp \
     aboutdialog.cpp \
     stuffprintview.cpp \
-    abstractprintview.cpp
+    abstractprintview.cpp \
+    managersdoreportdialog.cpp
 
 HEADERS  += mainwindow.h \
     centralview.h \
@@ -80,14 +85,16 @@ HEADERS  += mainwindow.h \
     qstaffweeklyreport.h \
     aboutdialog.h \
     stuffprintview.h \
-    abstractprintview.h
+    abstractprintview.h \
+    managersdoreportdialog.h
 
 FORMS    += mainwindow.ui \
     legendform.ui \
     qemployeeshiftsweeklyreport.ui \
     alshiftssettingsdialog.ui \
     employeeeditorform.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    managersdoreportdialog.ui
 win32 {
 DEFINES += _ATL_XP_TARGETING
 DEFINES += PSAPI_VERSION=1

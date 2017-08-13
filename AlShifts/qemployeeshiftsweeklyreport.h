@@ -2,6 +2,7 @@
 #define QEMPLOYEESHIFTSWEEKLYREPORT_H
 
 #include <QWidget>
+#include <QLocale>
 #include <QMap>
 #include <QVector>
 
@@ -46,6 +47,7 @@ public slots:
     void writeCSVFile(const QString &fileName);
     void openWithExcel();
 private:
+    QLocale el_locale;
     QString cvsFilename;
     QAction *insertRowAction;
     QAction *removeRowAction;

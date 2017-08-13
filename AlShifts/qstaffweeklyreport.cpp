@@ -482,7 +482,7 @@ bool QStaffWeeklyReport::writeCSVFile(const QString &filename)
         return false;
     }
     QTextStream *ts = new QTextStream(&file);
-    ts->setCodec("Windows-1253");
+    ts->setCodec("UTF-8");
     *ts << result << "\n";
     ts->flush();
     file.close();

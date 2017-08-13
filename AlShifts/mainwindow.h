@@ -94,6 +94,8 @@ private slots:
 
     void on_actionClear_DO_Text_triggered();
 
+    void on_actionManagers_Dayoff_Report_triggered();
+
 protected:
     void closeEvent(QCloseEvent *event);
 };

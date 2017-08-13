@@ -233,6 +233,9 @@ namespace Algorithmos {
             case FEMATRIX:
                 result = path.absolutePath();
                 break;
+            case DOREPORT:
+                result = path.absolutePath()+"/managers_DO_report_template.html";
+                break;
             default:
                 result = path.absolutePath();
                 break;

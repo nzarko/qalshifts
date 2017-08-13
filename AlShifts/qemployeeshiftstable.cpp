@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QLineEdit>
 #include <QAbstractItemView>
+#include <QLocale>
 
 #include <QHeaderView>
 #include <QApplication>
@@ -29,6 +30,7 @@ int QEmployeeShiftsTable::r = 0;
 QEmployeeShiftsTable::QEmployeeShiftsTable(QWidget *parent):
     QTableWidget(parent),
     is_empty(true),
+    el_loc(QLocale::Greek,QLocale::Greece),
     m_startDate(QDateTime::currentDateTime())
 {
 
@@ -224,7 +226,8 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
     emtypeRange.insert(Algorithmos::BFUELMANAGER, fmanRange);
     emtypeRange.insert(Algorithmos::FUELMANAGER, feRange);
     //Try to extract m_startDate from first headerItem
-    m_startDate = QDateTime::fromString(horizontalHeaderItem(0)->text(),"ddd dd \nMMM yyyy");
+    m_startDate = //QDateTime::fromString(horizontalHeaderItem(0)->text(),"ddd dd \nMMM yyyy");
+            (QDateTime)el_loc.toDate(horizontalHeaderItem(0)->text(), "ddd dd \nMMM yyyy");
     if(m_startDate.isValid())
         qDebug() << "QEmployeeShiftsTable::readFile-->m_startDate-->" << m_startDate.toString("dd/MM/yyyy") << endl;
     else
@@ -397,7 +400,11 @@ QDate QEmployeeShiftsTable::dateForColumn(int col)
     if(is_empty) {
         qDebug() << "Shifts table is empty. Fill it first then try again" << endl;
     }
-    dt = QDate::fromString(horizontalHeaderItem(col)->text(),"ddd dd \nMMM yyyy");
+
+    QString str_date= horizontalHeaderItem(col)->text();
+    dt = el_loc.toDate(str_date,"ddd dd \nMMM yyyy");
+
+    //dt = QDate::fromString(str_date,"ddd dd \nMMM yyyy");
     if(!dt.isValid())
     {
         qDebug() << "Could not read date for column " << col << "!! See QEmployeeShiftsTable::dateForColumn(int col)"
@@ -733,7 +740,9 @@ void QEmployeeShiftsTable::populateShiftsTable(Shifts &shifts)
     for(int j = 0; j < shifts.size(); j++) {
         QDateTime date_time = shifts[j]->shiftDate();
         QTableWidgetItem *vHeaderItem = new QTableWidgetItem();
-        vHeaderItem->setText(date_time.toString("ddd dd \nMMM yyyy"));
+
+        vHeaderItem->setText(/*date_time.toString("ddd dd \nMMM yyyy")*/
+                             el_loc.toString(date_time,"ddd dd \nMMM yyyy"));
         vHeaderItem->setTextAlignment(Qt::AlignCenter);
 
         setHorizontalHeaderItem(j,vHeaderItem);

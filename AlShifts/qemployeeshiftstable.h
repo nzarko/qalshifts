@@ -13,6 +13,7 @@ class QAction;
 class QPrinter;
 class QPrintDialog;
 class QPrintPreviewDialog;
+class QLocale;
 QT_END_NAMESPACE
 
 using Algorithmos::QShiftsTableItem;
@@ -159,6 +160,7 @@ private slots:
     void somethingChanged();
     void removeCurrentRow();
 private:
+    QLocale el_loc;
     QAction *removeRowAction;
     enum { MagicNumber = 0x7F51C883, RowCount = 30, ColumnCount = 49, EmployeeType=Qt::UserRole+3 };
     HeaderDelegate *headerDelegate;

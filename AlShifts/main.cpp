@@ -5,10 +5,14 @@
 #include <QDebug>
 #include <QLocale>
 #include <QTranslator>
+#include <QTextCodec>
 #include <QLibraryInfo>
 
 int main(int argc, char *argv[])
 {
+//    QLocale el_locale(QLocale::Greek, QLocale::Greece);
+//    QLocale::setDefault(el_locale);
+
     QCoreApplication::addLibraryPath(".");
     QApplication a(argc, argv);
     //The bellow info are being used with the default QSettings constructor.
