@@ -15,6 +15,7 @@
 
 #include <QHeaderView>
 #include <QApplication>
+#include <QFileInfo>
 
 #include <algorithm>
 #include <cstdlib>
@@ -200,8 +201,9 @@ bool QEmployeeShiftsTable::readFile(const QString &fileName)
             ///TODO : fill emTypeRange with proper values
             /// so the model be eligible to solve shift changes
             /// v0.8.5
+            /// SOLVED v0.8.7
             if(curIndex < 3) {
-                etr_vec[curIndex]->endRow = row - 1;
+                etr_vec[curIndex]->endRow = row;
                 ++curIndex;
                 if(curIndex < 3)
                     etr_vec[curIndex]->startRow = row + 1;
@@ -813,7 +815,8 @@ void QEmployeeShiftsTable::saveShifts()
             out << item(row,col)->data(Algorithmos::STIROLE).toInt();
         }
 
-    qDebug() << tr("File %1 saved succesfull!").arg(file.fileName()) << endl;
+    QFileInfo file_info(file);
+    qDebug() << tr("File %1 saved succesfull!").arg(file_info.canonicalFilePath()) << endl;
     file.close();
     /* *****************
      * Fuel Managers
